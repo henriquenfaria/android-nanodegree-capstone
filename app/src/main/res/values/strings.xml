@@ -2,4 +2,11 @@
     <string name="app_name" translatable="false">Wise Trip</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="toast_successfully_signed_in">Successfully signed in!</string>
+    <string name="toast_sign_in_canceled">Sign in canceled!</string>
+
+    <string name="your_trips">Your Trips</string>
+    <string name="settings">Settings</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
