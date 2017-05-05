@@ -37,7 +37,6 @@ public class TripListActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener mFirebaseAuthStateListener;
     private List<AuthUI.IdpConfig> mAuthProviders;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +86,8 @@ public class TripListActivity extends AppCompatActivity
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
                                     .setProviders(mAuthProviders)
+                                    .setLogo(R.drawable.wise_trip_logo)
+                                    .setTheme(R.style.AppTheme)
                                     .build(),
                             RC_SIGN_IN);
                 }
@@ -100,7 +101,6 @@ public class TripListActivity extends AppCompatActivity
 
     // TODO: Delete it if not needed in the future
     private void onSignOutCleanup() {
-
     }
 
     @Override
@@ -115,7 +115,6 @@ public class TripListActivity extends AppCompatActivity
         if (mFirebaseAuthStateListener != null) {
             mFirebaseAuth.addAuthStateListener(mFirebaseAuthStateListener);
         }
-
     }
 
     @Override
@@ -131,7 +130,6 @@ public class TripListActivity extends AppCompatActivity
                 finish();
             }
         }
-
     }
 
     @Override
@@ -143,7 +141,6 @@ public class TripListActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
