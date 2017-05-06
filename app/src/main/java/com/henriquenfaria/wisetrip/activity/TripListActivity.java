@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.ui;
+package com.henriquenfaria.wisetrip.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
