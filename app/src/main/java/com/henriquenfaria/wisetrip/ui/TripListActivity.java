@@ -16,13 +16,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Arrays;
 
 /* Main Activity that lists all Trips created by the user */
 public class TripListActivity extends AppCompatActivity
@@ -35,7 +35,6 @@ public class TripListActivity extends AppCompatActivity
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mFirebaseAuthStateListener;
-    private List<AuthUI.IdpConfig> mAuthProviders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +42,6 @@ public class TripListActivity extends AppCompatActivity
         setContentView(R.layout.activity_trip_list);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
-        mAuthProviders = new ArrayList<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,21 +69,22 @@ public class TripListActivity extends AppCompatActivity
         mFirebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser != null) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                if (auth.getCurrentUser() != null) {
                     // User is signed in
                     onSignInInitialize();
                 } else {
                     // User is signed out
                     onSignOutCleanup();
-                    mAuthProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
-                            .build());
-                    mAuthProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                            .build());
+
                     startActivityForResult(AuthUI.getInstance()
                                     .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false)
-                                    .setProviders(mAuthProviders)
+                                    .setIsSmartLockEnabled(!BuildConfig.DEBUG)
+                                    .setProviders(Arrays.asList(
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
+                                                    .build(),
+                                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                                    .build()))
                                     .setLogo(R.drawable.wise_trip_logo)
                                     .setTheme(R.style.AppTheme)
                                     .build(),
@@ -154,7 +153,14 @@ public class TripListActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_sign_out) {
             // Sign out
-            AuthUI.getInstance().signOut(this);
+            AuthUI.getInstance()
+                    .signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // user is now signed out
+                            finish();
+                        }
+                    });
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
