@@ -158,7 +158,8 @@ public class TripListActivity extends AppCompatActivity
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         public void onComplete(@NonNull Task<Void> task) {
                             // user is now signed out
-                            finish();
+                            Toast.makeText(TripListActivity.this, R.string.toast_successfully_signed_out,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }
