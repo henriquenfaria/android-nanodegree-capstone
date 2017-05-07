@@ -36,7 +36,7 @@ public class AuthUiActivity extends AppCompatActivity {
         // Redirect to Trip List screen if user has been authenticated
         FirebaseAuth auth = mFirebaseAuth;
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(this, TripListActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         }
 
@@ -47,7 +47,7 @@ public class AuthUiActivity extends AppCompatActivity {
                 if (auth.getCurrentUser() != null) {
                     // User is signed in
                     onSignInInitialize();
-                    startActivity(new Intent(AuthUiActivity.this, TripListActivity.class));
+                    startActivity(new Intent(AuthUiActivity.this, MainActivity.class));
                     finish();
                 } else {
                     // User is signed out
@@ -86,7 +86,7 @@ public class AuthUiActivity extends AppCompatActivity {
 
         if (resultCode == ResultCodes.OK) {
             // Successfully signed in
-            startActivity(new Intent(this, TripListActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
             return;
         } else if (resultCode == RESULT_CANCELED) {
