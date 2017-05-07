@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -22,8 +21,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
+import com.henriquenfaria.wisetrip.models.Trip;
+
+import java.util.ArrayList;
 
 /* Main Activity that lists all user's trips */
 public class MainActivity extends AppCompatActivity
@@ -33,6 +37,9 @@ public class MainActivity extends AppCompatActivity
     private boolean mIsTwoPane;
 
     private FirebaseAuth mFirebaseAuth;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mUserTripReference;
+    private FirebaseUser mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +48,30 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         // Redirect to Sign In screen if user has not been authenticated
-        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-        if (currentUser == null) {
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
+        if (mCurrentUser == null) {
             startActivity(new Intent(this, AuthUiActivity.class));
             finish();
             return;
         }
-
         setContentView(R.layout.activity_main);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mUserTripReference = mFirebaseDatabase.getReference()
+                .child("user-trips")
+                .child(mCurrentUser.getUid());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //TODO: Temp code to add temp test trip data
+                saveNewTrip();
             }
         });
 
@@ -138,5 +151,14 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    //TODO: Temp method
+    private void saveNewTrip() {
+        ArrayList<String> countries = new ArrayList<>();
+        countries.add("USA");
+        countries.add("CAN");
+        Trip newTrip = new Trip("Trip to North America", 1494100000000l, 1494192097015l, countries);
+        mUserTripReference.push().setValue(newTrip);
     }
 }
