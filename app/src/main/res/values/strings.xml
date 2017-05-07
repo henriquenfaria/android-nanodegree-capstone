@@ -5,7 +5,10 @@
 
     <string name="toast_successfully_signed_in">Successfully signed in</string>
     <string name="toast_successfully_signed_out">Successfully signed out</string>
-    <string name="toast_sign_in_canceled">Sign in canceled</string>
+    <string name="toast_sign_out_error">Sign out error</string>
+    <string name="toast_unknown_error">Unknown error</string>
+    <string name="toast_no_internet_connection">Not internet connection</string>
+
 
     <string name="your_trips">Your Trips</string>
     <string name="settings">Settings</string>

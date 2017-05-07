@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.activity;
+package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,29 +19,32 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.henriquenfaria.wisetrip.BuildConfig;
+import com.google.firebase.auth.FirebaseUser;
 import com.henriquenfaria.wisetrip.R;
 
-import java.util.Arrays;
-
-/* Main Activity that lists all Trips created by the user */
+/* Main Activity that lists all user's trips */
 public class TripListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = TripListActivity.class.getSimpleName();
 
-    // Request code for auth sign in, this is an arbitrary value
-    private static final int RC_SIGN_IN = 1;
-
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mFirebaseAuthStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trip_list);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        // Redirect to Sign In screen if user has not been authenticated
+        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(this, AuthUiActivity.class));
+            finish();
+            return;
+        }
+
+        setContentView(R.layout.activity_trip_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,6 +62,7 @@ public class TripListActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
+        //TODO: Deprecated
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -66,69 +70,6 @@ public class TripListActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        mFirebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                if (auth.getCurrentUser() != null) {
-                    // User is signed in
-                    onSignInInitialize();
-                } else {
-                    // User is signed out
-                    onSignOutCleanup();
-
-                    startActivityForResult(AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(!BuildConfig.DEBUG)
-                                    .setProviders(Arrays.asList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
-                                                    .build(),
-                                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                                                    .build()))
-                                    .setLogo(R.drawable.wise_trip_logo)
-                                    .setTheme(R.style.AppTheme)
-                                    .build(),
-                            RC_SIGN_IN);
-                }
-            }
-        };
-    }
-
-    // TODO: Delete it if not needed in the future
-    private void onSignInInitialize() {
-    }
-
-    // TODO: Delete it if not needed in the future
-    private void onSignOutCleanup() {
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mFirebaseAuth.removeAuthStateListener(mFirebaseAuthStateListener);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mFirebaseAuthStateListener != null) {
-            mFirebaseAuth.addAuthStateListener(mFirebaseAuthStateListener);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(TripListActivity.this, R.string.toast_successfully_signed_in,
-                        Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(TripListActivity.this, R.string.toast_sign_in_canceled,
-                        Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
     }
 
     @Override
@@ -157,9 +98,14 @@ public class TripListActivity extends AppCompatActivity
                     .signOut(this)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         public void onComplete(@NonNull Task<Void> task) {
-                            // user is now signed out
-                            Toast.makeText(TripListActivity.this, R.string.toast_successfully_signed_out,
-                                    Toast.LENGTH_SHORT).show();
+                            if (task.isSuccessful()) {
+                                // user is now signed out
+                                startActivity(new Intent(TripListActivity.this, TripListActivity.class));
+                                finish();
+                            } else {
+                                Toast.makeText(TripListActivity.this, R.string
+                                                .toast_sign_out_error, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
         }
