@@ -12,13 +12,13 @@
               app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                 android:id="@+id/trip_list_container"
+                 android:id="@+id/main_fragment_container"
                  android:layout_width="400dp"
                  android:layout_height="match_parent">
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/trip_detail_container"
+        android:id="@+id/detail_fragment_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3"/>
