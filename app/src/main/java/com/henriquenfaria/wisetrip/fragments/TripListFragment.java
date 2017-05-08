@@ -18,10 +18,13 @@ import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.TripHolder;
 import com.henriquenfaria.wisetrip.models.Trip;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class TripListFragment extends Fragment {
 
     //TODO: ButterKnife is not working
-    //@BindView(R.id.trip_list_recycler_view)
+    @BindView(R.id.trip_list_recycler_view)
     RecyclerView mTripListRecyclerView;
 
     private FirebaseAuth mFirebaseAuth;
@@ -48,10 +51,7 @@ public class TripListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_trip_list, container, false);
 
-        //TODO: ButterKnife is not working
-        //ButterKnife.bind(this, rootView);
-
-        mTripListRecyclerView = (RecyclerView) rootView.findViewById(R.id.trip_list_recycler_view);
+        ButterKnife.bind(this, rootView);
 
         mTripListRecyclerView.setHasFixedSize(false);
         mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
