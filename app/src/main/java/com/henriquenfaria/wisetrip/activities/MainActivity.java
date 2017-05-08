@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        // TODO: Move this implementation to AddTripActivity
         mUserTripReference = mFirebaseDatabase.getReference()
                 .child("user-trips")
                 .child(mCurrentUser.getUid());
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Temp code to add temp test trip data
+                //TODO: Should call AddTripActivity instead of this test method
                 saveNewTrip();
             }
         });
