@@ -77,7 +77,7 @@ public class AuthUiActivity extends AppCompatActivity {
             return;
         }
 
-        Toast.makeText(AuthUiActivity.this, R.string.toast_unknown_error,
+        Toast.makeText(AuthUiActivity.this, R.string.unknown_error,
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -95,19 +95,19 @@ public class AuthUiActivity extends AppCompatActivity {
             return;
         } else {
             if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                Toast.makeText(AuthUiActivity.this, R.string.toast_no_internet_connection,
+                Toast.makeText(AuthUiActivity.this, R.string.no_internet_connection,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                Toast.makeText(AuthUiActivity.this, R.string.toast_unknown_error,
+                Toast.makeText(AuthUiActivity.this, R.string.unknown_error,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
         }
 
-        Toast.makeText(AuthUiActivity.this, R.string.toast_unknown_error,
+        Toast.makeText(AuthUiActivity.this, R.string.unknown_error,
                 Toast.LENGTH_SHORT).show();
     }
 

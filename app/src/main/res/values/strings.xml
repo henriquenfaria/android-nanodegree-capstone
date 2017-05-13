@@ -2,13 +2,13 @@
     <string name="app_name" translatable="false">Wise Trip</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="toast_sign_out_error">Sign out error</string>
-    <string name="toast_unknown_error">Unknown error</string>
-    <string name="toast_no_internet_connection">Not internet connection</string>
-
-
+    <string name="sign_out_error">Sign out error</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="no_internet_connection">Not internet connection</string>
     <string name="your_trips">Your Trips</string>
     <string name="settings">Settings</string>
     <string name="sign_out">Sign Out</string>
+    <string name="trip_title">Trip Title</string>
+    <string name="create_new_trip">Create New Trip</string>
+    <string name="save">Save</string>
 </resources>

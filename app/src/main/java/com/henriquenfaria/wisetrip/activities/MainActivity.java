@@ -21,13 +21,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
-import com.henriquenfaria.wisetrip.models.Trip;
-
-import java.util.ArrayList;
 
 /* Main Activity that lists all user's trips */
 public class MainActivity extends AppCompatActivity
@@ -37,8 +32,6 @@ public class MainActivity extends AppCompatActivity
     private boolean mIsTwoPane;
 
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUserTripReference;
     private FirebaseUser mCurrentUser;
 
     @Override
@@ -55,12 +48,6 @@ public class MainActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_main);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-
-        // TODO: Move this implementation to AddTripActivity
-        mUserTripReference = mFirebaseDatabase.getReference()
-                .child("user-trips")
-                .child(mCurrentUser.getUid());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,8 +58,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Should call AddTripActivity instead of this test method
-                saveNewTrip();
+                Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -138,7 +125,7 @@ public class MainActivity extends AppCompatActivity
                                 finish();
                             } else {
                                 Toast.makeText(MainActivity.this, R.string
-                                        .toast_sign_out_error, Toast.LENGTH_SHORT).show();
+                                        .sign_out_error, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -152,14 +139,5 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-    }
-
-    //TODO: Temp method
-    private void saveNewTrip() {
-        ArrayList<String> countries = new ArrayList<>();
-        countries.add("USA");
-        countries.add("CAN");
-        Trip newTrip = new Trip("Trip to North America", 1494100000000l, 1494192097015l, countries);
-        mUserTripReference.push().setValue(newTrip);
     }
 }

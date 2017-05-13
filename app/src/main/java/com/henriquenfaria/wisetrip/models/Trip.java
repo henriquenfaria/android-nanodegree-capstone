@@ -1,37 +1,42 @@
 package com.henriquenfaria.wisetrip.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Trip {
+public class Trip implements Parcelable {
 
     private String title;
     private long startDate;
     private long endDate;
-    private List<String> countries;
+    private List<City> cities;
 
-    public Trip(String title, long startDate, long endDate, List<String> countries) {
+    public Trip(String title, long startDate, long endDate, List<City> cities) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.countries = countries;
+        this.cities = cities;
     }
 
     public Trip() {
     }
 
+    //TODO: Is @Exclude really needed here?
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("title", title);
         result.put("startDate", startDate);
         result.put("endDate", endDate);
-        result.put("countries", countries);
+        result.put("cities", cities);
         return result;
     }
 
@@ -59,13 +64,47 @@ public class Trip {
         this.endDate = endDate;
     }
 
-    public List<String> getCountries() {
-        return countries;
+    public List<City> getCities() {
+        return cities;
     }
 
-    public void setCountries(List<String> countries) {
-        this.countries = countries;
+    public void setCity(List<City> cities) {
+        this.cities = cities;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeLong(this.startDate);
+        dest.writeLong(this.endDate);
+        dest.writeList(this.cities);
+    }
+
+    protected Trip(Parcel in) {
+        this.title = in.readString();
+        this.startDate = in.readLong();
+        this.endDate = in.readLong();
+        this.cities = new ArrayList<>();
+        in.readList(this.cities, City.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Trip> CREATOR = new Parcelable.Creator<Trip>() {
+        @Override
+        public Trip createFromParcel(Parcel source) {
+            return new Trip(source);
+        }
+
+        @Override
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
 }
 
 
