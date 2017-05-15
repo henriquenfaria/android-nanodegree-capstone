@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.Trip;
@@ -19,17 +20,19 @@ import com.henriquenfaria.wisetrip.models.Trip;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TripFactoryFragment extends Fragment {
+public class TripFactoryFragment extends Fragment implements DatePickerFragment.OnDateSetListener {
 
     private static final String ARG_TRIP = "arg_trip";
+    private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
+
     private OnTripFactoryListener mListener;
     private Trip mTrip;
-
-
 
     @BindView(R.id.title_edit_text)
     EditText mTripTitleEditText;
 
+    @BindView(R.id.start_date_text)
+    TextView mStartDateTextView;
 
     public TripFactoryFragment() {
         // Required empty public constructor
@@ -62,8 +65,18 @@ public class TripFactoryFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        DatePickerFragment datePickerFragment = (DatePickerFragment) getFragmentManager()
+                .findFragmentByTag(TAG_DATE_PICKER_FRAGMENT);
+        if (datePickerFragment != null) {
+            datePickerFragment.setOnDateSetListener(this);
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_trip_factory_menu, menu);  // Use filter.xml from step 1
+        inflater.inflate(R.menu.fragment_trip_factory_menu, menu);
     }
 
     @Override
@@ -88,7 +101,6 @@ public class TripFactoryFragment extends Fragment {
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
@@ -97,6 +109,22 @@ public class TripFactoryFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         mListener.changeActionBarTitle(getString(R.string.create_new_trip));
+
+        //TODO: Move this onClickListener to a separated listener instance
+        mStartDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                DatePickerFragment datePickerFragment = new DatePickerFragment();
+                datePickerFragment.setOnDateSetListener(TripFactoryFragment.this);
+
+                //TODO: Implement end date
+                datePickerFragment.setTargetViewId(mStartDateTextView.getId());
+
+                //TODO: Use getSupportFragmentManager?
+                datePickerFragment.show(getFragmentManager(), TAG_DATE_PICKER_FRAGMENT);
+
+            }
+        });
 
         populateFields();
 
@@ -120,14 +148,25 @@ public class TripFactoryFragment extends Fragment {
             //mTrip.setTitle(mTripTitleEditText.getText().toString());
             mListener.saveTrip(mTrip, false);
         } else {
-            Trip newTrip = new Trip(mTripTitleEditText.getText().toString(), 1494100000000L, 1494192097015L, null);
+            Trip newTrip = new Trip(mTripTitleEditText.getText().toString(), 1494100000000L,
+                    1494192097015L, null);
             mListener.saveTrip(newTrip, true);
 
         }
     }
 
+    @Override
+    public void onDateSet(int targetViewId, long dateMillis, String dateText) {
+        // TODO: Store dateMillis which is going to be saved in the db
+        //TODO: Implement end date
+        if (mStartDateTextView.getId() == targetViewId) {
+            mStartDateTextView.setText(dateText);
+        }
+    }
+
     public interface OnTripFactoryListener {
         void changeActionBarTitle(String newTitle);
+
         void saveTrip(Trip trip, boolean isNewTrip);
     }
 }
