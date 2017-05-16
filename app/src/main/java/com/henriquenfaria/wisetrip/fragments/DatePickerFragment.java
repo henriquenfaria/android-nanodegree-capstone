@@ -8,6 +8,7 @@ import android.widget.DatePicker;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -18,6 +19,7 @@ public class DatePickerFragment extends DialogFragment
 
     private OnDateSetListener mListener;
     private int mTargetViewId;
+    private long mCurrentDay;
 
     public void setOnDateSetListener(OnDateSetListener listener) {
         mListener = listener;
@@ -25,6 +27,10 @@ public class DatePickerFragment extends DialogFragment
 
     public void setTargetViewId(int targetViewId) {
         mTargetViewId = targetViewId;
+    }
+
+    public void setCurrentDay(long currentDay) {
+        mCurrentDay = currentDay;
     }
 
     @Override
@@ -40,6 +46,11 @@ public class DatePickerFragment extends DialogFragment
         }
 
         Calendar calendar = Calendar.getInstance();
+
+        if (mCurrentDay > 0) {
+            calendar.setTime(new Date(mCurrentDay));
+        }
+
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);

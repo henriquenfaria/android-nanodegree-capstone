@@ -5,5 +5,7 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="factory_form_margin_top">24dp</dimen>
+    <dimen name="factory_form_item_margin_top">24dp</dimen>
+    <dimen name="factory_form_icon_margin_end">8dp</dimen>
+    <dimen name="factory_form_date_separator_margin_horizontal">4dp</dimen>
 </resources>

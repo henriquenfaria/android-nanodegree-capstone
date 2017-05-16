@@ -19,13 +19,14 @@ public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
 
     private static final String TAG = TripFactoryActivity.class.getSimpleName();
+    private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
 
-    private Trip mTrip;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserTripReference;
     private FirebaseUser mCurrentUser;
-
+    private Trip mTrip;
+    private TripFactoryFragment mTripFactoryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +45,23 @@ public class TripFactoryActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
-            TripFactoryFragment tripFactoryFragment;
             if (intent != null && intent.hasExtra(Constants.Extras.EXTRA_TRIP)) {
                 // Trip already exists
                 mTrip = intent.getParcelableExtra(Constants.Extras.EXTRA_TRIP);
-                tripFactoryFragment = TripFactoryFragment.newInstance(mTrip);
+                mTripFactoryFragment = TripFactoryFragment.newInstance(mTrip);
 
             } else {
                 // New trip
-                tripFactoryFragment = TripFactoryFragment.newInstance();
+                mTripFactoryFragment = TripFactoryFragment.newInstance();
             }
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.trip_factory_fragment_container, tripFactoryFragment).commit();
+                    .add(R.id.trip_factory_fragment_container, mTripFactoryFragment,
+                            TAG_TRIP_FACTORY_FRAGMENT).commit();
+        } else {
+            // Fragment already exists, just get it using its TAG
+            mTripFactoryFragment = (TripFactoryFragment) getSupportFragmentManager()
+                    .findFragmentByTag(TAG_TRIP_FACTORY_FRAGMENT);
         }
     }
 
