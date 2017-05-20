@@ -2,8 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.henriquenfaria.wisetrip">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
     <application
-        android:name="com.henriquenfaria.wisetrip.application.WiseTripApplication"
+
+
+        android:name="com.henriquenfaria.wisetrip.WiseTripApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -29,6 +33,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity"/>
+        </activity>
+        <activity
+            android:name=".activities.TravelerActivity"
+            android:parentActivityName=".activities.TripFactoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.TripFactoryActivity"/>
         </activity>
     </application>
 </manifest>

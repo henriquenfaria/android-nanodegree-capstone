@@ -1,20 +1,28 @@
 package com.henriquenfaria.wisetrip.fragments;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.activities.TravelerActivity;
 import com.henriquenfaria.wisetrip.models.Trip;
 
 import butterknife.BindView;
@@ -27,6 +35,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String SAVE_START_DATE_MILLIS = "save_start_date_millis";
     private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
+    private static final int REQUEST_READ_CONTACTS = 1;
 
     private OnTripFactoryListener mListener;
     private Trip mTrip;
@@ -58,6 +67,9 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
 
     @BindView(R.id.end_date_text)
     TextView mEndDateTextView;
+
+    @BindView(R.id.test_button)
+    Button mTestButton;
 
     public TripFactoryFragment() {
         // Required empty public constructor
@@ -150,6 +162,44 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         mStartDateTextView.setOnClickListener(mOnDateClickListener);
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
 
+        // TODO: Test code
+        mTestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (ContextCompat.checkSelfPermission(TripFactoryFragment.this.getActivity(),
+                        Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(TripFactoryFragment
+                                    .this.getActivity(),
+                            Manifest.permission.READ_CONTACTS)) {
+
+                        // TODO: Create dialog explaining the permission
+                        Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT).show();
+                        // Show an explanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+
+                    } else {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(TripFactoryFragment.this.getActivity(),
+                                new String[]{Manifest.permission.READ_CONTACTS},
+                                REQUEST_READ_CONTACTS);
+
+                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        // app-defined int constant. The callback method gets the
+                        // result of the request.
+                    }
+                } else {
+                    Intent intent = new Intent(getContext(), TravelerActivity.class);
+                    getContext().startActivity(intent);
+
+                }
+            }
+        });
+
         populateFields();
 
         return rootView;
@@ -190,9 +240,44 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         }
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[],
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+                    Intent intent = new Intent(getContext(), TravelerActivity.class);
+                    getContext().startActivity(intent);
+
+
+                } else {
+
+                    // TODO: Fix text
+                    Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_SHORT).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
     public interface OnTripFactoryListener {
         void changeActionBarTitle(String newTitle);
 
         void saveTrip(Trip trip, boolean isNewTrip);
     }
+
+
 }

@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -33,7 +35,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:freezesText="true"
-                android:hint="@string/trip_title"/>
+                android:hint="@string/trip_title"
+                android:imeActionLabel="Done"
+                android:maxLines="1"
+                android:singleLine="true"/>
         </LinearLayout>
 
         <LinearLayout
@@ -68,13 +73,13 @@
                 android:id="@+id/date_separator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:freezesText="true"
-                android:layout_marginLeft="@dimen/factory_form_date_separator_margin_horizontal"
-                android:layout_marginStart="@dimen/factory_form_date_separator_margin_horizontal"
                 android:layout_marginEnd="@dimen/factory_form_date_separator_margin_horizontal"
+                android:layout_marginLeft="@dimen/factory_form_date_separator_margin_horizontal"
                 android:layout_marginRight="@dimen/factory_form_date_separator_margin_horizontal"
-                android:textColor="@android:color/black"
-                android:hint="@string/date_separator"/>
+                android:layout_marginStart="@dimen/factory_form_date_separator_margin_horizontal"
+                android:freezesText="true"
+                android:hint="@string/date_separator"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/end_date_text"
@@ -89,5 +94,13 @@
                 android:freezesText="true"
                 android:hint="@string/end_date"/>
         </LinearLayout>
+
+
+        <Button
+            android:id="@+id/test_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contacts"/>
+
     </LinearLayout>
 </ScrollView>

@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.application;
+package com.henriquenfaria.wisetrip;
 
 
 import android.app.Application;
