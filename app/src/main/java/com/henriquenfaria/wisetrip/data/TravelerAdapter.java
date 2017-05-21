@@ -103,8 +103,8 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         RequestOptions requestOptions =
                 new RequestOptions()
                         .dontAnimate()
-                        .placeholder(R.drawable.ic_default_traveler)
-                        .error(R.drawable.ic_default_traveler);
+                        .placeholder(R.drawable.ic_default_traveler_photo)
+                        .error(R.drawable.ic_default_traveler_photo);
         Glide.with(mContext)
                 .load(traveler.getPhotoUri())
                 .apply(requestOptions)

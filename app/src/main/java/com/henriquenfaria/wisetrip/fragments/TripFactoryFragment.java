@@ -10,14 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,8 +74,8 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     @BindView(R.id.end_date_text)
     TextView mEndDateTextView;
 
-    @BindView(R.id.test_button)
-    Button mTestButton;
+    @BindView(R.id.traveler_text)
+    TextView mTravelerText;
 
     public TripFactoryFragment() {
         // Required empty public constructor
@@ -171,7 +169,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
 
         // TODO: Test code
-        mTestButton.setOnClickListener(new View.OnClickListener() {
+        mTravelerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -289,9 +287,17 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
                     //TODO: Temp code
                     ArrayList<Traveler> travelers = data.getParcelableArrayListExtra(
                             Constants.Extras.EXTRA_TRAVELER);
-                    for (Traveler traveler : travelers) {
-                        Log.d(TAG, traveler.getName());
+                    StringBuffer travelersString = new StringBuffer();
+                    for (int i = 0; i < travelers.size(); i++) {
+                        //Log.d(TAG, traveler.getName());
+                        travelersString.append(travelers.get(i).getName());
+                        if (i+1 <  travelers.size()) {
+                            travelersString.append(", ");
+                        }
                     }
+                    mTravelerText.setText(travelersString);
+
+
                 }
             }
         }
