@@ -2,12 +2,12 @@ package com.henriquenfaria.wisetrip.data;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -15,20 +15,29 @@ import com.bumptech.glide.request.RequestOptions;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.Traveler;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.TravelerHolder> {
 
     private Cursor mCursor;
     private Context mContext;
 
-    /* ViewHolder for each task item */
     public class TravelerHolder extends RecyclerView.ViewHolder {
-        public ImageView travelerPhoto;
-        public TextView travelerName;
+
+        @BindView(R.id.traveler_item)
+        View rootView;
+
+        @BindView(R.id.traveler_photo)
+        CircleImageView travelerPhoto;
+
+        @BindView(R.id.traveler_name)
+        TextView travelerName;
 
         public TravelerHolder(View itemView) {
             super(itemView);
-            travelerPhoto = (ImageView) itemView.findViewById(R.id.traveler_photo);
-            travelerName = (TextView) itemView.findViewById(R.id.traveler_name);
+            ButterKnife.bind(this, itemView);
         }
     }
 
@@ -45,24 +54,61 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         return new TravelerHolder(itemView);
     }
 
+
     @Override
-    public void onBindViewHolder(TravelerHolder holder, int position) {
+    public void onBindViewHolder(final TravelerHolder holder, int position) {
         if (mCursor == null) {
             return;
         }
 
         mCursor.moveToPosition(position);
-        Traveler traveler = new Traveler(mCursor);
+        final Traveler traveler = new Traveler(mCursor);
+
+        holder.rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SparseArray<Traveler> travelerSparseArray = null;
+                if (mContext instanceof OnTravelerAdapter) {
+                    travelerSparseArray = ((OnTravelerAdapter) mContext).getTravelerSparseArray();
+                }
+
+                if (travelerSparseArray != null) {
+                    if (travelerSparseArray.get(holder.getAdapterPosition()) != null) {
+                        //Selected
+                        travelerSparseArray.delete(holder.getAdapterPosition());
+                        ((OnTravelerAdapter) mContext).setTravelerSparseArray(travelerSparseArray);
+                        holder.rootView.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        //Not selected
+                        travelerSparseArray.put(holder.getAdapterPosition(), traveler);
+                        ((OnTravelerAdapter) mContext).setTravelerSparseArray(travelerSparseArray);
+                        holder.rootView.setBackgroundColor(Color.LTGRAY);
+                    }
+                }
+            }
+        });
+
+        SparseArray<Traveler> travelerSparseArray = null;
+        if (mContext instanceof OnTravelerAdapter) {
+            travelerSparseArray = ((OnTravelerAdapter) mContext).getTravelerSparseArray();
+        }
+
+        if (travelerSparseArray != null && travelerSparseArray.get(position) != null) {
+            holder.rootView.setBackgroundColor(Color.LTGRAY);
+        } else {
+            holder.rootView.setBackgroundColor(Color.TRANSPARENT);
+        }
 
         holder.travelerName.setText(traveler.getName());
-        Uri photoUri = traveler.getPhotoUri();
-
-        if (photoUri != null) {
-            Glide.with(mContext)
-                    .load(photoUri)
-                    .apply(new RequestOptions().dontAnimate().centerCrop())
-                    .into(holder.travelerPhoto);
-        }
+        RequestOptions requestOptions =
+                new RequestOptions()
+                        .dontAnimate()
+                        .placeholder(R.drawable.ic_default_traveler)
+                        .error(R.drawable.ic_default_traveler);
+        Glide.with(mContext)
+                .load(traveler.getPhotoUri())
+                .apply(requestOptions)
+                .into(holder.travelerPhoto);
     }
 
     @Override
@@ -78,10 +124,10 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         return new Traveler(mCursor);
     }
 
-    /*@Override
+    @Override
     public long getItemId(int position) {
-        return getItem(position).id;
-    }*/
+        return getItem(position).getPosition();
+    }
 
     public void swapCursor(Cursor cursor) {
         if (mCursor != null) {
@@ -89,5 +135,11 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         }
         mCursor = cursor;
         notifyDataSetChanged();
+    }
+
+    public interface OnTravelerAdapter {
+        SparseArray<Traveler> getTravelerSparseArray();
+
+        void setTravelerSparseArray(SparseArray<Traveler> travelerSparseArray);
     }
 }

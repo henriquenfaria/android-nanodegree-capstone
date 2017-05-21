@@ -7,6 +7,6 @@ public class Constants {
     // Intent extras
     public static class Extras {
         public static final String EXTRA_TRIP = "extra_trip";
-
+        public static final String EXTRA_TRAVELER = "extra_TRAVELER";
     }
 }

@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,10 +24,16 @@ import android.widget.Toast;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.TravelerActivity;
+import com.henriquenfaria.wisetrip.models.Traveler;
 import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.utils.Constants;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.app.Activity.RESULT_OK;
 
 public class TripFactoryFragment extends Fragment implements DatePickerFragment.OnDateSetListener {
 
@@ -35,6 +42,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String SAVE_START_DATE_MILLIS = "save_start_date_millis";
     private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
+    private static final int REQUEST_PICK_TRAVELER = 1;
     private static final int REQUEST_READ_CONTACTS = 1;
 
     private OnTripFactoryListener mListener;
@@ -177,7 +185,8 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
                             Manifest.permission.READ_CONTACTS)) {
 
                         // TODO: Create dialog explaining the permission
-                        Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT)
+                                .show();
                         // Show an explanation to the user *asynchronously* -- don't block
                         // this thread waiting for the user's response! After the user
                         // sees the explanation, try again to request the permission.
@@ -193,8 +202,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
                         // result of the request.
                     }
                 } else {
-                    Intent intent = new Intent(getContext(), TravelerActivity.class);
-                    getContext().startActivity(intent);
+                    startTravelerActivityForResult();
 
                 }
             }
@@ -240,7 +248,6 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[],
                                            int[] grantResults) {
@@ -253,9 +260,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
-
-                    Intent intent = new Intent(getContext(), TravelerActivity.class);
-                    getContext().startActivity(intent);
+                    startTravelerActivityForResult();
 
 
                 } else {
@@ -271,6 +276,30 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == REQUEST_PICK_TRAVELER) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                if (data != null && data.hasExtra(Constants.Extras.EXTRA_TRAVELER)) {
+                    //TODO: Temp code
+                    ArrayList<Traveler> travelers = data.getParcelableArrayListExtra(
+                            Constants.Extras.EXTRA_TRAVELER);
+                    for (Traveler traveler : travelers) {
+                        Log.d(TAG, traveler.getName());
+                    }
+                }
+            }
+        }
+    }
+
+    void startTravelerActivityForResult() {
+        Intent intent = new Intent(getContext(), TravelerActivity.class);
+        startActivityForResult(intent, REQUEST_PICK_TRAVELER);
     }
 
     public interface OnTripFactoryListener {

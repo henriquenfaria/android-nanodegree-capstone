@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/traveler_item"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal">
+              android:clickable="true"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:paddingBottom="@dimen/traveler_item_vertical_padding"
+              android:paddingEnd="@dimen/activity_horizontal_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingStart="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/traveler_item_vertical_padding">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/traveler_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_default_traveler"/>
+        android:layout_width="@dimen/traveler_photo_size"
+        android:layout_height="@dimen/traveler_photo_size"
+        app:civ_border_color="@android:color/black"
+        app:civ_border_width="@dimen/traveler_photo_border_size"/>
 
     <TextView
         android:id="@+id/traveler_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/traveler_name_margin_start"
+        android:layout_marginStart="@dimen/traveler_name_margin_start"
         android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"

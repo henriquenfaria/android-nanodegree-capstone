@@ -13,6 +13,9 @@
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
     <string name="save">Save</string>
-
     <string name="date_separator" translatable="false">~</string>
+
+    <plurals name="traveler_selected">
+        <item quantity="other">%d selected</item>
+    </plurals>
 </resources>

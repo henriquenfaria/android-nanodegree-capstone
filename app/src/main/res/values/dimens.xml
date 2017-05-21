@@ -8,4 +8,8 @@
     <dimen name="factory_form_item_margin_top">24dp</dimen>
     <dimen name="factory_form_icon_margin_end">8dp</dimen>
     <dimen name="factory_form_date_separator_margin_horizontal">4dp</dimen>
+    <dimen name="traveler_photo_size">40dp</dimen>
+    <dimen name="traveler_photo_border_size">2dp</dimen>
+    <dimen name="traveler_name_margin_start">16dp</dimen>
+    <dimen name="traveler_item_vertical_padding">8dp</dimen>
 </resources>
