@@ -48,6 +48,8 @@ public class TravelerActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveler);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
@@ -87,11 +89,13 @@ public class TravelerActivity extends AppCompatActivity implements
                     data.putParcelableArrayListExtra(Constants.Extras.EXTRA_TRAVELER, Utils
                             .sparseArrayAsArrayList(mTravelerSparseArray));
                 }
-
                 setResult(RESULT_OK, data);
                 finish();
-                break;
-
+                return true;
+            case android.R.id.home:
+                // To animate transition like back button press
+                finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
