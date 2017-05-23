@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.Traveler;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,33 +68,33 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SparseArray<Traveler> travelerSparseArray = null;
+                HashMap<Long, Traveler> travelerHashMap = null;
                 if (mContext instanceof OnTravelerAdapter) {
-                    travelerSparseArray = ((OnTravelerAdapter) mContext).getTravelerSparseArray();
+                    travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
                 }
 
-                if (travelerSparseArray != null) {
-                    if (travelerSparseArray.get(holder.getAdapterPosition()) != null) {
+                if (travelerHashMap != null) {
+                    if (travelerHashMap.get(traveler.getId()) != null) {
                         //Selected
-                        travelerSparseArray.delete(holder.getAdapterPosition());
-                        ((OnTravelerAdapter) mContext).setTravelerSparseArray(travelerSparseArray);
+                        travelerHashMap.remove(traveler.getId());
+                        ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                         holder.rootView.setBackgroundColor(Color.TRANSPARENT);
                     } else {
                         //Not selected
-                        travelerSparseArray.put(holder.getAdapterPosition(), traveler);
-                        ((OnTravelerAdapter) mContext).setTravelerSparseArray(travelerSparseArray);
+                        travelerHashMap.put(traveler.getId(), traveler);
+                        ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                         holder.rootView.setBackgroundColor(Color.LTGRAY);
                     }
                 }
             }
         });
 
-        SparseArray<Traveler> travelerSparseArray = null;
+        HashMap<Long, Traveler> travelerHashMap = null;
         if (mContext instanceof OnTravelerAdapter) {
-            travelerSparseArray = ((OnTravelerAdapter) mContext).getTravelerSparseArray();
+            travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
         }
 
-        if (travelerSparseArray != null && travelerSparseArray.get(position) != null) {
+        if (travelerHashMap != null && travelerHashMap.get(traveler.getId()) != null) {
             holder.rootView.setBackgroundColor(Color.LTGRAY);
         } else {
             holder.rootView.setBackgroundColor(Color.TRANSPARENT);
@@ -126,7 +127,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).getPosition();
+        return getItem(position).getId();
     }
 
     public void swapCursor(Cursor cursor) {
@@ -138,8 +139,8 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
     }
 
     public interface OnTravelerAdapter {
-        SparseArray<Traveler> getTravelerSparseArray();
+        HashMap<Long, Traveler> getTravelerHashMap();
 
-        void setTravelerSparseArray(SparseArray<Traveler> travelerSparseArray);
+        void setTravelerHashMap(HashMap<Long, Traveler> travelerHashMap);
     }
 }

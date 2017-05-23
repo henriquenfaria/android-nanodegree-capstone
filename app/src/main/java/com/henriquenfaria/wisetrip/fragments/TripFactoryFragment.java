@@ -26,7 +26,8 @@ import com.henriquenfaria.wisetrip.models.Traveler;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -276,7 +277,6 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
@@ -284,20 +284,21 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 if (data != null && data.hasExtra(Constants.Extras.EXTRA_TRAVELER)) {
-                    //TODO: Temp code
-                    ArrayList<Traveler> travelers = data.getParcelableArrayListExtra(
-                            Constants.Extras.EXTRA_TRAVELER);
+                    // noinspection unchecked
+                    HashMap<Long, Traveler> travelers = (HashMap<Long, Traveler>) data
+                            .getSerializableExtra(Constants.Extras.EXTRA_TRAVELER);
+
                     StringBuffer travelersString = new StringBuffer();
-                    for (int i = 0; i < travelers.size(); i++) {
-                        //Log.d(TAG, traveler.getName());
-                        travelersString.append(travelers.get(i).getName());
-                        if (i+1 <  travelers.size()) {
+                    int count_for_comma = 0;
+                    for (Map.Entry entry : travelers.entrySet()) {
+                        Traveler traveler = (Traveler) entry.getValue();
+                        travelersString.append(traveler.getName());
+                        if (++count_for_comma < travelers.size()) {
                             travelersString.append(", ");
                         }
                     }
+
                     mTravelerText.setText(travelersString);
-
-
                 }
             }
         }
@@ -313,6 +314,4 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
 
         void saveTrip(Trip trip, boolean isNewTrip);
     }
-
-
 }

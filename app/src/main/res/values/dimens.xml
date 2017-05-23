@@ -12,4 +12,5 @@
     <dimen name="traveler_photo_border_size">2dp</dimen>
     <dimen name="traveler_name_margin_start">16dp</dimen>
     <dimen name="traveler_item_vertical_padding">8dp</dimen>
+    <dimen name="traveler_search_view_bottom_margin">10dp</dimen>
 </resources>

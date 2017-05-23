@@ -17,15 +17,15 @@ public class Traveler implements Parcelable {
     private Uri mPhotoUri;
 
     @Exclude
-    private int mPosition;
+    private long mId;
 
     public Traveler() {
     }
 
-    public Traveler(String name, Uri photoUri, int position) {
+    public Traveler(String name, Uri photoUri, long id) {
         mName = name;
         mPhotoUri = photoUri;
-        mPosition = position;
+        mId = id;
     }
 
     public Traveler(Cursor cursor) {
@@ -38,7 +38,7 @@ public class Traveler implements Parcelable {
                 mPhotoUri = Uri.parse(photoUri);
             }
 
-            mPosition = cursor.getPosition();
+            mId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
         }
     }
 
@@ -58,12 +58,12 @@ public class Traveler implements Parcelable {
         mPhotoUri = photoUri;
     }
 
-    public int getPosition() {
-        return mPosition;
+    public long getId() {
+        return mId;
     }
 
-    public void setPosition(int position) {
-        mPosition = position;
+    public void setId(long id) {
+        mId = id;
     }
 
     @Override
@@ -75,13 +75,13 @@ public class Traveler implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mName);
         dest.writeParcelable(this.mPhotoUri, flags);
-        dest.writeInt(this.mPosition);
+        dest.writeLong(this.mId);
     }
 
     protected Traveler(Parcel in) {
         this.mName = in.readString();
         this.mPhotoUri = in.readParcelable(Uri.class.getClassLoader());
-        this.mPosition = in.readInt();
+        this.mId = in.readLong();
     }
 
     public static final Parcelable.Creator<Traveler> CREATOR = new Parcelable.Creator<Traveler>() {
