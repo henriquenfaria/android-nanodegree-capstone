@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion 25
@@ -12,6 +12,7 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [google_api_key:google_api_value]
     }
     buildTypes {
         release {
@@ -33,9 +34,9 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     // Firebase
-    compile 'com.google.firebase:firebase-core:10.2.4'
-    compile 'com.google.firebase:firebase-database:10.2.4'
-    compile 'com.google.firebase:firebase-auth:10.2.4'
+    compile 'com.google.firebase:firebase-core:10.2.6'
+    compile 'com.google.firebase:firebase-database:10.2.6'
+    compile 'com.google.firebase:firebase-auth:10.2.6'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
 
@@ -51,5 +52,10 @@ dependencies {
     // CircleImageView for traveler photos
     compile 'de.hdodenhof:circleimageview:2.1.0'
 
+    //Google Play Services - Places
+    compile 'com.google.android.gms:play-services-places:10.2.6'
+
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'

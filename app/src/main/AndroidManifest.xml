@@ -41,5 +41,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.TripFactoryActivity"/>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${google_api_key}"/>
     </application>
 </manifest>

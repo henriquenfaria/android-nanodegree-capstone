@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.TravelerActivity;
 import com.henriquenfaria.wisetrip.models.Traveler;
@@ -32,6 +39,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class TripFactoryFragment extends Fragment implements DatePickerFragment.OnDateSetListener {
@@ -43,6 +51,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
     private static final int REQUEST_PICK_TRAVELER = 1;
     private static final int REQUEST_READ_CONTACTS = 1;
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 2;
 
     private OnTripFactoryListener mListener;
     private Trip mTrip;
@@ -66,6 +75,65 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         }
     };
 
+    private View.OnClickListener mOnTravelerClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            if (ContextCompat.checkSelfPermission(TripFactoryFragment.this.getActivity(),
+                    Manifest.permission.READ_CONTACTS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(TripFactoryFragment
+                                .this.getActivity(),
+                        Manifest.permission.READ_CONTACTS)) {
+
+                    // TODO: Create dialog explaining the permission
+                    Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT)
+                            .show();
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(TripFactoryFragment.this.getActivity(),
+                            new String[]{Manifest.permission.READ_CONTACTS},
+                            REQUEST_READ_CONTACTS);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            } else {
+                startTravelerActivityForResult();
+
+            }
+        }
+    };
+
+    private View.OnClickListener mOnDestinationClickListener = new View.OnClickListener() {
+
+
+        @Override
+        public void onClick(View v) {
+            try {
+                AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                        .build();
+
+                Intent intent =
+                        new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                                .setFilter(typeFilter)
+                                .build(getActivity());
+                startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+            } catch (GooglePlayServicesRepairableException e) {
+                // TODO: Handle the error.
+            } catch (GooglePlayServicesNotAvailableException e) {
+                // TODO: Handle the error.
+            }
+        }
+    };
+
     @BindView(R.id.title_edit_text)
     EditText mTripTitleEditText;
 
@@ -77,6 +145,9 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
 
     @BindView(R.id.traveler_text)
     TextView mTravelerText;
+
+    @BindView(R.id.destination_text)
+    TextView mDestinationText;
 
     public TripFactoryFragment() {
         // Required empty public constructor
@@ -168,44 +239,8 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
 
         mStartDateTextView.setOnClickListener(mOnDateClickListener);
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
-
-        // TODO: Test code
-        mTravelerText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (ContextCompat.checkSelfPermission(TripFactoryFragment.this.getActivity(),
-                        Manifest.permission.READ_CONTACTS)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(TripFactoryFragment
-                                    .this.getActivity(),
-                            Manifest.permission.READ_CONTACTS)) {
-
-                        // TODO: Create dialog explaining the permission
-                        Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT)
-                                .show();
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-                        // No explanation needed, we can request the permission.
-                        ActivityCompat.requestPermissions(TripFactoryFragment.this.getActivity(),
-                                new String[]{Manifest.permission.READ_CONTACTS},
-                                REQUEST_READ_CONTACTS);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
-                } else {
-                    startTravelerActivityForResult();
-
-                }
-            }
-        });
+        mTravelerText.setOnClickListener(mOnTravelerClickListener);
+        mDestinationText.setOnClickListener(mOnDestinationClickListener);
 
         populateFields();
 
@@ -279,9 +314,8 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
+        // Response from TravelerActivity
         if (requestCode == REQUEST_PICK_TRAVELER) {
-            // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 if (data != null && data.hasExtra(Constants.Extras.EXTRA_TRAVELER)) {
                     // noinspection unchecked
@@ -300,6 +334,21 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
 
                     mTravelerText.setText(travelersString);
                 }
+            }
+            // Response from Place Autocomplete
+        } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+                // TODO: Must save Place's important data in a structure to be able retrieve it when user saves the trip
+                if (place != null) {
+                    mDestinationText.setText(place.getName());
+                }
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
             }
         }
     }
