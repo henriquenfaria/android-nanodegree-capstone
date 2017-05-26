@@ -8,8 +8,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,10 +30,13 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.TravelerActivity;
+import com.henriquenfaria.wisetrip.data.DestinationAdapter;
+import com.henriquenfaria.wisetrip.models.City;
 import com.henriquenfaria.wisetrip.models.Traveler;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,26 +46,35 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-public class TripFactoryFragment extends Fragment implements DatePickerFragment.OnDateSetListener {
+public class TripFactoryFragment extends BaseFragment implements DatePickerDialogFragment
+        .OnDateSetListener, DestinationAdapter.OnDestinationClickListener {
 
     private static final String TAG = TripFactoryFragment.class.getSimpleName();
     private static final String ARG_TRIP = "arg_trip";
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String SAVE_START_DATE_MILLIS = "save_start_date_millis";
     private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
-    private static final int REQUEST_PICK_TRAVELER = 1;
-    private static final int REQUEST_READ_CONTACTS = 1;
-    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 2;
+    private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
+            "save_destination_adapter_clicked_position";
+    private static final String SAVE_CITIES = "save_cities";
+
+    public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
+    public static final int REQUEST_PICK_TRAVELER = 1;
+    public static final int REQUEST_PLACE_AUTOCOMPLETE_UPDATE = 2;
+    public static final int REQUEST_PLACE_AUTOCOMPLETE_ADD = 3;
 
     private OnTripFactoryListener mListener;
     private Trip mTrip;
     private long mStartDateMillis;
     private long mEndDateMillis;
+    private DestinationAdapter mAdapter;
+    private int mDestinationAdapterClickedPosition;
+    private ArrayList<City> mCities;
 
     private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
-            DatePickerFragment datePickerFragment = new DatePickerFragment();
+            DatePickerDialogFragment datePickerFragment = new DatePickerDialogFragment();
             datePickerFragment.setOnDateSetListener(TripFactoryFragment.this);
             datePickerFragment.setTargetViewId(v.getId());
             if (mStartDateTextView.getId() == v.getId()) {
@@ -98,7 +111,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(TripFactoryFragment.this.getActivity(),
                             new String[]{Manifest.permission.READ_CONTACTS},
-                            REQUEST_READ_CONTACTS);
+                            PERMISSION_REQUEST_READ_CONTACTS);
 
                     // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                     // app-defined int constant. The callback method gets the
@@ -107,29 +120,6 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
             } else {
                 startTravelerActivityForResult();
 
-            }
-        }
-    };
-
-    private View.OnClickListener mOnDestinationClickListener = new View.OnClickListener() {
-
-
-        @Override
-        public void onClick(View v) {
-            try {
-                AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                        .build();
-
-                Intent intent =
-                        new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
-                                .setFilter(typeFilter)
-                                .build(getActivity());
-                startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-            } catch (GooglePlayServicesRepairableException e) {
-                // TODO: Handle the error.
-            } catch (GooglePlayServicesNotAvailableException e) {
-                // TODO: Handle the error.
             }
         }
     };
@@ -146,8 +136,8 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     @BindView(R.id.traveler_text)
     TextView mTravelerText;
 
-    @BindView(R.id.destination_text)
-    TextView mDestinationText;
+    @BindView(R.id.destination_recyclerview)
+    RecyclerView mDestinationRecyclerView;
 
     public TripFactoryFragment() {
         // Required empty public constructor
@@ -173,6 +163,9 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         super.onSaveInstanceState(outState);
         outState.putLong(SAVE_START_DATE_MILLIS, mStartDateMillis);
         outState.putLong(SAVE_END_DATE_MILLIS, mEndDateMillis);
+        outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
+                mDestinationAdapterClickedPosition);
+        outState.putParcelableArrayList(SAVE_CITIES, mCities);
     }
 
     @Override
@@ -189,8 +182,9 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     @Override
     public void onResume() {
         super.onResume();
-        DatePickerFragment datePickerFragment = (DatePickerFragment) getFragmentManager()
-                .findFragmentByTag(TAG_DATE_PICKER_FRAGMENT);
+        DatePickerDialogFragment datePickerFragment = (DatePickerDialogFragment)
+                getFragmentManager()
+                        .findFragmentByTag(TAG_DATE_PICKER_FRAGMENT);
         if (datePickerFragment != null) {
             datePickerFragment.setOnDateSetListener(this);
         }
@@ -231,6 +225,11 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         if (savedInstanceState != null) {
             mStartDateMillis = savedInstanceState.getLong(SAVE_START_DATE_MILLIS);
             mEndDateMillis = savedInstanceState.getLong(SAVE_END_DATE_MILLIS);
+            mDestinationAdapterClickedPosition
+                    = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
+            mCities = savedInstanceState.getParcelableArrayList(SAVE_CITIES);
+        } else {
+            mCities = new ArrayList<>();
         }
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
@@ -240,7 +239,10 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
         mStartDateTextView.setOnClickListener(mOnDateClickListener);
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
         mTravelerText.setOnClickListener(mOnTravelerClickListener);
-        mDestinationText.setOnClickListener(mOnDestinationClickListener);
+
+        mAdapter = new DestinationAdapter(this, mCities);
+        mDestinationRecyclerView.setAdapter(mAdapter);
+        mDestinationRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
 
         populateFields();
 
@@ -286,7 +288,7 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     public void onRequestPermissionsResult(int requestCode, String permissions[],
                                            int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_READ_CONTACTS: {
+            case PERMISSION_REQUEST_READ_CONTACTS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -336,13 +338,41 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
                 }
             }
             // Response from Place Autocomplete
-        } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+        } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_UPDATE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
-                // TODO: Must save Place's important data in a structure to be able retrieve it when user saves the trip
-                if (place != null) {
+
+                // TODO: Must save Place's important data in a structure to be able retrieve it
+                // when user saves the trip
+                /*if (place != null) {
                     mDestinationText.setText(place.getName());
-                }
+                }*/
+
+                City city = new City();
+                city.setName(place.getName().toString());
+                mCities.set(mDestinationAdapterClickedPosition, city);
+                mAdapter.swap(mCities);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_ADD) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+
+                // TODO: Must save Place's important data in a structure to be able retrieve it
+                // when user saves the trip
+                /*if (place != null) {
+                    mDestinationText.setText(place.getName());
+                }*/
+
+                City city = new City();
+                city.setName(place.getName().toString());
+                mCities.add(city);
+                mAdapter.swap(mCities);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 // TODO: Handle the error.
@@ -356,6 +386,43 @@ public class TripFactoryFragment extends Fragment implements DatePickerFragment.
     void startTravelerActivityForResult() {
         Intent intent = new Intent(getContext(), TravelerActivity.class);
         startActivityForResult(intent, REQUEST_PICK_TRAVELER);
+    }
+
+    @Override
+    public void onDestinationItemClick(int position) {
+        try {
+            mDestinationAdapterClickedPosition = position;
+            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                    .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                    .build();
+
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                    .setFilter(typeFilter)
+                    .build(mFragmentActivity);
+            startActivityForResult(intent, REQUEST_PLACE_AUTOCOMPLETE_UPDATE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
+    @Override
+    public void onDestinationFooterClick(int position) {
+        try {
+            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                    .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                    .build();
+
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                    .setFilter(typeFilter)
+                    .build(mFragmentActivity);
+            startActivityForResult(intent, REQUEST_PLACE_AUTOCOMPLETE_ADD);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
     }
 
     public interface OnTripFactoryListener {

@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class DatePickerFragment extends DialogFragment
+public class DatePickerDialogFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
     private static final String SAVE_TARGET_VIEW_ID = "save_target_view_id";

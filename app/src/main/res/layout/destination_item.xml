@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/factory_form_item_margin_top"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/factory_form_icon_margin_end"
+        android:layout_marginRight="@dimen/factory_form_icon_margin_end"
+        android:src="@drawable/ic_traveler"/>
+
+    <TextView
+        android:id="@+id/destination_text"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_arrow_drop_down"
+        android:drawableRight="@drawable/ic_arrow_drop_down"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:freezesText="true"
+        android:hint="@string/hint_where_are_you_going"/>
+</LinearLayout>

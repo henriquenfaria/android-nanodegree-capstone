@@ -2,7 +2,6 @@ package com.henriquenfaria.wisetrip.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,7 +20,7 @@ import com.henriquenfaria.wisetrip.models.Trip;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TripListFragment extends Fragment {
+public class TripListFragment extends BaseFragment {
 
     //TODO: ButterKnife is not working
     @BindView(R.id.trip_list_recycler_view)
