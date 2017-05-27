@@ -240,7 +240,7 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
         mTravelerText.setOnClickListener(mOnTravelerClickListener);
 
-        mAdapter = new DestinationAdapter(this, mCities);
+        mAdapter = new DestinationAdapter(mFragmentActivity, this, mCities);
         mDestinationRecyclerView.setAdapter(mAdapter);
         mDestinationRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
 
@@ -404,6 +404,14 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
             // TODO: Handle the error.
         } catch (GooglePlayServicesNotAvailableException e) {
             // TODO: Handle the error.
+        }
+    }
+
+    @Override
+    public void onDestinationRemoveItemClick(int position) {
+        if (mCities != null && mCities.get(position) != null) {
+            mCities.remove(position);
+            mAdapter.swap(mCities);
         }
     }
 

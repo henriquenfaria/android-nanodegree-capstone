@@ -1,10 +1,12 @@
 package com.henriquenfaria.wisetrip.data;
 
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
@@ -18,6 +20,7 @@ public class DestinationAdapter extends
 
     private static final int FOOTER_VIEW = 1;
 
+    private Context mContext;
     private OnDestinationClickListener mOnDestinationClickListener;
     private List<City> mCities;
 
@@ -33,24 +36,26 @@ public class DestinationAdapter extends
 
 
     public static class FooterHolder extends DestinationHolder {
-
-
         public FooterHolder(View itemView) {
             super(itemView);
-
         }
     }
 
     public static class ItemHolder extends DestinationHolder {
+        public TextView descriptionText;
+        public ImageView removeDestinationButton;
 
         public ItemHolder(View itemView) {
             super(itemView);
-
+            descriptionText = (TextView) itemView.findViewById(R.id.destination_description_text);
+            removeDestinationButton = (ImageView) itemView.findViewById(R.id
+                    .remove_destination_button);
         }
     }
 
-    public DestinationAdapter(OnDestinationClickListener onDestinationClickListener, List<City>
-            cities) {
+    public DestinationAdapter(Context context, OnDestinationClickListener
+            onDestinationClickListener, List<City> cities) {
+        mContext = context;
         mOnDestinationClickListener = onDestinationClickListener;
         mCities = cities;
     }
@@ -59,7 +64,7 @@ public class DestinationAdapter extends
     public DestinationHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == FOOTER_VIEW) {
             View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.destination_item, parent, false);
+                    .inflate(R.layout.destination_footer, parent, false);
 
             return new FooterHolder(itemView);
 
@@ -87,11 +92,22 @@ public class DestinationAdapter extends
         } else if (viewHolder instanceof ItemHolder) {
             ItemHolder item = (ItemHolder) viewHolder;
             City city = mCities.get(position);
+            item.descriptionText.setText(String.format(mContext.getResources()
+                    .getString(R.string.destination_item_description), position + 1));
             item.destinationText.setText(city.getName());
             item.destinationText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnDestinationClickListener.onDestinationItemClick(viewHolder
+                            .getAdapterPosition());
+
+                }
+            });
+
+            item.removeDestinationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnDestinationClickListener.onDestinationRemoveItemClick(viewHolder
                             .getAdapterPosition());
                 }
             });
@@ -131,6 +147,8 @@ public class DestinationAdapter extends
 
     public interface OnDestinationClickListener {
         void onDestinationItemClick(int position);
+
+        void onDestinationRemoveItemClick(int position);
 
         void onDestinationFooterClick(int position);
     }

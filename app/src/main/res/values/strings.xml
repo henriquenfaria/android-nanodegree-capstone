@@ -18,6 +18,8 @@
     <string name="hint_where_are_you_going">Where are you going?</string>
     <string name="hint_what_is_the_trip_name">What\'s the trip\'s name?</string>
     <string name="hint_search_traveler_name">Find Traveler</string>
+    <string name="destination_item_description">Destination %d</string>
+    <string name="destination_footer_description">Add new destination</string>
 
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
