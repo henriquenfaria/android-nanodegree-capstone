@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.City;
+import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.List;
 
@@ -123,6 +124,11 @@ public class DestinationAdapter extends
         if (mCities.size() == 0) {
             //Return 1 here to show nothing
             return 1;
+        }
+
+        if (mCities.size() >= Constants.Global.MAX_DESTINATION_COUNT) {
+            // Remove footer to limit destination number
+            return mCities.size();
         }
 
         // Add extra view to show the footer view
