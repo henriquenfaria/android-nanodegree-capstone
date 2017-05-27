@@ -9,11 +9,9 @@ public class Constants {
         public static final int MAX_DESTINATION_COUNT = 15;
     }
 
-
     // Intent extras
     public static class Extras {
         public static final String EXTRA_TRIP = "extra_trip";
         public static final String EXTRA_TRAVELER = "extra_TRAVELER";
     }
-
 }

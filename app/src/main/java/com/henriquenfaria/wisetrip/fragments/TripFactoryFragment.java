@@ -390,21 +390,8 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
 
     @Override
     public void onDestinationItemClick(int position) {
-        try {
-            mDestinationAdapterClickedPosition = position;
-            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                    .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
-                    .build();
-
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
-                    .setFilter(typeFilter)
-                    .build(mFragmentActivity);
-            startActivityForResult(intent, REQUEST_PLACE_AUTOCOMPLETE_UPDATE);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
-        }
+        mDestinationAdapterClickedPosition = position;
+        startPlaceAutocomplete(REQUEST_PLACE_AUTOCOMPLETE_UPDATE);
     }
 
     @Override
@@ -417,6 +404,10 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
 
     @Override
     public void onDestinationFooterClick(int position) {
+        startPlaceAutocomplete(REQUEST_PLACE_AUTOCOMPLETE_ADD);
+    }
+
+    private void startPlaceAutocomplete(int requestId) {
         try {
             AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
                     .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
@@ -425,11 +416,11 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
             Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
                     .setFilter(typeFilter)
                     .build(mFragmentActivity);
-            startActivityForResult(intent, REQUEST_PLACE_AUTOCOMPLETE_ADD);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
+            startActivityForResult(intent, requestId);
+        } catch (GooglePlayServicesRepairableException
+                | GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(mFragmentActivity, R.string.google_play_services_error, Toast
+                    .LENGTH_SHORT).show();
         }
     }
 

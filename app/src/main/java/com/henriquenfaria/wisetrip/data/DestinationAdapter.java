@@ -122,7 +122,7 @@ public class DestinationAdapter extends
         }
 
         if (mCities.size() == 0) {
-            //Return 1 here to show nothing
+            //Return 1 here to show only footer
             return 1;
         }
 
@@ -131,14 +131,14 @@ public class DestinationAdapter extends
             return mCities.size();
         }
 
-        // Add extra view to show the footer view
+        // Show destination and footer
         return mCities.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == mCities.size()) {
-            // This is where we'll add footer.
+            // Footer will be in the last position
             return FOOTER_VIEW;
         }
 

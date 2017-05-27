@@ -20,7 +20,7 @@
     <string name="hint_search_traveler_name">Find Traveler</string>
     <string name="destination_item_description">Destination %d</string>
     <string name="destination_footer_description">Add new destination</string>
-
+    <string name="google_play_services_error">Google Play Services error</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>
