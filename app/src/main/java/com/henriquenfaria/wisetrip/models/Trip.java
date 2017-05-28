@@ -17,13 +17,13 @@ public class Trip implements Parcelable {
     private String title;
     private long startDate;
     private long endDate;
-    private List<City> cities;
+    private List<Destination> destinations;
 
-    public Trip(String title, long startDate, long endDate, List<City> cities) {
+    public Trip(String title, long startDate, long endDate, List<Destination> destinations) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.cities = cities;
+        this.destinations = destinations;
     }
 
     public Trip() {
@@ -36,7 +36,7 @@ public class Trip implements Parcelable {
         result.put("title", title);
         result.put("startDate", startDate);
         result.put("endDate", endDate);
-        result.put("cities", cities);
+        result.put("destinations", destinations);
         return result;
     }
 
@@ -64,12 +64,12 @@ public class Trip implements Parcelable {
         this.endDate = endDate;
     }
 
-    public List<City> getCities() {
-        return cities;
+    public List<Destination> getDestinations() {
+        return destinations;
     }
 
-    public void setCity(List<City> cities) {
-        this.cities = cities;
+    public void setDestinations(List<Destination> destinations) {
+        this.destinations = destinations;
     }
 
 
@@ -83,15 +83,15 @@ public class Trip implements Parcelable {
         dest.writeString(this.title);
         dest.writeLong(this.startDate);
         dest.writeLong(this.endDate);
-        dest.writeList(this.cities);
+        dest.writeList(this.destinations);
     }
 
     protected Trip(Parcel in) {
         this.title = in.readString();
         this.startDate = in.readLong();
         this.endDate = in.readLong();
-        this.cities = new ArrayList<>();
-        in.readList(this.cities, City.class.getClassLoader());
+        this.destinations = new ArrayList<>();
+        in.readList(this.destinations, Destination.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Trip> CREATOR = new Parcelable.Creator<Trip>() {

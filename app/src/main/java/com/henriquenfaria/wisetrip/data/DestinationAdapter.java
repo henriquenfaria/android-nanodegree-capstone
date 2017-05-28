@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.models.City;
+import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class DestinationAdapter extends
 
     private Context mContext;
     private OnDestinationClickListener mOnDestinationClickListener;
-    private List<City> mCities;
+    private List<Destination> mDestinations;
 
 
     public static class DestinationHolder extends RecyclerView.ViewHolder {
@@ -55,10 +55,10 @@ public class DestinationAdapter extends
     }
 
     public DestinationAdapter(Context context, OnDestinationClickListener
-            onDestinationClickListener, List<City> cities) {
+            onDestinationClickListener, List<Destination> destinations) {
         mContext = context;
         mOnDestinationClickListener = onDestinationClickListener;
-        mCities = cities;
+        mDestinations = destinations;
     }
 
     @Override
@@ -92,10 +92,10 @@ public class DestinationAdapter extends
 
         } else if (viewHolder instanceof ItemHolder) {
             ItemHolder item = (ItemHolder) viewHolder;
-            City city = mCities.get(position);
+            Destination destination = mDestinations.get(position);
             item.descriptionText.setText(String.format(mContext.getResources()
                     .getString(R.string.destination_item_description), position + 1));
-            item.destinationText.setText(city.getName());
+            item.destinationText.setText(destination.getName());
             item.destinationText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -117,27 +117,27 @@ public class DestinationAdapter extends
 
     @Override
     public int getItemCount() {
-        if (mCities == null) {
+        if (mDestinations == null) {
             return 0;
         }
 
-        if (mCities.size() == 0) {
+        if (mDestinations.size() == 0) {
             //Return 1 here to show only footer
             return 1;
         }
 
-        if (mCities.size() >= Constants.Global.MAX_DESTINATION_COUNT) {
+        if (mDestinations.size() >= Constants.Global.MAX_DESTINATION_COUNT) {
             // Remove footer to limit destination number
-            return mCities.size();
+            return mDestinations.size();
         }
 
         // Show destination and footer
-        return mCities.size() + 1;
+        return mDestinations.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mCities.size()) {
+        if (position == mDestinations.size()) {
             // Footer will be in the last position
             return FOOTER_VIEW;
         }
@@ -145,8 +145,8 @@ public class DestinationAdapter extends
         return super.getItemViewType(position);
     }
 
-    public void swap(List<City> list) {
-        mCities = list;
+    public void swap(List<Destination> list) {
+        mDestinations = list;
         notifyDataSetChanged();
     }
 

@@ -4,14 +4,14 @@ package com.henriquenfaria.wisetrip.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class City implements Parcelable {
+public class Destination implements Parcelable {
 
     private String name;
 
-    public City() {
+    public Destination() {
     }
 
-    public City(String name) {
+    public Destination(String name) {
         this.name = name;
     }
 
@@ -33,19 +33,19 @@ public class City implements Parcelable {
         dest.writeString(this.name);
     }
 
-    protected City(Parcel in) {
+    protected Destination(Parcel in) {
         this.name = in.readString();
     }
 
-    public static final Parcelable.Creator<City> CREATOR = new Parcelable.Creator<City>() {
+    public static final Parcelable.Creator<Destination> CREATOR = new Parcelable.Creator<Destination>() {
         @Override
-        public City createFromParcel(Parcel source) {
-            return new City(source);
+        public Destination createFromParcel(Parcel source) {
+            return new Destination(source);
         }
 
         @Override
-        public City[] newArray(int size) {
-            return new City[size];
+        public Destination[] newArray(int size) {
+            return new Destination[size];
         }
     };
 }

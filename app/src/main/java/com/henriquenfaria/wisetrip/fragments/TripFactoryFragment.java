@@ -31,7 +31,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.TravelerActivity;
 import com.henriquenfaria.wisetrip.data.DestinationAdapter;
-import com.henriquenfaria.wisetrip.models.City;
+import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Traveler;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -56,7 +56,7 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
     private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
             "save_destination_adapter_clicked_position";
-    private static final String SAVE_CITIES = "save_cities";
+    private static final String SAVE_DESTINATIONS = "save_destinations";
 
     public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
     public static final int REQUEST_PICK_TRAVELER = 1;
@@ -69,7 +69,7 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
     private long mEndDateMillis;
     private DestinationAdapter mAdapter;
     private int mDestinationAdapterClickedPosition;
-    private ArrayList<City> mCities;
+    private ArrayList<Destination> mDestinations;
 
     private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
         @Override
@@ -165,7 +165,7 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
         outState.putLong(SAVE_END_DATE_MILLIS, mEndDateMillis);
         outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
                 mDestinationAdapterClickedPosition);
-        outState.putParcelableArrayList(SAVE_CITIES, mCities);
+        outState.putParcelableArrayList(SAVE_DESTINATIONS, mDestinations);
     }
 
     @Override
@@ -227,9 +227,9 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
             mEndDateMillis = savedInstanceState.getLong(SAVE_END_DATE_MILLIS);
             mDestinationAdapterClickedPosition
                     = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
-            mCities = savedInstanceState.getParcelableArrayList(SAVE_CITIES);
+            mDestinations = savedInstanceState.getParcelableArrayList(SAVE_DESTINATIONS);
         } else {
-            mCities = new ArrayList<>();
+            mDestinations = new ArrayList<>();
         }
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
@@ -240,7 +240,7 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
         mTravelerText.setOnClickListener(mOnTravelerClickListener);
 
-        mAdapter = new DestinationAdapter(mFragmentActivity, this, mCities);
+        mAdapter = new DestinationAdapter(mFragmentActivity, this, mDestinations);
         mDestinationRecyclerView.setAdapter(mAdapter);
         mDestinationRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
 
@@ -348,10 +348,10 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
                     mDestinationText.setText(place.getName());
                 }*/
 
-                City city = new City();
-                city.setName(place.getName().toString());
-                mCities.set(mDestinationAdapterClickedPosition, city);
-                mAdapter.swap(mCities);
+                Destination destination = new Destination();
+                destination.setName(place.getName().toString());
+                mDestinations.set(mDestinationAdapterClickedPosition, destination);
+                mAdapter.swap(mDestinations);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 // TODO: Handle the error.
@@ -369,10 +369,10 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
                     mDestinationText.setText(place.getName());
                 }*/
 
-                City city = new City();
-                city.setName(place.getName().toString());
-                mCities.add(city);
-                mAdapter.swap(mCities);
+                Destination destination = new Destination();
+                destination.setName(place.getName().toString());
+                mDestinations.add(destination);
+                mAdapter.swap(mDestinations);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 // TODO: Handle the error.
@@ -396,9 +396,9 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
 
     @Override
     public void onDestinationRemoveItemClick(int position) {
-        if (mCities != null && mCities.get(position) != null) {
-            mCities.remove(position);
-            mAdapter.swap(mCities);
+        if (mDestinations != null && mDestinations.get(position) != null) {
+            mDestinations.remove(position);
+            mAdapter.swap(mDestinations);
         }
     }
 
