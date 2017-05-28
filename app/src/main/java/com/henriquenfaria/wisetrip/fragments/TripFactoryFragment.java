@@ -46,8 +46,9 @@ import butterknife.ButterKnife;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-public class TripFactoryFragment extends BaseFragment implements DatePickerDialogFragment
-        .OnDateSetListener, DestinationAdapter.OnDestinationClickListener {
+public class TripFactoryFragment extends BaseFragment implements
+        DatePickerDialogFragment.OnDateSetListener,
+        DestinationAdapter.OnDestinationClickListener {
 
     private static final String TAG = TripFactoryFragment.class.getSimpleName();
     private static final String ARG_TRIP = "arg_trip";
@@ -78,10 +79,18 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
             DatePickerDialogFragment datePickerFragment = new DatePickerDialogFragment();
             datePickerFragment.setOnDateSetListener(TripFactoryFragment.this);
             datePickerFragment.setTargetViewId(v.getId());
+
             if (mStartDateTextView.getId() == v.getId()) {
-                datePickerFragment.setCurrentDay(mStartDateMillis);
+                datePickerFragment.setCurrentDate(mStartDateMillis);
+                if (mEndDateMillis > 0) {
+                    datePickerFragment.setMaximumDate(mEndDateMillis);
+                }
+
             } else if (mEndDateTextView.getId() == v.getId()) {
-                datePickerFragment.setCurrentDay(mEndDateMillis);
+                datePickerFragment.setCurrentDate(mEndDateMillis);
+                if (mStartDateMillis > 0) {
+                    datePickerFragment.setMinimumDate(mStartDateMillis);
+                }
             }
 
             //TODO: Use getSupportFragmentManager?
@@ -269,13 +278,11 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
             Trip newTrip = new Trip(mTripTitleEditText.getText().toString(), 1494100000000L,
                     1494192097015L, null);
             mListener.saveTrip(newTrip, true);
-
         }
     }
 
     @Override
     public void onDateSet(int targetViewId, long dateMillis, String dateText) {
-        // TODO: Store dateMillis which is going to be saved in the db
         if (mStartDateTextView.getId() == targetViewId) {
             mStartDateMillis = dateMillis;
             mStartDateTextView.setText(dateText);

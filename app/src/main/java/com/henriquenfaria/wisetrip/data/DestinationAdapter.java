@@ -125,7 +125,7 @@ public class DestinationAdapter extends
             return 1;
         }
 
-        if (mDestinations.size() >= Constants.Global.MAX_DESTINATION_COUNT) {
+        if (mDestinations.size() >= Constants.Global.MAX_DESTINATIONS) {
             // Remove footer to limit destination number
             return mDestinations.size();
         }

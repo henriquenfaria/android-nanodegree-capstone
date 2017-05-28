@@ -83,7 +83,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
                         ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                         holder.rootView.setBackgroundColor(Color.TRANSPARENT);
                     } else {
-                        if (travelerHashMap.size() < Constants.Global.MAX_TRAVELERS_COUNT ) {
+                        if (travelerHashMap.size() < Constants.Global.MAX_TRAVELERS) {
                             //Not selected
                             travelerHashMap.put(traveler.getId(), traveler);
                             ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
