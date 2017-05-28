@@ -7,6 +7,8 @@ public class Constants {
     public static class Global {
         // Max Trip destinations
         public static final int MAX_DESTINATION_COUNT = 15;
+        // Max Trip travelers
+        public static final int MAX_TRAVELERS_COUNT = 10;
     }
 
     // Intent extras

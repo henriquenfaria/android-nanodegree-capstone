@@ -49,7 +49,6 @@ public class TravelerActivity extends AppCompatActivity implements
     private HashMap<Long, Traveler> mTravelerHashMap;
     private String mSearchViewFilter;
 
-
     @SuppressLint("UseSparseArrays")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,10 +61,9 @@ public class TravelerActivity extends AppCompatActivity implements
 
         if (savedInstanceState != null) {
             // noinspection unchecked
-            mTravelerHashMap = (HashMap<Long, Traveler>) savedInstanceState.getSerializable
-                    (SAVE_TRAVELER_KEY);
+            mTravelerHashMap = (HashMap<Long, Traveler>) savedInstanceState
+                    .getSerializable(SAVE_TRAVELER_KEY);
         } else {
-
             mTravelerHashMap = new HashMap<>();
         }
 
@@ -122,33 +120,16 @@ public class TravelerActivity extends AppCompatActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        // ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         String[] projectionFields = new String[]{
                 ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME,
                 ContactsContract.Contacts.PHOTO_THUMBNAIL_URI};
 
-
-        /*String[] projectionFields = new String[]{ContactsContract.Contacts._ID,
-                ContactsContract.CommonDataKinds.Contactables.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Contactables.PHOTO_THUMBNAIL_URI};*/
-
         String selection = null;
         if (!TextUtils.isEmpty(mSearchViewFilter)) {
             selection = ContactsContract.CommonDataKinds.Contactables.DISPLAY_NAME + " LIKE  '%"
-                    + mSearchViewFilter
-                    + "%' ";
+                    + mSearchViewFilter + "%' ";
         }
-
-
-       /* ContactsContract.Contacts._ID
-        CursorLoader cursorLoader = new CursorLoader(TravelerActivity.this,
-                ContactsContract.Contacts.CONTENT_URI,
-                projectionFields,
-                selection,
-                null,
-                ContactsContract.CommonDataKinds.Contactables.DISPLAY_NAME + " ASC"*/
 
         CursorLoader cursorLoader = new CursorLoader(TravelerActivity.this,
                 ContactsContract.Contacts.CONTENT_URI,

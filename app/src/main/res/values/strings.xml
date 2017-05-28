@@ -21,7 +21,7 @@
     <string name="destination_item_description">Destination %d</string>
     <string name="destination_footer_description">Add new destination</string>
     <string name="google_play_services_error">Google Play Services error</string>
-    <string name="destination_full_name">%1$s (%2$s)</string>
+    <string name="reached_maximum_number_of_travelers">Reached maximum number of travelers</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

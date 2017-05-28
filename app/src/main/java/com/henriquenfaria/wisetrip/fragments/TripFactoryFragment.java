@@ -59,6 +59,7 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
     private static final String SAVE_DESTINATIONS = "save_destinations";
 
     public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
+
     public static final int REQUEST_PICK_TRAVELER = 1;
     public static final int REQUEST_PLACE_AUTOCOMPLETE_UPDATE = 2;
     public static final int REQUEST_PLACE_AUTOCOMPLETE_ADD = 3;

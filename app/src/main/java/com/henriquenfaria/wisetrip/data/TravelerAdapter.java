@@ -8,11 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.Traveler;
+import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.HashMap;
 
@@ -74,16 +76,21 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
                 }
 
                 if (travelerHashMap != null) {
+
                     if (travelerHashMap.get(traveler.getId()) != null) {
                         //Selected
                         travelerHashMap.remove(traveler.getId());
                         ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                         holder.rootView.setBackgroundColor(Color.TRANSPARENT);
                     } else {
-                        //Not selected
-                        travelerHashMap.put(traveler.getId(), traveler);
-                        ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
-                        holder.rootView.setBackgroundColor(Color.LTGRAY);
+                        if (travelerHashMap.size() < Constants.Global.MAX_TRAVELERS_COUNT ) {
+                            //Not selected
+                            travelerHashMap.put(traveler.getId(), traveler);
+                            ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
+                            holder.rootView.setBackgroundColor(Color.LTGRAY);
+                        } else {
+                            Toast.makeText(mContext, R.string.reached_maximum_number_of_travelers, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
