@@ -27,6 +27,7 @@ public class Trip implements Parcelable {
     }
 
     public Trip() {
+        // Required for Firebase
     }
 
     //TODO: Is @Exclude really needed here?

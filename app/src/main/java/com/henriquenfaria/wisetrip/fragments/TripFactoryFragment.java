@@ -337,45 +337,36 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
                     mTravelerText.setText(travelersString);
                 }
             }
-            // Response from Place Autocomplete
+            // Response from Place Autocomplete, we'll update a previously set destination
         } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_UPDATE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
-
-                // TODO: Must save Place's important data in a structure to be able retrieve it
-                // when user saves the trip
-                /*if (place != null) {
-                    mDestinationText.setText(place.getName());
-                }*/
-
-                Destination destination = new Destination();
-                destination.setName(place.getName().toString());
-                mDestinations.set(mDestinationAdapterClickedPosition, destination);
-                mAdapter.swap(mDestinations);
+                if (place != null) {
+                    Destination destination = new Destination(place);
+                    mDestinations.set(mDestinationAdapterClickedPosition, destination);
+                    mAdapter.swap(mDestinations);
+                }
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
-                // TODO: Handle the error.
+                Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
+                        Toast.LENGTH_SHORT).show();
                 Log.i(TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
+            // Response from Place Autocomplete, we'll add a new destination
         } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_ADD) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
-
-                // TODO: Must save Place's important data in a structure to be able retrieve it
-                // when user saves the trip
-                /*if (place != null) {
-                    mDestinationText.setText(place.getName());
-                }*/
-
-                Destination destination = new Destination();
-                destination.setName(place.getName().toString());
-                mDestinations.add(destination);
-                mAdapter.swap(mDestinations);
+                if (place != null) {
+                    Destination destination = new Destination(place);
+                    mDestinations.add(destination);
+                    mAdapter.swap(mDestinations);
+                }
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
-                // TODO: Handle the error.
+                Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
+                        Toast.LENGTH_SHORT).show();
                 Log.i(TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
@@ -419,8 +410,8 @@ public class TripFactoryFragment extends BaseFragment implements DatePickerDialo
             startActivityForResult(intent, requestId);
         } catch (GooglePlayServicesRepairableException
                 | GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(mFragmentActivity, R.string.google_play_services_error, Toast
-                    .LENGTH_SHORT).show();
+            Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

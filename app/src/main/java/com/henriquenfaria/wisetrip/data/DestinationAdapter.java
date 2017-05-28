@@ -35,7 +35,6 @@ public class DestinationAdapter extends
         }
     }
 
-
     public static class FooterHolder extends DestinationHolder {
         public FooterHolder(View itemView) {
             super(itemView);
@@ -95,13 +94,13 @@ public class DestinationAdapter extends
             Destination destination = mDestinations.get(position);
             item.descriptionText.setText(String.format(mContext.getResources()
                     .getString(R.string.destination_item_description), position + 1));
+
             item.destinationText.setText(destination.getName());
             item.destinationText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mOnDestinationClickListener.onDestinationItemClick(viewHolder
                             .getAdapterPosition());
-
                 }
             });
 

@@ -207,5 +207,4 @@ public class TravelerActivity extends AppCompatActivity implements
                 count, count);
         setTitle(travelerSelected);
     }
-
 }
