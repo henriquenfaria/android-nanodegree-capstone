@@ -50,14 +50,19 @@ public class TripFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
         DestinationAdapter.OnDestinationClickListener {
 
-    private static final String TAG = TripFactoryFragment.class.getSimpleName();
+    private static final String LOG_TAG = TripFactoryFragment.class.getSimpleName();
     private static final String ARG_TRIP = "arg_trip";
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
+    private static final String SAVE_TRIP = "save_trip";
+    private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
     private static final String SAVE_START_DATE_MILLIS = "save_start_date_millis";
     private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
+    private static final String SAVE_TRAVELERS = "save_travelers";
+    private static final String SAVE_DESTINATIONS = "save_destinations";
+
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
             "save_destination_adapter_clicked_position";
-    private static final String SAVE_DESTINATIONS = "save_destinations";
+
 
     public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 
@@ -67,11 +72,14 @@ public class TripFactoryFragment extends BaseFragment implements
 
     private OnTripFactoryListener mListener;
     private Trip mTrip;
+    private boolean mIsEditMode;
     private long mStartDateMillis;
     private long mEndDateMillis;
+    private HashMap<String, Traveler> mTravelers;
+    private ArrayList<Destination> mDestinations;
     private DestinationAdapter mAdapter;
     private int mDestinationAdapterClickedPosition;
-    private ArrayList<Destination> mDestinations;
+
 
     private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
         @Override
@@ -129,7 +137,6 @@ public class TripFactoryFragment extends BaseFragment implements
                 }
             } else {
                 startTravelerActivityForResult();
-
             }
         }
     };
@@ -171,10 +178,13 @@ public class TripFactoryFragment extends BaseFragment implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVE_TRIP, mTrip);
+        outState.putBoolean(SAVE_IS_EDIT_MODE, mIsEditMode);
         outState.putLong(SAVE_START_DATE_MILLIS, mStartDateMillis);
         outState.putLong(SAVE_END_DATE_MILLIS, mEndDateMillis);
         outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
                 mDestinationAdapterClickedPosition);
+        outState.putSerializable(SAVE_TRAVELERS, mTravelers);
         outState.putParcelableArrayList(SAVE_DESTINATIONS, mDestinations);
     }
 
@@ -184,6 +194,9 @@ public class TripFactoryFragment extends BaseFragment implements
 
         if (getArguments() != null) {
             mTrip = getArguments().getParcelable(ARG_TRIP);
+            if (mTrip != null) {
+                mIsEditMode = true;
+            }
         }
 
         setHasOptionsMenu(true);
@@ -208,6 +221,7 @@ public class TripFactoryFragment extends BaseFragment implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        //TODO: Add delete button when isEditMode is true
         if (id == R.id.action_save) {
             saveTrip();
             return true;
@@ -233,13 +247,22 @@ public class TripFactoryFragment extends BaseFragment implements
 
         // Restore instances
         if (savedInstanceState != null) {
+            mTrip = savedInstanceState.getParcelable(SAVE_TRIP);
+            mIsEditMode = savedInstanceState.getBoolean(SAVE_IS_EDIT_MODE);
             mStartDateMillis = savedInstanceState.getLong(SAVE_START_DATE_MILLIS);
             mEndDateMillis = savedInstanceState.getLong(SAVE_END_DATE_MILLIS);
             mDestinationAdapterClickedPosition
                     = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
+            // noinspection unchecked
+            mTravelers = (HashMap<String, Traveler>) savedInstanceState.getSerializable(SAVE_TRAVELERS);
             mDestinations = savedInstanceState.getParcelableArrayList(SAVE_DESTINATIONS);
         } else {
-            mDestinations = new ArrayList<>();
+            if (mDestinations == null) {
+                mDestinations = new ArrayList<>();
+            }
+            if (mTrip == null) {
+                mTrip = new Trip();
+            }
         }
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
@@ -270,15 +293,13 @@ public class TripFactoryFragment extends BaseFragment implements
         // TODO: Must validate fields before calling Activity
         // checkFormFields();
 
-        if (mTrip != null) {
-            //TODO: Implement existing trip logic
-            //mTrip.setTitle(mTripTitleEditText.getText().toString());
-            mListener.saveTrip(mTrip, false);
-        } else {
-            Trip newTrip = new Trip(mTripTitleEditText.getText().toString(), 1494100000000L,
-                    1494192097015L, null);
-            mListener.saveTrip(newTrip, true);
-        }
+        mTrip.setTitle(mTripTitleEditText.getText().toString());
+        mTrip.setStartDate(mStartDateMillis);
+        mTrip.setEndDate(mEndDateMillis);
+        mTrip.setTravelers(mTravelers);
+        mTrip.setDestinations(mDestinations);
+
+        mListener.saveTrip(mTrip, mIsEditMode);
     }
 
     @Override
@@ -306,9 +327,7 @@ public class TripFactoryFragment extends BaseFragment implements
 
                     startTravelerActivityForResult();
 
-
                 } else {
-
                     // TODO: Fix text
                     Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_SHORT).show();
                     // permission denied, boo! Disable the
@@ -329,15 +348,15 @@ public class TripFactoryFragment extends BaseFragment implements
             if (resultCode == RESULT_OK) {
                 if (data != null && data.hasExtra(Constants.Extras.EXTRA_TRAVELER)) {
                     // noinspection unchecked
-                    HashMap<Long, Traveler> travelers = (HashMap<Long, Traveler>) data
+                    mTravelers = (HashMap<String, Traveler>) data
                             .getSerializableExtra(Constants.Extras.EXTRA_TRAVELER);
 
                     StringBuffer travelersString = new StringBuffer();
                     int count_for_comma = 0;
-                    for (Map.Entry entry : travelers.entrySet()) {
+                    for (Map.Entry entry : mTravelers.entrySet()) {
                         Traveler traveler = (Traveler) entry.getValue();
                         travelersString.append(traveler.getName());
-                        if (++count_for_comma < travelers.size()) {
+                        if (++count_for_comma < mTravelers.size()) {
                             travelersString.append(", ");
                         }
                     }
@@ -358,7 +377,7 @@ public class TripFactoryFragment extends BaseFragment implements
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
                         Toast.LENGTH_SHORT).show();
-                Log.i(TAG, status.getStatusMessage());
+                Log.i(LOG_TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
@@ -375,7 +394,7 @@ public class TripFactoryFragment extends BaseFragment implements
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
                         Toast.LENGTH_SHORT).show();
-                Log.i(TAG, status.getStatusMessage());
+                Log.i(LOG_TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
@@ -426,6 +445,6 @@ public class TripFactoryFragment extends BaseFragment implements
     public interface OnTripFactoryListener {
         void changeActionBarTitle(String newTitle);
 
-        void saveTrip(Trip trip, boolean isNewTrip);
+        void saveTrip(Trip trip, boolean isEditMode);
     }
 }

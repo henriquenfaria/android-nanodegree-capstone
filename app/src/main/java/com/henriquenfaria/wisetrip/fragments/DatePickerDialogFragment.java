@@ -54,7 +54,6 @@ public class DatePickerDialogFragment extends DialogFragment
         outState.putLong(SAVE_CURRENT_DATE, mCurrentDate);
         outState.putLong(SAVE_MINIMUM_DATE, mMinimumDate);
         outState.putLong(SAVE_MAXIMUM_DATE, mMaximumDate);
-
     }
 
     @Override

@@ -13,58 +13,70 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Traveler implements Parcelable {
 
-    private String mName;
-    private Uri mPhotoUri;
+    private String id;
+    private String name;
 
     @Exclude
-    private long mId;
+    private Uri photoUri;
 
     public Traveler() {
+        // Required for Firebase
     }
 
-    public Traveler(String name, Uri photoUri, long id) {
-        mName = name;
-        mPhotoUri = photoUri;
-        mId = id;
+    public Traveler(String id, String name, Uri photoUri) {
+        this.id = id;
+        this.name = name;
+        this.photoUri = photoUri;
     }
 
     public Traveler(Cursor cursor) {
         if (cursor != null) {
-            mName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
             String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts
                     .PHOTO_THUMBNAIL_URI));
 
             if (!TextUtils.isEmpty(photoUri)) {
-                mPhotoUri = Uri.parse(photoUri);
+                this.photoUri = Uri.parse(photoUri);
             }
 
-            mId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            id = Long.toString(cursor.getLong(cursor
+                    .getColumnIndex(ContactsContract.Contacts._ID)));
         }
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public long getLongId() {
+        try {
+            return Long.parseLong(this.id);
+        } catch (NumberFormatException ex) {
+            return -1;
+        }
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
     public String getName() {
-        return mName;
+        return this.name;
     }
 
     public void setName(String name) {
-        mName = name;
+        this.name = name;
     }
 
     public Uri getPhotoUri() {
-        return mPhotoUri;
+        return photoUri;
     }
 
     public void setPhotoUri(Uri photoUri) {
-        mPhotoUri = photoUri;
+        this.photoUri = photoUri;
     }
 
-    public long getId() {
-        return mId;
-    }
-
-    public void setId(long id) {
-        mId = id;
-    }
 
     @Override
     public int describeContents() {
@@ -73,15 +85,16 @@ public class Traveler implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.mName);
-        dest.writeParcelable(this.mPhotoUri, flags);
-        dest.writeLong(this.mId);
+        dest.writeString(this.id);
+        dest.writeString(this.name);
+        dest.writeParcelable(this.photoUri, flags);
+
     }
 
     protected Traveler(Parcel in) {
-        this.mName = in.readString();
-        this.mPhotoUri = in.readParcelable(Uri.class.getClassLoader());
-        this.mId = in.readLong();
+        this.id = in.readString();
+        this.name = in.readString();
+        this.photoUri = in.readParcelable(Uri.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Traveler> CREATOR = new Parcelable.Creator<Traveler>() {

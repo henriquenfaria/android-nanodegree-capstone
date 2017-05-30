@@ -28,7 +28,7 @@ import com.henriquenfaria.wisetrip.fragments.TripListFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private boolean mIsTwoPane;
 
     private FirebaseAuth mFirebaseAuth;

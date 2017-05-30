@@ -34,7 +34,7 @@ public class TravelerActivity extends AppCompatActivity implements
         TravelerAdapter.OnTravelerAdapter,
         SearchView.OnQueryTextListener {
 
-    private static final String TAG = TravelerActivity.class.getSimpleName();
+    private static final String LOG_TAG = TravelerActivity.class.getSimpleName();
     private static final int ID_TASK_CONTACTS = 1;
     private static final String SAVE_TRAVELER_KEY = "save_traveler_key";
 
@@ -46,7 +46,7 @@ public class TravelerActivity extends AppCompatActivity implements
 
     private TravelerAdapter mTravelerAdapter;
     private LinearLayoutManager mLayoutManager;
-    private HashMap<Long, Traveler> mTravelerHashMap;
+    private HashMap<String, Traveler> mTravelerHashMap;
     private String mSearchViewFilter;
 
     @SuppressLint("UseSparseArrays")
@@ -61,7 +61,7 @@ public class TravelerActivity extends AppCompatActivity implements
 
         if (savedInstanceState != null) {
             // noinspection unchecked
-            mTravelerHashMap = (HashMap<Long, Traveler>) savedInstanceState
+            mTravelerHashMap = (HashMap<String, Traveler>) savedInstanceState
                     .getSerializable(SAVE_TRAVELER_KEY);
         } else {
             mTravelerHashMap = new HashMap<>();
@@ -152,12 +152,12 @@ public class TravelerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public HashMap<Long, Traveler> getTravelerHashMap() {
+    public HashMap<String, Traveler> getTravelerHashMap() {
         return mTravelerHashMap;
     }
 
     @Override
-    public void setTravelerHashMap(HashMap<Long, Traveler> travelerHashMap) {
+    public void setTravelerHashMap(HashMap<String, Traveler> travelerHashMap) {
         mTravelerHashMap = travelerHashMap;
         setTitleCount();
     }

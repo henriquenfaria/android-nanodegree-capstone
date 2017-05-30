@@ -15,19 +15,28 @@ import java.util.Map;
 public class Trip implements Parcelable {
 
     private String title;
-    private long startDate;
-    private long endDate;
+    private Long startDate;
+    private Long endDate;
+    private Map<String, Traveler> travelers;
     private List<Destination> destinations;
 
-    public Trip(String title, long startDate, long endDate, List<Destination> destinations) {
+    public Trip(String title, long startDate, long endDate,  Map<String,Traveler> travelers, List<Destination>
+            destinations) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.travelers = travelers;
         this.destinations = destinations;
     }
 
     public Trip() {
         // Required for Firebase
+
+        title = "";
+        startDate = -1L;
+        endDate = -1L;
+        travelers = new HashMap<>();
+        destinations = new ArrayList<>();
     }
 
     //TODO: Is @Exclude really needed here?
@@ -37,6 +46,7 @@ public class Trip implements Parcelable {
         result.put("title", title);
         result.put("startDate", startDate);
         result.put("endDate", endDate);
+        result.put("travelers", travelers);
         result.put("destinations", destinations);
         return result;
     }
@@ -49,20 +59,28 @@ public class Trip implements Parcelable {
         this.title = title;
     }
 
-    public long getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(long startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 
-    public long getEndDate() {
+    public Long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(long endDate) {
+    public void setEndDate(Long endDate) {
         this.endDate = endDate;
+    }
+
+    public Map<String, Traveler> getTravelers() {
+        return travelers;
+    }
+
+    public void setTravelers(Map<String, Traveler> travelers) {
+        this.travelers = travelers;
     }
 
     public List<Destination> getDestinations() {
@@ -73,7 +91,6 @@ public class Trip implements Parcelable {
         this.destinations = destinations;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -82,20 +99,31 @@ public class Trip implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.title);
-        dest.writeLong(this.startDate);
-        dest.writeLong(this.endDate);
-        dest.writeList(this.destinations);
+        dest.writeValue(this.startDate);
+        dest.writeValue(this.endDate);
+        dest.writeInt(this.travelers.size());
+        for (Map.Entry<String, Traveler> entry : this.travelers.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeParcelable(entry.getValue(), flags);
+        }
+        dest.writeTypedList(this.destinations);
     }
 
     protected Trip(Parcel in) {
         this.title = in.readString();
-        this.startDate = in.readLong();
-        this.endDate = in.readLong();
-        this.destinations = new ArrayList<>();
-        in.readList(this.destinations, Destination.class.getClassLoader());
+        this.startDate = (Long) in.readValue(Long.class.getClassLoader());
+        this.endDate = (Long) in.readValue(Long.class.getClassLoader());
+        int travelersSize = in.readInt();
+        this.travelers = new HashMap<String, Traveler>(travelersSize);
+        for (int i = 0; i < travelersSize; i++) {
+            String key = in.readString();
+            Traveler value = in.readParcelable(Traveler.class.getClassLoader());
+            this.travelers.put(key, value);
+        }
+        this.destinations = in.createTypedArrayList(Destination.CREATOR);
     }
 
-    public static final Parcelable.Creator<Trip> CREATOR = new Parcelable.Creator<Trip>() {
+    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
         @Override
         public Trip createFromParcel(Parcel source) {
             return new Trip(source);

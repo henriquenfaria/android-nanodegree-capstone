@@ -70,7 +70,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<Long, Traveler> travelerHashMap = null;
+                HashMap<String, Traveler> travelerHashMap = null;
                 if (mContext instanceof OnTravelerAdapter) {
                     travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
                 }
@@ -89,14 +89,16 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
                             ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                             holder.rootView.setBackgroundColor(Color.LTGRAY);
                         } else {
-                            Toast.makeText(mContext, R.string.reached_maximum_number_of_travelers, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext,
+                                    R.string.reached_maximum_number_of_travelers,
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             }
         });
 
-        HashMap<Long, Traveler> travelerHashMap = null;
+        HashMap<String, Traveler> travelerHashMap = null;
         if (mContext instanceof OnTravelerAdapter) {
             travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
         }
@@ -134,7 +136,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).getId();
+        return getItem(position).getLongId();
     }
 
     public void swapCursor(Cursor cursor) {
@@ -146,8 +148,8 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
     }
 
     public interface OnTravelerAdapter {
-        HashMap<Long, Traveler> getTravelerHashMap();
+        HashMap<String, Traveler> getTravelerHashMap();
 
-        void setTravelerHashMap(HashMap<Long, Traveler> travelerHashMap);
+        void setTravelerHashMap(HashMap<String, Traveler> travelerHashMap);
     }
 }

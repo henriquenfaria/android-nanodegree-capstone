@@ -17,6 +17,13 @@ public class Destination implements Parcelable {
         // Required for Firebase
     }
 
+    public Destination(String id, String name, double latitude, double longitude) {
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Destination(Place place) {
         id = place.getId();
         name = String.valueOf(place.getName());

@@ -19,7 +19,7 @@ import java.util.Arrays;
 /* Activity to handle user authentication */
 public class AuthUiActivity extends AppCompatActivity {
 
-    private static final String TAG = AuthUiActivity.class.getSimpleName();
+    private static final String LOG_TAG = AuthUiActivity.class.getSimpleName();
 
     // Request code for auth sign in, this is an arbitrary value
     private static final int RC_SIGN_IN = 1;

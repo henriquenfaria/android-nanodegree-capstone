@@ -18,7 +18,8 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
 
-    private static final String TAG = TripFactoryActivity.class.getSimpleName();
+    private static final String LOG_TAG = TripFactoryActivity.class.getSimpleName();
+
     private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
 
     private FirebaseAuth mFirebaseAuth;
@@ -71,9 +72,14 @@ public class TripFactoryActivity extends AppCompatActivity
     }
 
     @Override
-    public void saveTrip(Trip trip, boolean isNewTrip) {
-        //TODO: need to verify "isNewTrip" to update a trip instead of adding a new one
-        mUserTripReference.push().setValue(trip);
+    public void saveTrip(Trip trip, boolean isEditMode) {
+        //TODO: need to verify "isEditMode" to update a trip instead of adding a new one
+        if (isEditMode) {
+            // Update existing trip value
+        } else {
+            mUserTripReference.push().setValue(trip);
+        }
+
         finish();
     }
 
