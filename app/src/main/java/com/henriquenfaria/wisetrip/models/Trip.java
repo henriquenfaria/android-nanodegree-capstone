@@ -14,14 +14,17 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Trip implements Parcelable {
 
+    private String id;
     private String title;
     private Long startDate;
     private Long endDate;
     private Map<String, Traveler> travelers;
     private List<Destination> destinations;
 
-    public Trip(String title, long startDate, long endDate,  Map<String,Traveler> travelers, List<Destination>
-            destinations) {
+    public Trip(String id, String title, long startDate, long endDate, Map<String, Traveler>
+            travelers, List<Destination>
+                        destinations) {
+        this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -31,7 +34,7 @@ public class Trip implements Parcelable {
 
     public Trip() {
         // Required for Firebase
-
+        id = "";
         title = "";
         startDate = -1L;
         endDate = -1L;
@@ -39,16 +42,25 @@ public class Trip implements Parcelable {
         destinations = new ArrayList<>();
     }
 
-    //TODO: Is @Exclude really needed here?
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("id", id);
         result.put("title", title);
         result.put("startDate", startDate);
         result.put("endDate", endDate);
         result.put("travelers", travelers);
         result.put("destinations", destinations);
         return result;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -98,6 +110,7 @@ public class Trip implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeString(this.title);
         dest.writeValue(this.startDate);
         dest.writeValue(this.endDate);
@@ -110,11 +123,12 @@ public class Trip implements Parcelable {
     }
 
     protected Trip(Parcel in) {
+        this.id = in.readString();
         this.title = in.readString();
         this.startDate = (Long) in.readValue(Long.class.getClassLoader());
         this.endDate = (Long) in.readValue(Long.class.getClassLoader());
         int travelersSize = in.readInt();
-        this.travelers = new HashMap<String, Traveler>(travelersSize);
+        this.travelers = new HashMap<>(travelersSize);
         for (int i = 0; i < travelersSize; i++) {
             String key = in.readString();
             Traveler value = in.readParcelable(Traveler.class.getClassLoader());

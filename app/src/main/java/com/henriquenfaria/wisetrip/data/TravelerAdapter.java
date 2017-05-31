@@ -77,15 +77,15 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
                 if (travelerHashMap != null) {
 
-                    if (travelerHashMap.get(traveler.getId()) != null) {
+                    if (travelerHashMap.get(traveler.getContactId()) != null) {
                         //Selected
-                        travelerHashMap.remove(traveler.getId());
+                        travelerHashMap.remove(traveler.getContactId());
                         ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                         holder.rootView.setBackgroundColor(Color.TRANSPARENT);
                     } else {
                         if (travelerHashMap.size() < Constants.Global.MAX_TRAVELERS) {
                             //Not selected
-                            travelerHashMap.put(traveler.getId(), traveler);
+                            travelerHashMap.put(traveler.getContactId(), traveler);
                             ((OnTravelerAdapter) mContext).setTravelerHashMap(travelerHashMap);
                             holder.rootView.setBackgroundColor(Color.LTGRAY);
                         } else {
@@ -103,7 +103,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
             travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
         }
 
-        if (travelerHashMap != null && travelerHashMap.get(traveler.getId()) != null) {
+        if (travelerHashMap != null && travelerHashMap.get(traveler.getContactId()) != null) {
             holder.rootView.setBackgroundColor(Color.LTGRAY);
         } else {
             holder.rootView.setBackgroundColor(Color.TRANSPARENT);
@@ -136,7 +136,11 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).getLongId();
+        try {
+            return Long.parseLong(getItem(position).getContactId());
+        } catch (NumberFormatException ex) {
+            return -1;
+        }
     }
 
     public void swapCursor(Cursor cursor) {

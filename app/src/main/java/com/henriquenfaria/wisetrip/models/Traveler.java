@@ -8,12 +8,10 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.IgnoreExtraProperties;
 
-@IgnoreExtraProperties
 public class Traveler implements Parcelable {
 
-    private String id;
+    private String contactId;
     private String name;
 
     @Exclude
@@ -23,8 +21,8 @@ public class Traveler implements Parcelable {
         // Required for Firebase
     }
 
-    public Traveler(String id, String name, Uri photoUri) {
-        this.id = id;
+    public Traveler(String contactId, String name, Uri photoUri) {
+        this.contactId = contactId;
         this.name = name;
         this.photoUri = photoUri;
     }
@@ -39,25 +37,17 @@ public class Traveler implements Parcelable {
                 this.photoUri = Uri.parse(photoUri);
             }
 
-            id = Long.toString(cursor.getLong(cursor
+            contactId = Long.toString(cursor.getLong(cursor
                     .getColumnIndex(ContactsContract.Contacts._ID)));
         }
     }
 
-    public String getId() {
-        return this.id;
+    public String getContactId() {
+        return this.contactId;
     }
 
-    public long getLongId() {
-        try {
-            return Long.parseLong(this.id);
-        } catch (NumberFormatException ex) {
-            return -1;
-        }
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setContactId(String contactId) {
+        this.contactId = contactId;
     }
 
 
@@ -69,14 +59,15 @@ public class Traveler implements Parcelable {
         this.name = name;
     }
 
+    @Exclude
     public Uri getPhotoUri() {
         return photoUri;
     }
 
+    @Exclude
     public void setPhotoUri(Uri photoUri) {
         this.photoUri = photoUri;
     }
-
 
     @Override
     public int describeContents() {
@@ -85,14 +76,13 @@ public class Traveler implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
+        dest.writeString(this.contactId);
         dest.writeString(this.name);
         dest.writeParcelable(this.photoUri, flags);
-
     }
 
     protected Traveler(Parcel in) {
-        this.id = in.readString();
+        this.contactId = in.readString();
         this.name = in.readString();
         this.photoUri = in.readParcelable(Uri.class.getClassLoader());
     }
