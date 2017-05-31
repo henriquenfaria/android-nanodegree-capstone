@@ -55,14 +55,8 @@ public class TripFactoryFragment extends BaseFragment implements
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String SAVE_TRIP = "save_trip";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
-    // private static final String SAVE_START_DATE_MILLIS = "save_start_date_millis";
-    // private static final String SAVE_END_DATE_MILLIS = "save_end_date_millis";
-    //private static final String SAVE_TRAVELERS = "save_travelers";
-    // private static final String SAVE_DESTINATIONS = "save_destinations";
-
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
             "save_destination_adapter_clicked_position";
-
 
     public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 
@@ -73,10 +67,6 @@ public class TripFactoryFragment extends BaseFragment implements
     private OnTripFactoryListener mListener;
     private Trip mTrip;
     private boolean mIsEditMode;
-    //  private long mStartDateMillis;
-    //  private long mEndDateMillis;
-    // private HashMap<String, Traveler> mTravelers;
-    // private ArrayList<Destination> mDestinations;
     private DestinationAdapter mAdapter;
     private int mDestinationAdapterClickedPosition;
 
@@ -175,12 +165,8 @@ public class TripFactoryFragment extends BaseFragment implements
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_TRIP, mTrip);
         outState.putBoolean(SAVE_IS_EDIT_MODE, mIsEditMode);
-        // outState.putLong(SAVE_START_DATE_MILLIS, mStartDateMillis);
-        // outState.putLong(SAVE_END_DATE_MILLIS, mEndDateMillis);
         outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
                 mDestinationAdapterClickedPosition);
-        //outState.putSerializable(SAVE_TRAVELERS, mTravelers);
-        // outState.putParcelableArrayList(SAVE_DESTINATIONS, mDestinations);
     }
 
     @Override
@@ -249,22 +235,9 @@ public class TripFactoryFragment extends BaseFragment implements
         if (savedInstanceState != null) {
             mTrip = savedInstanceState.getParcelable(SAVE_TRIP);
             mIsEditMode = savedInstanceState.getBoolean(SAVE_IS_EDIT_MODE);
-            //  mStartDateMillis = savedInstanceState.getLong(SAVE_START_DATE_MILLIS);
-            //  mEndDateMillis = savedInstanceState.getLong(SAVE_END_DATE_MILLIS);
             mDestinationAdapterClickedPosition
                     = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
-            // noinspection unchecked
-            // mTravelers = (HashMap<String, Traveler>) savedInstanceState.getSerializable
-            // (SAVE_TRAVELERS);
-            //  mDestinations = savedInstanceState.getParcelableArrayList(SAVE_DESTINATIONS);
-        } /*else {
-            if (mDestinations == null) {
-                mDestinations = new ArrayList<>();
-            }
-           if (mTrip == null) {
-                mTrip = new Trip();
-            }
-        }*/
+        } 
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
         ButterKnife.bind(this, rootView);
@@ -343,9 +316,6 @@ public class TripFactoryFragment extends BaseFragment implements
         if (requestCode == REQUEST_PICK_TRAVELER) {
             if (resultCode == RESULT_OK) {
                 if (data != null && data.hasExtra(Constants.Extras.EXTRA_TRAVELER)) {
-                    // noinspection unchecked
-                    /*mTravelers = (HashMap<String, Traveler>) data
-                            .getSerializableExtra(Constants.Extras.EXTRA_TRAVELER);*/
                     // noinspection unchecked
                     mTrip.setTravelers((HashMap<String, Traveler>) data.getSerializableExtra
                             (Constants.Extras.EXTRA_TRAVELER));
