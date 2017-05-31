@@ -24,6 +24,7 @@ public class DestinationAdapter extends
     private Context mContext;
     private OnDestinationClickListener mOnDestinationClickListener;
     private List<Destination> mDestinations;
+    private boolean mIsFooterError;
 
 
     public static class DestinationHolder extends RecyclerView.ViewHolder {
@@ -89,6 +90,9 @@ public class DestinationAdapter extends
                 }
             });
 
+            footer.destinationText.setError(mIsFooterError ?
+                    mContext.getString(R.string.mandatory_field) : null);
+
         } else if (viewHolder instanceof ItemHolder) {
             ItemHolder item = (ItemHolder) viewHolder;
             Destination destination = mDestinations.get(position);
@@ -149,6 +153,10 @@ public class DestinationAdapter extends
         notifyDataSetChanged();
     }
 
+
+    public void setFooterError(boolean footerError) {
+        mIsFooterError = footerError;
+    }
 
     public interface OnDestinationClickListener {
         void onDestinationItemClick(int position);

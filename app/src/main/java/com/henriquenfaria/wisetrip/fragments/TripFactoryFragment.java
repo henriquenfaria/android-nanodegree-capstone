@@ -11,7 +11,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,6 +59,8 @@ public class TripFactoryFragment extends BaseFragment implements
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
             "save_destination_adapter_clicked_position";
+    private static final String SAVE_DISPLAY_DESTINATION_FOOTER_ERROR =
+            "save_display_destination_footer_error";
 
     public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 
@@ -67,8 +71,9 @@ public class TripFactoryFragment extends BaseFragment implements
     private OnTripFactoryListener mListener;
     private Trip mTrip;
     private boolean mIsEditMode;
-    private DestinationAdapter mAdapter;
+    private DestinationAdapter mDestinationAdapter;
     private int mDestinationAdapterClickedPosition;
+    private boolean mIsDisplayDestinationFooterError;
 
 
     private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
@@ -131,6 +136,23 @@ public class TripFactoryFragment extends BaseFragment implements
         }
     };
 
+    private TextWatcher mTripTitleTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s != null) {
+                mTrip.setTitle(s.toString());
+            }
+        }
+    };
+
     @BindView(R.id.title_edit_text)
     EditText mTripTitleEditText;
 
@@ -167,6 +189,8 @@ public class TripFactoryFragment extends BaseFragment implements
         outState.putBoolean(SAVE_IS_EDIT_MODE, mIsEditMode);
         outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
                 mDestinationAdapterClickedPosition);
+        outState.putBoolean(SAVE_DISPLAY_DESTINATION_FOOTER_ERROR,
+                mIsDisplayDestinationFooterError);
     }
 
     @Override
@@ -237,19 +261,26 @@ public class TripFactoryFragment extends BaseFragment implements
             mIsEditMode = savedInstanceState.getBoolean(SAVE_IS_EDIT_MODE);
             mDestinationAdapterClickedPosition
                     = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
-        } 
+            mIsDisplayDestinationFooterError = savedInstanceState.getBoolean
+                    (SAVE_DISPLAY_DESTINATION_FOOTER_ERROR);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
         ButterKnife.bind(this, rootView);
         mListener.changeActionBarTitle(getString(R.string.create_new_trip));
 
+        mTripTitleEditText.addTextChangedListener(mTripTitleTextWatcher);
         mStartDateTextView.setOnClickListener(mOnDateClickListener);
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
         mTravelerText.setOnClickListener(mOnTravelerClickListener);
 
-        mAdapter = new DestinationAdapter(mFragmentActivity, this, mTrip.getDestinations());
-        mDestinationRecyclerView.setAdapter(mAdapter);
+        mDestinationAdapter = new DestinationAdapter(mFragmentActivity, this, mTrip
+                .getDestinations());
+        mDestinationRecyclerView.setAdapter(mDestinationAdapter);
         mDestinationRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
+
+        mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
+        mDestinationAdapter.notifyDataSetChanged();
 
         populateFields();
 
@@ -257,18 +288,41 @@ public class TripFactoryFragment extends BaseFragment implements
     }
 
     private void populateFields() {
-        if (mTrip == null) {
-            // New trip, nothing to populate
-            return;
-        }
+        //TODO: Populate form fields with selected Trip object in the list
     }
 
-    private void saveTrip() {
-        // TODO: Must validate fields before calling Activity
-        // checkFormFields();
+    private boolean isValidFormFields() {
+        boolean isValid = true;
 
-        mTrip.setTitle(mTripTitleEditText.getText().toString());
-        mListener.saveTrip(mTrip, mIsEditMode);
+        if (TextUtils.isEmpty(mTrip.getTitle())) {
+            mTripTitleEditText.setError(getString(R.string.mandatory_field));
+            isValid = false;
+        }
+        if (mTrip.getStartDate() <= 0) {
+            mStartDateTextView.setError(getString(R.string.mandatory_field));
+            isValid = false;
+        }
+
+        if (mTrip.getEndDate() <= 0) {
+            mEndDateTextView.setError(getString(R.string.mandatory_field));
+            isValid = false;
+        }
+
+        if (mTrip.getDestinations().size() == 0) {
+            mIsDisplayDestinationFooterError = true;
+            mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
+            mDestinationAdapter.notifyDataSetChanged();
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+
+    private void saveTrip() {
+        if (isValidFormFields()) {
+            mListener.saveTrip(mTrip, mIsEditMode);
+        }
     }
 
     @Override
@@ -276,9 +330,11 @@ public class TripFactoryFragment extends BaseFragment implements
         if (mStartDateTextView.getId() == targetViewId) {
             mTrip.setStartDate(dateMillis);
             mStartDateTextView.setText(dateText);
+            mStartDateTextView.setError(null);
         } else if (mEndDateTextView.getId() == targetViewId) {
             mTrip.setEndDate(dateMillis);
             mEndDateTextView.setText(dateText);
+            mEndDateTextView.setError(null);
         }
     }
 
@@ -340,7 +396,9 @@ public class TripFactoryFragment extends BaseFragment implements
                 if (place != null) {
                     Destination destination = new Destination(place);
                     mTrip.getDestinations().set(mDestinationAdapterClickedPosition, destination);
-                    mAdapter.swap(mTrip.getDestinations());
+                    mIsDisplayDestinationFooterError = false;
+                    mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
+                    mDestinationAdapter.swap(mTrip.getDestinations());
                 }
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
@@ -357,7 +415,9 @@ public class TripFactoryFragment extends BaseFragment implements
                 if (place != null) {
                     Destination destination = new Destination(place);
                     mTrip.getDestinations().add(destination);
-                    mAdapter.swap(mTrip.getDestinations());
+                    mIsDisplayDestinationFooterError = false;
+                    mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
+                    mDestinationAdapter.swap(mTrip.getDestinations());
                 }
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
@@ -385,7 +445,7 @@ public class TripFactoryFragment extends BaseFragment implements
     public void onDestinationRemoveItemClick(int position) {
         if (mTrip.getDestinations() != null && mTrip.getDestinations().get(position) != null) {
             mTrip.getDestinations().remove(position);
-            mAdapter.swap(mTrip.getDestinations());
+            mDestinationAdapter.swap(mTrip.getDestinations());
         }
     }
 

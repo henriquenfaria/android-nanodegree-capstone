@@ -69,7 +69,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:freezesText="true"
-                android:hint="@string/start_date"/>
+                android:hint="@string/hint_start_date"/>
 
             <TextView
                 android:id="@+id/date_separator"
@@ -94,7 +94,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:freezesText="true"
-                android:hint="@string/end_date"/>
+                android:hint="@string/hint_end_date"/>
         </LinearLayout>
 
 

@@ -11,17 +11,19 @@
     <string name="sign_out">Sign Out</string>
     <string name="trip_title">Trip Title</string>
     <string name="create_new_trip">Create New Trip</string>
-    <string name="start_date">Start Date</string>
-    <string name="end_date">End Date</string>
+    <string name="hint_start_date">Start Date *</string>
+    <string name="hint_end_date">End Date *</string>
     <string name="save">Save</string>
     <string name="hint_who_will_join_you">Who will join you?</string>
-    <string name="hint_where_are_you_going">Where are you going?</string>
-    <string name="hint_what_is_the_trip_name">What\'s the trip\'s name?</string>
+    <string name="hint_where_are_you_going">Where are you going? *</string>
+    <string name="hint_what_is_the_trip_name">What\'s the trip\'s name? *</string>
     <string name="hint_search_traveler_name">Find Traveler</string>
-    <string name="destination_item_description">Destination %d</string>
+    <string name="destination_item_description">Destination %d *</string>
     <string name="destination_footer_description">Add new destination</string>
     <string name="google_play_services_error">Google Play Services error</string>
     <string name="reached_maximum_number_of_travelers">Reached maximum number of travelers</string>
+    <string name="mandatory_field">Mandatory field</string>
+
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>
