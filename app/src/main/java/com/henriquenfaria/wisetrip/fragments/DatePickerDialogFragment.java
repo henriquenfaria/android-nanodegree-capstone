@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
-import java.text.DateFormat;
+import com.henriquenfaria.wisetrip.utils.Utils;
+
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 public class DatePickerDialogFragment extends DialogFragment
@@ -94,9 +94,8 @@ public class DatePickerDialogFragment extends DialogFragment
             calendar.set(Calendar.YEAR, year);
             calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, day);
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
             mListener.onDateSet(mTargetViewId, calendar.getTimeInMillis(),
-                    df.format(calendar.getTime()));
+                    Utils.getFormattedTripDateText(calendar.getTimeInMillis()));
         }
     }
 

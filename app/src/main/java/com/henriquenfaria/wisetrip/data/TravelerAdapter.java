@@ -30,13 +30,13 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
     public class TravelerHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.traveler_item)
-        View rootView;
+        protected View rootView;
 
         @BindView(R.id.traveler_photo)
-        CircleImageView travelerPhoto;
+        protected CircleImageView travelerPhoto;
 
         @BindView(R.id.traveler_name)
-        TextView travelerName;
+        protected TextView travelerName;
 
         public TravelerHolder(View itemView) {
             super(itemView);

@@ -3,9 +3,19 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_menu_delete"
+        android:orderInCategory="1"
+        android:title="@string/delete"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/action_save"
         android:icon="@drawable/ic_menu_done"
         android:orderInCategory="10"
         android:title="@string/save"
+        android:visible="true"
         app:showAsAction="ifRoom"/>
+
 </menu>

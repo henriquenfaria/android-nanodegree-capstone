@@ -4,7 +4,9 @@ package com.henriquenfaria.wisetrip.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -73,11 +75,38 @@ public class TripFactoryActivity extends AppCompatActivity
 
     @Override
     public void saveTrip(Trip trip, boolean isEditMode) {
-        //TODO: need to verify "isEditMode" to update a trip instead of adding a new one
+
         if (isEditMode) {
-            // Update existing trip value
+            // Update existing Trip
+            if (trip != null && !TextUtils.isEmpty(trip.getId())) {
+                DatabaseReference databaseReference = mUserTripReference.child(trip.getId());
+                databaseReference.setValue(trip);
+                Toast.makeText(this, getString(R.string.trip_updated_success, trip.getTitle()),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.trip_updated_error),
+                        Toast.LENGTH_SHORT).show();
+            }
         } else {
-            mUserTripReference.push().setValue(trip);
+            // Creating Trip
+            DatabaseReference databaseReference = mUserTripReference.push();
+            trip.setId(databaseReference.getKey());
+            databaseReference.setValue(trip);
+            Toast.makeText(this, getString(R.string.trip_created_success, trip.getTitle()), Toast
+                    .LENGTH_SHORT).show();
+        }
+
+        finish();
+    }
+
+    @Override
+    public void deleteTrip(Trip trip) {
+        if (trip != null && !TextUtils.isEmpty(trip.getId())) {
+            mUserTripReference.child(trip.getId()).removeValue();
+            Toast.makeText(this, getString(R.string.trip_deleted_success, trip.getTitle()), Toast
+                    .LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.trip_deleted_error), Toast.LENGTH_SHORT).show();
         }
 
         finish();

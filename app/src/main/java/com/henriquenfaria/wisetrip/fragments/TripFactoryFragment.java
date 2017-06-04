@@ -38,9 +38,9 @@ import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Traveler;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,10 +57,12 @@ public class TripFactoryFragment extends BaseFragment implements
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String SAVE_TRIP = "save_trip";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
+    private static final String SAVE_IS_POPULATED = "save_is_populated";
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
             "save_destination_adapter_clicked_position";
     private static final String SAVE_DISPLAY_DESTINATION_FOOTER_ERROR =
             "save_display_destination_footer_error";
+
 
     public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 
@@ -71,6 +73,7 @@ public class TripFactoryFragment extends BaseFragment implements
     private OnTripFactoryListener mListener;
     private Trip mTrip;
     private boolean mIsEditMode;
+    private boolean mIsPopulated;
     private DestinationAdapter mDestinationAdapter;
     private int mDestinationAdapterClickedPosition;
     private boolean mIsDisplayDestinationFooterError;
@@ -154,19 +157,19 @@ public class TripFactoryFragment extends BaseFragment implements
     };
 
     @BindView(R.id.title_edit_text)
-    EditText mTripTitleEditText;
+    protected EditText mTripTitleEditText;
 
     @BindView(R.id.start_date_text)
-    TextView mStartDateTextView;
+    protected TextView mStartDateTextView;
 
     @BindView(R.id.end_date_text)
-    TextView mEndDateTextView;
+    protected TextView mEndDateTextView;
 
     @BindView(R.id.traveler_text)
-    TextView mTravelerText;
+    protected TextView mTravelerText;
 
     @BindView(R.id.destination_recyclerview)
-    RecyclerView mDestinationRecyclerView;
+    protected RecyclerView mDestinationRecyclerView;
 
     public TripFactoryFragment() {
         // Required empty public constructor
@@ -187,6 +190,7 @@ public class TripFactoryFragment extends BaseFragment implements
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_TRIP, mTrip);
         outState.putBoolean(SAVE_IS_EDIT_MODE, mIsEditMode);
+        outState.putBoolean(SAVE_IS_POPULATED, mIsPopulated);
         outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
                 mDestinationAdapterClickedPosition);
         outState.putBoolean(SAVE_DISPLAY_DESTINATION_FOOTER_ERROR,
@@ -206,6 +210,7 @@ public class TripFactoryFragment extends BaseFragment implements
 
             if (!TextUtils.isEmpty(mTrip.getId())) {
                 mIsEditMode = true;
+                mIsPopulated = false;
             }
         }
 
@@ -229,14 +234,24 @@ public class TripFactoryFragment extends BaseFragment implements
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (mIsEditMode) {
+            menu.findItem(R.id.action_delete).setVisible(true);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        //TODO: Add delete button when isEditMode is true
+
         if (id == R.id.action_save) {
             saveTrip();
             return true;
+        } else if (id == R.id.action_delete) {
+            deleteTrip();
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -255,15 +270,20 @@ public class TripFactoryFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
 
+
         // Restore instances
         if (savedInstanceState != null) {
             mTrip = savedInstanceState.getParcelable(SAVE_TRIP);
             mIsEditMode = savedInstanceState.getBoolean(SAVE_IS_EDIT_MODE);
+            mIsPopulated = savedInstanceState.getBoolean(SAVE_IS_POPULATED);
             mDestinationAdapterClickedPosition
                     = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
             mIsDisplayDestinationFooterError = savedInstanceState.getBoolean
                     (SAVE_DISPLAY_DESTINATION_FOOTER_ERROR);
         }
+
+        //this.supportInvalidateOptionsMenu();
+
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
         ButterKnife.bind(this, rootView);
@@ -274,21 +294,27 @@ public class TripFactoryFragment extends BaseFragment implements
         mEndDateTextView.setOnClickListener(mOnDateClickListener);
         mTravelerText.setOnClickListener(mOnTravelerClickListener);
 
-        mDestinationAdapter = new DestinationAdapter(mFragmentActivity, this, mTrip
-                .getDestinations());
+        mDestinationAdapter = new DestinationAdapter(mFragmentActivity, this,
+                mTrip.getDestinations());
         mDestinationRecyclerView.setAdapter(mDestinationAdapter);
         mDestinationRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
 
         mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
         mDestinationAdapter.notifyDataSetChanged();
 
-        populateFields();
+        if (mIsEditMode && !mIsPopulated) {
+            populateFields();
+            mIsPopulated = true;
+        }
 
         return rootView;
     }
 
     private void populateFields() {
-        //TODO: Populate form fields with selected Trip object in the list
+        mTripTitleEditText.setText(mTrip.getTitle());
+        mStartDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getStartDate()));
+        mEndDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getEndDate()));
+        mTravelerText.setText(Utils.getFormattedTravelersText(mTrip.getTravelers()));
     }
 
     private boolean isValidFormFields() {
@@ -323,6 +349,10 @@ public class TripFactoryFragment extends BaseFragment implements
         if (isValidFormFields()) {
             mListener.saveTrip(mTrip, mIsEditMode);
         }
+    }
+
+    private void deleteTrip() {
+        mListener.deleteTrip(mTrip);
     }
 
     @Override
@@ -376,17 +406,7 @@ public class TripFactoryFragment extends BaseFragment implements
                     mTrip.setTravelers((HashMap<String, Traveler>) data.getSerializableExtra
                             (Constants.Extras.EXTRA_TRAVELER));
 
-                    StringBuffer travelersString = new StringBuffer();
-                    int count_for_comma = 0;
-                    for (Map.Entry entry : mTrip.getTravelers().entrySet()) {
-                        Traveler traveler = (Traveler) entry.getValue();
-                        travelersString.append(traveler.getName());
-                        if (++count_for_comma < mTrip.getTravelers().size()) {
-                            travelersString.append(", ");
-                        }
-                    }
-
-                    mTravelerText.setText(travelersString);
+                    mTravelerText.setText(Utils.getFormattedTravelersText(mTrip.getTravelers()));
                 }
             }
             // Response from Place Autocomplete, we'll update a previously set destination
@@ -475,5 +495,7 @@ public class TripFactoryFragment extends BaseFragment implements
         void changeActionBarTitle(String newTitle);
 
         void saveTrip(Trip trip, boolean isEditMode);
+
+        void deleteTrip(Trip trip);
     }
 }

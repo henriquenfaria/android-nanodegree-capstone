@@ -93,6 +93,12 @@ public class DestinationAdapter extends
             footer.destinationText.setError(mIsFooterError ?
                     mContext.getString(R.string.mandatory_field) : null);
 
+            if (mDestinations != null && mDestinations.size() > 0) {
+                footer.destinationText.setHint(R.string. hint_where_are_you_going);
+            } else {
+                footer.destinationText.setHint(R.string. hint_where_are_you_going_required);
+            }
+
         } else if (viewHolder instanceof ItemHolder) {
             ItemHolder item = (ItemHolder) viewHolder;
             Destination destination = mDestinations.get(position);

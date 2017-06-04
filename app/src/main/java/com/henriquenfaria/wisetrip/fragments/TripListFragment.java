@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.TripHolder;
+import com.henriquenfaria.wisetrip.data.TripFirebaseHolder;
+import com.henriquenfaria.wisetrip.data.TripFirebaseRecyclerAdapter;
 import com.henriquenfaria.wisetrip.models.Trip;
 
 import butterknife.BindView;
@@ -30,7 +30,7 @@ public class TripListFragment extends BaseFragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserTripReference;
     private FirebaseUser mCurrentUser;
-    private FirebaseRecyclerAdapter<Trip, TripHolder> mAdapter;
+    private TripFirebaseRecyclerAdapter mTripAdapter;
 
 
     @Override
@@ -56,27 +56,23 @@ public class TripListFragment extends BaseFragment {
         mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Query query = mUserTripReference.orderByChild("title");
-        mAdapter = new FirebaseRecyclerAdapter<Trip, TripHolder>(Trip.class, R.layout
-                .trip_item, TripHolder.class, mUserTripReference) {
-            @Override
-            public void populateViewHolder(TripHolder chatMessageViewHolder, Trip trip, int
-                    position) {
-                chatMessageViewHolder.setTripTitle(trip.getTitle());
-            }
+        mTripAdapter = new TripFirebaseRecyclerAdapter(Trip.class, R.layout.trip_item,
+                TripFirebaseHolder.class, mUserTripReference) {
+
         };
 
         // TODO: If date is properly indexed, use:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
-       /* new FirebaseIndexRecyclerAdapter<Trip, TripHolder>(Trip.class,
+       /* new FirebaseIndexRecyclerAdapter<mTripAdapter, TripFirebaseHolder>(mTripAdapter.class,
                 R.layout.trip_item,
-                TripHolder.class,
+                TripFirebaseHolder.class,
                 keyRef, // The Firebase location containing the list of keys to be found in dataRef.
                 dataRef) //The Firebase location to watch for data changes. Each key key found at
                  keyRef's location represents a list item in the RecyclerView.
          */
 
 
-        mTripListRecyclerView.setAdapter(mAdapter);
+        mTripListRecyclerView.setAdapter(mTripAdapter);
 
 
         return rootView;
@@ -85,8 +81,8 @@ public class TripListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mAdapter != null) {
-            mAdapter.cleanup();
+        if (mTripAdapter != null) {
+            mTripAdapter.cleanup();
         }
 
     }

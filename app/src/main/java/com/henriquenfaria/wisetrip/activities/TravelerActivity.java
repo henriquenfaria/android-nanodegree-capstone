@@ -39,10 +39,10 @@ public class TravelerActivity extends AppCompatActivity implements
     private static final String SAVE_TRAVELER_KEY = "save_traveler_key";
 
     @BindView(R.id.traveler_search_view)
-    SearchView mTravelerSearchView;
+    protected SearchView mTravelerSearchView;
 
     @BindView(R.id.traveler_recycler_view)
-    RecyclerView mTravelerRecyclerView;
+    protected RecyclerView mTravelerRecyclerView;
 
     private TravelerAdapter mTravelerAdapter;
     private LinearLayoutManager mLayoutManager;

@@ -49,6 +49,6 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:freezesText="true"
-            android:hint="@string/hint_where_are_you_going"/>
+            android:hint="@string/hint_where_are_you_going_required"/>
     </LinearLayout>
 </LinearLayout>
