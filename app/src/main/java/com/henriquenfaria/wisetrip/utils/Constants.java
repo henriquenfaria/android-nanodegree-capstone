@@ -6,7 +6,7 @@ public class Constants {
     // Global constants
     public static class Global {
         // Max Trip destinations
-        public static final int MAX_DESTINATIONS = 3;
+        public static final int MAX_DESTINATIONS = 10;
         // Max Trip travelers
         public static final int MAX_TRAVELERS = 10;
         // Max height for Trip photo

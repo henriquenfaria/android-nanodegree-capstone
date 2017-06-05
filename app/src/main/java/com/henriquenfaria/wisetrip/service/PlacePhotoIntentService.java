@@ -12,7 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.models.Trip;
-import com.henriquenfaria.wisetrip.retrofit.PlaceDetailsService;
+import com.henriquenfaria.wisetrip.retrofit.api.PlaceDetailsService;
 import com.henriquenfaria.wisetrip.retrofit.models.Photo;
 import com.henriquenfaria.wisetrip.retrofit.models.PlaceDetailsResult;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -75,6 +75,8 @@ public class PlacePhotoIntentService extends IntentService {
 
                     Response<PlaceDetailsResult> response = call.execute();
                     PlaceDetailsResult responseDetailsResult = response.body();
+
+                    //TODO: Must save and display responseDetailsResult.getHtmlAttributions()
 
                     List<Photo> photos = responseDetailsResult.getResult().getPhotos();
                     if (photos != null && photos.size() > 0) {

@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.retrofit;
+package com.henriquenfaria.wisetrip.retrofit.api;
 
 import com.henriquenfaria.wisetrip.retrofit.models.PlaceDetailsResult;
 

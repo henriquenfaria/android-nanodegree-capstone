@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.retrofit.PlaceDetailsService;
+import com.henriquenfaria.wisetrip.retrofit.api.PlaceDetailsService;
 import com.henriquenfaria.wisetrip.retrofit.models.PlaceDetailsResult;
 import com.henriquenfaria.wisetrip.utils.Constants;
 

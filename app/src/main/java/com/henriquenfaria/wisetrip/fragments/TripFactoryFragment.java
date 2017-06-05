@@ -414,6 +414,7 @@ public class TripFactoryFragment extends BaseFragment implements
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 if (place != null) {
+                    //TODO: Must save and use place.getAttributions()
                     Destination destination = new Destination(place);
                     mTrip.getDestinations().set(mDestinationAdapterClickedPosition, destination);
                     mIsDisplayDestinationFooterError = false;
