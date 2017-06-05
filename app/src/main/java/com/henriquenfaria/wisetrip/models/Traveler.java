@@ -21,11 +21,6 @@ public class Traveler implements Parcelable {
         // Required for Firebase
     }
 
-    public Traveler(String contactId, String name, Uri photoUri) {
-        this.contactId = contactId;
-        this.name = name;
-        this.photoUri = photoUri;
-    }
 
     public Traveler(Cursor cursor) {
         if (cursor != null) {

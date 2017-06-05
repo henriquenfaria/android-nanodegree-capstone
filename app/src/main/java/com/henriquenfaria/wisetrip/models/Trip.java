@@ -21,17 +21,6 @@ public class Trip implements Parcelable {
     private Map<String, Traveler> travelers;
     private List<Destination> destinations;
 
-    public Trip(String id, String title, long startDate, long endDate, Map<String, Traveler>
-            travelers, List<Destination>
-                        destinations) {
-        this.id = id;
-        this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.travelers = travelers;
-        this.destinations = destinations;
-    }
-
     public Trip() {
         // Required for Firebase
         id = "";

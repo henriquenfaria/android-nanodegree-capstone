@@ -12,16 +12,10 @@ public class Destination implements Parcelable {
     private String name;
     private double latitude;
     private double longitude;
+    private String photoReference;
 
     public Destination() {
         // Required for Firebase
-    }
-
-    public Destination(String id, String name, double latitude, double longitude) {
-        this.id = id;
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 
     public Destination(Place place) {
@@ -35,6 +29,7 @@ public class Destination implements Parcelable {
             latitude = -1;
             longitude = -1;
         }
+        photoReference = "";
     }
 
     public String getId() {
@@ -69,6 +64,14 @@ public class Destination implements Parcelable {
         this.longitude = longitude;
     }
 
+    public String getPhotoReference() {
+        return photoReference;
+    }
+
+    public void setPhotoReference(String photoReference) {
+        this.photoReference = photoReference;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -80,6 +83,7 @@ public class Destination implements Parcelable {
         dest.writeString(this.name);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
+        dest.writeString(this.photoReference);
     }
 
     protected Destination(Parcel in) {
@@ -87,6 +91,7 @@ public class Destination implements Parcelable {
         this.name = in.readString();
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
+        this.photoReference = in.readString();
     }
 
     public static final Creator<Destination> CREATOR = new Creator<Destination>() {

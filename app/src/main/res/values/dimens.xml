@@ -20,4 +20,6 @@
     <dimen name="trip_card_view_inner_margin">6dp</dimen>
     <dimen name="trip_card_view_outer_vertical_margin">6dp</dimen>
     <dimen name="trip_card_view_edit_button_padding">8dp</dimen>
+    <dimen name="trip_card_view_height">200dp</dimen>
+    <dimen name="trip_card_view_title_additional_margin">8dp</dimen>
 </resources>

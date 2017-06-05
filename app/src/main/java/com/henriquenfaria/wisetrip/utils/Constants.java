@@ -9,11 +9,13 @@ public class Constants {
         public static final int MAX_DESTINATIONS = 3;
         // Max Trip travelers
         public static final int MAX_TRAVELERS = 10;
+        // Max height for Trip photo
+        public static final String MAX_PHOTO_HEIGHT = "400";
     }
 
     // Intent extras
     public static class Extras {
         public static final String EXTRA_TRIP = "extra_trip";
-        public static final String EXTRA_TRAVELER = "extra_TRAVELER";
+        public static final String EXTRA_TRAVELER = "extra_traveler";
     }
 }

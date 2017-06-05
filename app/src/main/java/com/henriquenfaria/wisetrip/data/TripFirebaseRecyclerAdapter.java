@@ -19,11 +19,13 @@ public class TripFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Trip, T
     }
 
     @Override
-    protected void populateViewHolder(TripFirebaseHolder tripViewHolder, final Trip trip, final
-    int position) {
+    protected void populateViewHolder(TripFirebaseHolder tripViewHolder, final Trip trip,
+                                      final int position) {
         tripViewHolder.setTripTitle(trip.getTitle());
         tripViewHolder.setTripDate(Utils.getFormattedFullTripDateText(trip.getStartDate(),
                 trip.getEndDate()));
+
+        tripViewHolder.setTripPhoto(trip.getDestinations().get(0).getPhotoReference());
 
         tripViewHolder.setOnTripItemClickListener(new TripFirebaseHolder.OnTripItemClickListener() {
             @Override
@@ -36,28 +38,11 @@ public class TripFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Trip, T
         tripViewHolder.setOnEditTripClickListener(new TripFirebaseHolder.OnEditTripClickListener() {
             @Override
             public void onEditTripClick(View view, int position) {
-                Context context =  view.getContext();
+                Context context = view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
                 intent.putExtra(Constants.Extras.EXTRA_TRIP, trip);
                 context.startActivity(intent);
             }
         });
-
     }
-
-   /* @Override
-    public TripFirebaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TripFirebaseHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-        viewHolder.setOnClickListener(new TripFirebaseHolder.OnClickListener() {
-
-            @Override
-            public void onEditButtonClick(View view, int position) {
-                Toast.makeText(getActivity(), "Item long clicked at " + position, Toast
-                .LENGTH_SHORT).show();
-            }
-        });
-        return viewHolder;
-    }*/
-
-
 }

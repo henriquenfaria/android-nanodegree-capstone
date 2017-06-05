@@ -42,8 +42,13 @@
                 android:value=".activities.TripFactoryActivity"/>
         </activity>
 
+        <service
+            android:name=".service.PlacePhotoIntentService"
+            android:exported="false">
+        </service>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${google_api_key}"/>
+            android:value="${google_geo_api_key_manifest}"/>
     </application>
 </manifest>

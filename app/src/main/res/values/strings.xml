@@ -25,11 +25,11 @@
     <string name="google_play_services_error">Google Play Services error</string>
     <string name="reached_maximum_number_of_travelers">Reached maximum number of travelers</string>
     <string name="mandatory_field">Mandatory field</string>
-    <string name="trip_deleted_success">Trip \"%s\" was successfully deleted</string>
-    <string name="trip_updated_success">Trip \"%s\" was successfully updated</string>
+    <string name="trip_created_success">Trip successfully created</string>
+    <string name="trip_deleted_success">Trip successfully deleted</string>
+    <string name="trip_updated_success">Trip successfully updated</string>
     <string name="trip_deleted_error">Error while deleting Trip</string>
     <string name="trip_updated_error">Error while updating Trip</string>
-    <string name="trip_created_success">Trip \"%s\" was successfully created</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

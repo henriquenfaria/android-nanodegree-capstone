@@ -12,13 +12,16 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [google_api_key:google_api_value]
+        manifestPlaceholders = [google_geo_api_key_manifest:google_geo_api_value_manifest]
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    buildTypes.each {
+        it.buildConfigField 'String', 'GOOGLE_GEO_API_KEY', google_geo_api_value
     }
 }
 
@@ -50,6 +53,12 @@ dependencies {
 
     // CircleImageView for traveler photos
     compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    //Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+
+    //Interceptor
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 
     //Google Play Services - Places
     compile 'com.google.android.gms:play-services-places:10.2.6'

@@ -14,8 +14,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripFactoryFragment;
+import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
+
+import java.util.List;
 
 public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
@@ -81,7 +85,7 @@ public class TripFactoryActivity extends AppCompatActivity
             if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                 DatabaseReference databaseReference = mUserTripReference.child(trip.getId());
                 databaseReference.setValue(trip);
-                Toast.makeText(this, getString(R.string.trip_updated_success, trip.getTitle()),
+                Toast.makeText(this, getString(R.string.trip_updated_success),
                         Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, getString(R.string.trip_updated_error),
@@ -92,9 +96,18 @@ public class TripFactoryActivity extends AppCompatActivity
             DatabaseReference databaseReference = mUserTripReference.push();
             trip.setId(databaseReference.getKey());
             databaseReference.setValue(trip);
-            Toast.makeText(this, getString(R.string.trip_created_success, trip.getTitle()), Toast
+            Toast.makeText(this, getString(R.string.trip_created_success), Toast
                     .LENGTH_SHORT).show();
         }
+
+        //TODO: Temporary code
+        Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
+        List<Destination> destinations = trip.getDestinations();
+        if (destinations.size() > 0) {
+            placePhotoIntentService.putExtra(Constants.Extras.EXTRA_TRIP, trip);
+        }
+
+        startService(placePhotoIntentService);
 
         finish();
     }
@@ -103,7 +116,7 @@ public class TripFactoryActivity extends AppCompatActivity
     public void deleteTrip(Trip trip) {
         if (trip != null && !TextUtils.isEmpty(trip.getId())) {
             mUserTripReference.child(trip.getId()).removeValue();
-            Toast.makeText(this, getString(R.string.trip_deleted_success, trip.getTitle()), Toast
+            Toast.makeText(this, getString(R.string.trip_deleted_success), Toast
                     .LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, getString(R.string.trip_deleted_error), Toast.LENGTH_SHORT).show();
