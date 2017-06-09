@@ -27,7 +27,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.henriquenfaria.wisetrip.BuildConfig.GOOGLE_GEO_API_KEY;
+import static com.henriquenfaria.wisetrip.BuildConfig.GOOGLE_GEO_API_ANDROID_KEY;
 
 public class PlacePhotoIntentService extends IntentService {
 
@@ -71,23 +71,24 @@ public class PlacePhotoIntentService extends IntentService {
 
                     PlaceDetailsService service = retrofit.create(PlaceDetailsService.class);
                     Call<PlaceDetailsResult> call = service.getPlaceDetailsResult(placeId,
-                            GOOGLE_GEO_API_KEY);
+                            GOOGLE_GEO_API_ANDROID_KEY);
 
                     Response<PlaceDetailsResult> response = call.execute();
                     PlaceDetailsResult responseDetailsResult = response.body();
 
                     //TODO: Must save and display responseDetailsResult.getHtmlAttributions()
-
-                    List<Photo> photos = responseDetailsResult.getResult().getPhotos();
-                    if (photos != null && photos.size() > 0) {
-                        String photoReference = photos.get(0).getPhotoReference();
-                        if (!TextUtils.isEmpty(photoReference)) {
-                            DatabaseReference destinationReference = userTripReference
-                                    .child(trip.getId())
-                                    .child("destinations")
-                                    .child("0")
-                                    .child("photoReference");
-                            destinationReference.setValue(photoReference);
+                    if (responseDetailsResult.getResult() != null) {
+                        List<Photo> photos = responseDetailsResult.getResult().getPhotos();
+                        if (photos != null && photos.size() > 0) {
+                            String photoReference = photos.get(0).getPhotoReference();
+                            if (!TextUtils.isEmpty(photoReference)) {
+                                DatabaseReference destinationReference = userTripReference
+                                        .child(trip.getId())
+                                        .child("destinations")
+                                        .child("0")
+                                        .child("photoReference");
+                                destinationReference.setValue(photoReference);
+                            }
                         }
                     }
                 } catch (IOException ex) {

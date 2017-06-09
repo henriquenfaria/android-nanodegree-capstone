@@ -21,7 +21,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.henriquenfaria.wisetrip.BuildConfig.GOOGLE_GEO_API_KEY;
+import static com.henriquenfaria.wisetrip.BuildConfig.GOOGLE_GEO_API_ANDROID_KEY;
 
 
 public class TripFirebaseHolder extends RecyclerView.ViewHolder {
@@ -80,7 +80,7 @@ public class TripFirebaseHolder extends RecyclerView.ViewHolder {
 
         PlaceDetailsService service = retrofit.create(PlaceDetailsService.class);
         Call<PlaceDetailsResult> call = service.getPhotoResult(photoReference,
-                Constants.Global.MAX_PHOTO_HEIGHT, GOOGLE_GEO_API_KEY);
+                Constants.Global.MAX_PHOTO_HEIGHT, GOOGLE_GEO_API_ANDROID_KEY);
 
         RequestOptions requestOptions =
                 new RequestOptions()

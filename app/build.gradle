@@ -12,7 +12,7 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [google_geo_api_key_manifest:google_geo_api_value_manifest]
+        manifestPlaceholders = [google_geo_api_manifest_key:google_geo_api_manifest_key]
     }
     buildTypes {
         release {
@@ -21,7 +21,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'GOOGLE_GEO_API_KEY', google_geo_api_value
+        it.buildConfigField 'String', 'GOOGLE_GEO_API_ANDROID_KEY', google_geo_api_android_key
     }
 }
 
