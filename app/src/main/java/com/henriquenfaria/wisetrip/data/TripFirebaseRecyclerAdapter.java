@@ -25,7 +25,7 @@ public class TripFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Trip, T
         tripViewHolder.setTripDate(Utils.getFormattedFullTripDateText(trip.getStartDate(),
                 trip.getEndDate()));
 
-        tripViewHolder.setTripPhoto(trip.getDestinations().get(0).getPhotoReference());
+        tripViewHolder.setTripPhoto(trip.getId());
 
         tripViewHolder.setOnTripItemClickListener(new TripFirebaseHolder.OnTripItemClickListener() {
             @Override
@@ -40,7 +40,7 @@ public class TripFirebaseRecyclerAdapter extends FirebaseRecyclerAdapter<Trip, T
             public void onEditTripClick(View view, int position) {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
-                intent.putExtra(Constants.Extras.EXTRA_TRIP, trip);
+                intent.putExtra(Constants.Extra.EXTRA_TRIP, trip);
                 context.startActivity(intent);
             }
         });

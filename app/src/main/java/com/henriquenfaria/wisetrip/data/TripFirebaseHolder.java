@@ -1,8 +1,11 @@
 package com.henriquenfaria.wisetrip.data;
 
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,18 +13,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.retrofit.api.PlaceDetailsService;
-import com.henriquenfaria.wisetrip.retrofit.models.PlaceDetailsResult;
 import com.henriquenfaria.wisetrip.utils.Constants;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.henriquenfaria.wisetrip.BuildConfig.GOOGLE_GEO_API_ANDROID_KEY;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class TripFirebaseHolder extends RecyclerView.ViewHolder {
@@ -72,26 +73,25 @@ public class TripFirebaseHolder extends RecyclerView.ViewHolder {
         mTripDate.setText(tripDate);
     }
 
-    public void setTripPhoto(String photoReference) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(PlaceDetailsService.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    public void setTripPhoto(String tripId) {
+        if (!TextUtils.isEmpty(tripId)) {
+            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+            File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
+                    Context.MODE_PRIVATE);
+            File photoFile = new File(directoryFile, tripId);
 
-        PlaceDetailsService service = retrofit.create(PlaceDetailsService.class);
-        Call<PlaceDetailsResult> call = service.getPhotoResult(photoReference,
-                Constants.Global.MAX_PHOTO_HEIGHT, GOOGLE_GEO_API_ANDROID_KEY);
+            RequestOptions requestOptions =
+                    new RequestOptions()
+                            .error(R.drawable.trip_card_default)
+                            .placeholder(R.color.tripCardPlaceholderBackground)
+                            .signature(new ObjectKey(String.valueOf(photoFile.lastModified())))
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
-        RequestOptions requestOptions =
-                new RequestOptions()
-                        .error(R.drawable.trip_card_default)
-                        .placeholder(R.color.tripCardPlaceholderBackground)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
-
-        Glide.with(mTripPhoto.getContext())
-                .load(call.request().url().toString())
-                .apply(requestOptions)
-                .into(mTripPhoto);
+            Glide.with(mTripPhoto.getContext())
+                    .load(photoFile)
+                    .apply(requestOptions)
+                    .into(mTripPhoto);
+        }
     }
 
     public interface OnTripItemClickListener {

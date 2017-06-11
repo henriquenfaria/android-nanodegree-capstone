@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,10 +28,13 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private boolean mIsTwoPane;
+    private static final String TAG_MAIN_FRAGMENT = "tag_main_fragment";
 
+    private boolean mIsTwoPane;
+    private Fragment mFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +50,19 @@ public class MainActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_main);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
-                startActivity(intent);
+                if (mFragment instanceof TripListFragment) {
+
+                    Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -74,7 +77,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         /*TODO: Gonna use master-detail pattern?
          Seems this is not useful for users, since they will not be constantly switching trips */
         if (findViewById(R.id.detail_fragment_container) != null) {
@@ -85,7 +87,12 @@ public class MainActivity extends AppCompatActivity
             mIsTwoPane = true;
         }
 
-        displaySelectedScreen(R.id.nav_your_trips);
+        if (savedInstanceState == null) {
+            displaySelectedScreen(R.id.nav_your_trips);
+        } else {
+            mFragment = getSupportFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
+        }
+
         navigationView.setCheckedItem(R.id.nav_your_trips);
     }
 
@@ -107,10 +114,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displaySelectedScreen(int itemId) {
-        Fragment fragment = null;
-
         if (itemId == R.id.nav_your_trips) {
-            fragment = new TripListFragment();
+            mFragment = new TripListFragment();
         } else if (itemId == R.id.nav_settings) {
             // TODO: Implement Settings navigation
         } else if (itemId == R.id.nav_sign_out) {
@@ -131,10 +136,10 @@ public class MainActivity extends AppCompatActivity
                     });
         }
 
-        if (fragment != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.main_fragment_container, fragment);
-            ft.commit();
+        if (mFragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment_container, mFragment, TAG_MAIN_FRAGMENT).commit();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

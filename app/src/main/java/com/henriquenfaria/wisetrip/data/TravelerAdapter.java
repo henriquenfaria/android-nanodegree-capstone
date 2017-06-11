@@ -110,6 +110,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         }
 
         holder.travelerName.setText(traveler.getName());
+
         RequestOptions requestOptions =
                 new RequestOptions()
                         .dontAnimate()
@@ -119,6 +120,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
                 .load(traveler.getPhotoUri())
                 .apply(requestOptions)
                 .into(holder.travelerPhoto);
+
     }
 
     @Override

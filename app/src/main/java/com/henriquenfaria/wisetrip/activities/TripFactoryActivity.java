@@ -14,12 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripFactoryFragment;
-import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
-import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
-
-import java.util.List;
 
 public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
@@ -27,6 +23,8 @@ public class TripFactoryActivity extends AppCompatActivity
     private static final String LOG_TAG = TripFactoryActivity.class.getSimpleName();
 
     private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
+    private static final String SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE =
+            "save_is_trips_event_listener_active";
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -34,6 +32,10 @@ public class TripFactoryActivity extends AppCompatActivity
     private FirebaseUser mCurrentUser;
     private Trip mTrip;
     private TripFactoryFragment mTripFactoryFragment;
+
+    // Use this variable to control whether to call or not the PlacePhotoIntentService because
+    // onChildAdded is called for every item previously present
+    private boolean mIsTripsEventListenerActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +54,9 @@ public class TripFactoryActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
-            if (intent != null && intent.hasExtra(Constants.Extras.EXTRA_TRIP)) {
+            if (intent != null && intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 // Trip already exists
-                mTrip = intent.getParcelableExtra(Constants.Extras.EXTRA_TRIP);
+                mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 mTripFactoryFragment = TripFactoryFragment.newInstance(mTrip);
 
             } else {
@@ -66,10 +68,19 @@ public class TripFactoryActivity extends AppCompatActivity
                     .add(R.id.trip_factory_fragment_container, mTripFactoryFragment,
                             TAG_TRIP_FACTORY_FRAGMENT).commit();
         } else {
+            mIsTripsEventListenerActive = savedInstanceState.getBoolean
+                    (SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE);
+
             // Fragment already exists, just get it using its TAG
             mTripFactoryFragment = (TripFactoryFragment) getSupportFragmentManager()
                     .findFragmentByTag(TAG_TRIP_FACTORY_FRAGMENT);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE, mIsTripsEventListenerActive);
     }
 
     @Override
@@ -79,6 +90,7 @@ public class TripFactoryActivity extends AppCompatActivity
 
     @Override
     public void saveTrip(Trip trip, boolean isEditMode) {
+        mIsTripsEventListenerActive = true;
 
         if (isEditMode) {
             // Update existing Trip
@@ -100,20 +112,13 @@ public class TripFactoryActivity extends AppCompatActivity
                     .LENGTH_SHORT).show();
         }
 
-        //TODO: Temporary code
-        Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
-        List<Destination> destinations = trip.getDestinations();
-        if (destinations.size() > 0) {
-            placePhotoIntentService.putExtra(Constants.Extras.EXTRA_TRIP, trip);
-        }
-
-        startService(placePhotoIntentService);
-
         finish();
     }
 
     @Override
     public void deleteTrip(Trip trip) {
+        mIsTripsEventListenerActive = true;
+
         if (trip != null && !TextUtils.isEmpty(trip.getId())) {
             mUserTripReference.child(trip.getId()).removeValue();
             Toast.makeText(this, getString(R.string.trip_deleted_success), Toast
@@ -135,5 +140,4 @@ public class TripFactoryActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

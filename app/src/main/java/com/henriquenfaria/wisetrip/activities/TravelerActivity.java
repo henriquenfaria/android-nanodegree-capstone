@@ -96,7 +96,7 @@ public class TravelerActivity extends AppCompatActivity implements
             case R.id.action_save:
                 Intent data = new Intent();
                 if (mTravelerHashMap != null) {
-                    data.putExtra(Constants.Extras.EXTRA_TRAVELER, mTravelerHashMap);
+                    data.putExtra(Constants.Extra.EXTRA_TRAVELER, mTravelerHashMap);
                 }
                 setResult(RESULT_OK, data);
                 finish();

@@ -20,9 +20,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildTypes.each {
-        it.buildConfigField 'String', 'GOOGLE_GEO_API_ANDROID_KEY', google_geo_api_android_key
-    }
 }
 
 dependencies {
@@ -53,9 +50,6 @@ dependencies {
 
     // CircleImageView for traveler photos
     compile 'de.hdodenhof:circleimageview:2.1.0'
-
-    //Retrofit
-    compile 'com.squareup.retrofit2:retrofit:2.3.0'
 
     //Interceptor
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'

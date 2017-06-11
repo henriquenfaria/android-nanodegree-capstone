@@ -64,12 +64,23 @@ public class TripFactoryFragment extends BaseFragment implements
             "save_display_destination_footer_error";
 
 
-    public static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
+    private static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 
-    public static final int REQUEST_PICK_TRAVELER = 1;
-    public static final int REQUEST_PLACE_AUTOCOMPLETE_UPDATE = 2;
-    public static final int REQUEST_PLACE_AUTOCOMPLETE_ADD = 3;
+    private static final int REQUEST_PICK_TRAVELER = 1;
+    private static final int REQUEST_PLACE_AUTOCOMPLETE_UPDATE = 2;
+    private static final int REQUEST_PLACE_AUTOCOMPLETE_ADD = 3;
 
+    @BindView(R.id.title_edit_text)
+    protected EditText mTripTitleEditText;
+    @BindView(R.id.start_date_text)
+    protected TextView mStartDateTextView;
+    @BindView(R.id.end_date_text)
+    protected TextView mEndDateTextView;
+    @BindView(R.id.traveler_text)
+    protected TextView mTravelerText;
+    @BindView(R.id.destination_recyclerview)
+
+    protected RecyclerView mDestinationRecyclerView;
     private OnTripFactoryListener mListener;
     private Trip mTrip;
     private boolean mIsEditMode;
@@ -77,7 +88,6 @@ public class TripFactoryFragment extends BaseFragment implements
     private DestinationAdapter mDestinationAdapter;
     private int mDestinationAdapterClickedPosition;
     private boolean mIsDisplayDestinationFooterError;
-
 
     private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
         @Override
@@ -156,21 +166,6 @@ public class TripFactoryFragment extends BaseFragment implements
         }
     };
 
-    @BindView(R.id.title_edit_text)
-    protected EditText mTripTitleEditText;
-
-    @BindView(R.id.start_date_text)
-    protected TextView mStartDateTextView;
-
-    @BindView(R.id.end_date_text)
-    protected TextView mEndDateTextView;
-
-    @BindView(R.id.traveler_text)
-    protected TextView mTravelerText;
-
-    @BindView(R.id.destination_recyclerview)
-    protected RecyclerView mDestinationRecyclerView;
-
     public TripFactoryFragment() {
         // Required empty public constructor
     }
@@ -200,7 +195,6 @@ public class TripFactoryFragment extends BaseFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mTrip = getArguments().getParcelable(ARG_TRIP);
 
@@ -270,7 +264,6 @@ public class TripFactoryFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
 
-
         // Restore instances
         if (savedInstanceState != null) {
             mTrip = savedInstanceState.getParcelable(SAVE_TRIP);
@@ -281,9 +274,6 @@ public class TripFactoryFragment extends BaseFragment implements
             mIsDisplayDestinationFooterError = savedInstanceState.getBoolean
                     (SAVE_DISPLAY_DESTINATION_FOOTER_ERROR);
         }
-
-        //this.supportInvalidateOptionsMenu();
-
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
         ButterKnife.bind(this, rootView);
@@ -401,10 +391,10 @@ public class TripFactoryFragment extends BaseFragment implements
         // Response from TravelerActivity
         if (requestCode == REQUEST_PICK_TRAVELER) {
             if (resultCode == RESULT_OK) {
-                if (data != null && data.hasExtra(Constants.Extras.EXTRA_TRAVELER)) {
+                if (data != null && data.hasExtra(Constants.Extra.EXTRA_TRAVELER)) {
                     // noinspection unchecked
                     mTrip.setTravelers((HashMap<String, Traveler>) data.getSerializableExtra
-                            (Constants.Extras.EXTRA_TRAVELER));
+                            (Constants.Extra.EXTRA_TRAVELER));
 
                     mTravelerText.setText(Utils.getFormattedTravelersText(mTrip.getTravelers()));
                 }
