@@ -40,19 +40,15 @@ public class TripListFragment extends BaseFragment {
     private static final String LOG_TAG = TripListFragment.class.getSimpleName();
 
     @BindView(R.id.trip_list_recycler_view)
-    RecyclerView mTripListRecyclerView;
+    protected RecyclerView mTripListRecyclerView;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserTripReference;
     private FirebaseUser mCurrentUser;
     private TripFirebaseRecyclerAdapter mTripAdapter;
-
     private ChildEventListener mTripsEventListener;
-    private ValueEventListener mValueEventListener;
-
     private PlacePhotoReceiver mPlacePhotoReceiver;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -162,34 +158,12 @@ public class TripListFragment extends BaseFragment {
             };
             mUserTripReference.addChildEventListener(mTripsEventListener);
         }
-
-        /*if (mValueEventListener == null) {
-            mValueEventListener = new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d(LOG_TAG, "onDataChange");
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d(LOG_TAG, "onCancelled");
-                }
-            };
-            mUserTripReference.addListenerForSingleValueEvent(mValueEventListener);
-
-        }*/
     }
 
     private void detachDatabaseReadListener() {
         if (mTripsEventListener != null) {
             mUserTripReference.removeEventListener(mTripsEventListener);
             mTripsEventListener = null;
-        }
-        if (mValueEventListener != null) {
-            mUserTripReference.removeEventListener(mValueEventListener);
-            mValueEventListener = null;
         }
     }
 

@@ -11,7 +11,7 @@ import com.henriquenfaria.wisetrip.utils.Utils;
 import java.util.Calendar;
 import java.util.Date;
 
-
+// DialogFragment implementation for DatePickerDialog
 public class DatePickerDialogFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
@@ -21,31 +21,11 @@ public class DatePickerDialogFragment extends DialogFragment
     private static final String SAVE_MAXIMUM_DATE = "save_maximum_date";
 
     private DatePickerDialog mDatePickerDialog;
-    private OnDateSetListener mListener;
+    private OnDateSetListener mOnDateSetListener;
     private int mTargetViewId;
     private long mCurrentDate;
     private long mMinimumDate;
     private long mMaximumDate;
-
-    public void setOnDateSetListener(OnDateSetListener listener) {
-        mListener = listener;
-    }
-
-    public void setTargetViewId(int targetViewId) {
-        mTargetViewId = targetViewId;
-    }
-
-    public void setCurrentDate(long currentDate) {
-        mCurrentDate = currentDate;
-    }
-
-    public void setMinimumDate(long minDate) {
-        mMinimumDate = minDate;
-    }
-
-    public void setMaximumDate(long maxDate) {
-        mMaximumDate = maxDate;
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -88,15 +68,36 @@ public class DatePickerDialogFragment extends DialogFragment
         return mDatePickerDialog;
     }
 
+    @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        if (mListener != null) {
+        if (mOnDateSetListener != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR, year);
             calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, day);
-            mListener.onDateSet(mTargetViewId, calendar.getTimeInMillis(),
+            mOnDateSetListener.onDateSet(mTargetViewId, calendar.getTimeInMillis(),
                     Utils.getFormattedTripDateText(calendar.getTimeInMillis()));
         }
+    }
+
+    public void setOnDateSetListener(OnDateSetListener listener) {
+        mOnDateSetListener = listener;
+    }
+
+    public void setTargetViewId(int targetViewId) {
+        mTargetViewId = targetViewId;
+    }
+
+    public void setCurrentDate(long currentDate) {
+        mCurrentDate = currentDate;
+    }
+
+    public void setMinimumDate(long minDate) {
+        mMinimumDate = minDate;
+    }
+
+    public void setMaximumDate(long maxDate) {
+        mMaximumDate = maxDate;
     }
 
     public interface OnDateSetListener {

@@ -50,11 +50,13 @@ import static android.app.Activity.RESULT_OK;
 
 public class TripFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
+        AlertDialogFragment.OnAlertListener,
         DestinationAdapter.OnDestinationClickListener {
 
     private static final String LOG_TAG = TripFactoryFragment.class.getSimpleName();
     private static final String ARG_TRIP = "arg_trip";
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
+    private static final String TAG_ALERT_DIALOG_FRAGMENT = "tag_alert_dialog_fragment";
     private static final String SAVE_TRIP = "save_trip";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
     private static final String SAVE_IS_POPULATED = "save_is_populated";
@@ -109,7 +111,6 @@ public class TripFactoryFragment extends BaseFragment implements
                 }
             }
 
-            //TODO: Use getSupportFragmentManager?
             datePickerFragment.show(getFragmentManager(), TAG_DATE_PICKER_FRAGMENT);
         }
     };
@@ -127,8 +128,7 @@ public class TripFactoryFragment extends BaseFragment implements
                         Manifest.permission.READ_CONTACTS)) {
 
                     // TODO: Create dialog explaining the permission
-                    Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT).show();
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
@@ -208,18 +208,24 @@ public class TripFactoryFragment extends BaseFragment implements
             }
         }
 
+        DatePickerDialogFragment datePickerFragment = (DatePickerDialogFragment)
+                getFragmentManager().findFragmentByTag(TAG_DATE_PICKER_FRAGMENT);
+        if (datePickerFragment != null) {
+            datePickerFragment.setOnDateSetListener(this);
+        }
+
+        AlertDialogFragment alertDialogFragment = (AlertDialogFragment)
+                getFragmentManager().findFragmentByTag(TAG_ALERT_DIALOG_FRAGMENT);
+        if (alertDialogFragment != null) {
+            alertDialogFragment.setOnAlertListener(this);
+        }
+
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        DatePickerDialogFragment datePickerFragment = (DatePickerDialogFragment)
-                getFragmentManager()
-                        .findFragmentByTag(TAG_DATE_PICKER_FRAGMENT);
-        if (datePickerFragment != null) {
-            datePickerFragment.setOnDateSetListener(this);
-        }
     }
 
     @Override
@@ -243,7 +249,7 @@ public class TripFactoryFragment extends BaseFragment implements
             saveTrip();
             return true;
         } else if (id == R.id.action_delete) {
-            deleteTrip();
+            createDeleteTripConfirmationDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -344,6 +350,15 @@ public class TripFactoryFragment extends BaseFragment implements
     private void deleteTrip() {
         mListener.deleteTrip(mTrip);
     }
+
+    private void createDeleteTripConfirmationDialog() {
+        AlertDialogFragment alertDialogFragment = new AlertDialogFragment();
+        alertDialogFragment.setTitle(R.string.title_delete_trip);
+        alertDialogFragment.setMessage(R.string.message_delete_trip);
+        alertDialogFragment.setOnAlertListener(this);
+        alertDialogFragment.show(getFragmentManager(), TAG_ALERT_DIALOG_FRAGMENT);
+    }
+
 
     @Override
     public void onDateSet(int targetViewId, long dateMillis, String dateText) {
@@ -480,6 +495,11 @@ public class TripFactoryFragment extends BaseFragment implements
             Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void positiveAlertButtonClicked() {
+        deleteTrip();
     }
 
     public interface OnTripFactoryListener {

@@ -30,6 +30,10 @@
     <string name="trip_updated_success">Trip successfully updated</string>
     <string name="trip_deleted_error">Error while deleting Trip</string>
     <string name="trip_updated_error">Error while updating Trip</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_delete_trip">Delete Trip</string>
+    <string name="message_delete_trip">Do you want to permanently delete this Trip?</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>
