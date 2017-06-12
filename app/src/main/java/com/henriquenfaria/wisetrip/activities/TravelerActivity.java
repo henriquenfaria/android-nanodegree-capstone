@@ -34,7 +34,7 @@ public class TravelerActivity extends AppCompatActivity implements
         TravelerAdapter.OnTravelerAdapter,
         SearchView.OnQueryTextListener {
 
-    private static final String LOG_TAG = TravelerActivity.class.getSimpleName();
+
     private static final int ID_TASK_CONTACTS = 1;
     private static final String SAVE_TRAVELER_KEY = "save_traveler_key";
 

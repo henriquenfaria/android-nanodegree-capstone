@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,11 +25,11 @@ import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 
 public class PlacePhotoIntentService extends IntentService implements GoogleApiClient
         .OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
-
-    private static final String LOG_TAG = PlacePhotoIntentService.class.getSimpleName();
 
     public PlacePhotoIntentService() {
         super(PlacePhotoIntentService.class.getSimpleName());
@@ -54,7 +53,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     boolean isDeleted = Utils.deleteFileFromInternalStorage(
                             Constants.Global.DESTINATION_PHOTO_DIR, trip.getId());
                     if (isDeleted) {
-                        Log.d(LOG_TAG, "destination photo deleted");
+                        Timber.d("destination photo deleted");
                     }
                 }
             }
@@ -62,7 +61,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
     }
 
     private void addDestinationPhoto(Trip trip, boolean isChange) {
-        Log.d(LOG_TAG, "addDestinationPhoto()");
+        Timber.d("addDestinationPhoto()");
         GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addConnectionCallbacks(this)
@@ -102,7 +101,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         }
     }
 
-    private void sendResultBroadcast(){
+    private void sendResultBroadcast() {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(Constants.Action.ACTION_PLACE_PHOTO_RESULT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);

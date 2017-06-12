@@ -27,7 +27,6 @@ import com.henriquenfaria.wisetrip.fragments.TripListFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String TAG_MAIN_FRAGMENT = "tag_main_fragment";
 
     private boolean mIsTwoPane;

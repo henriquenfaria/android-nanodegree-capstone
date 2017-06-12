@@ -20,8 +20,6 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
 
-    private static final String LOG_TAG = TripFactoryActivity.class.getSimpleName();
-
     private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
     private static final String SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE =
             "save_is_trips_event_listener_active";

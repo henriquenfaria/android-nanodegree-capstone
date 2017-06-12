@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.TripFirebaseHolder;
 import com.henriquenfaria.wisetrip.data.TripFirebaseRecyclerAdapter;
@@ -34,10 +32,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class TripListFragment extends BaseFragment {
-
-    private static final String LOG_TAG = TripListFragment.class.getSimpleName();
 
     @BindView(R.id.trip_list_recycler_view)
     protected RecyclerView mTripListRecyclerView;
@@ -101,7 +98,7 @@ public class TripListFragment extends BaseFragment {
             mTripsEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Log.d(LOG_TAG, "onChildAdded");
+                    Timber.d("onChildAdded");
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null) {
@@ -118,7 +115,7 @@ public class TripListFragment extends BaseFragment {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Log.d(LOG_TAG, "onChildChanged");
+                    Timber.d("onChildChanged");
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null) {
@@ -132,7 +129,7 @@ public class TripListFragment extends BaseFragment {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d(LOG_TAG, "onChildRemoved");
+                    Timber.d("onChildRemoved");
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null) {
@@ -147,12 +144,12 @@ public class TripListFragment extends BaseFragment {
 
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    Log.d(LOG_TAG, "onChildMoved");
+                    Timber.d("onChildMoved");
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.d(LOG_TAG, "onCancelled");
+                    Timber.d("onCancelled");
                 }
 
             };

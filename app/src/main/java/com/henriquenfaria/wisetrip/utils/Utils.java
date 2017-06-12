@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.henriquenfaria.wisetrip.models.Traveler;
 
@@ -16,12 +15,12 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /* Utility class with static helper methods */
 public class Utils {
-
-    private static final String LOG_TAG = Utils.class.getSimpleName();
 
     public static String getFormattedFullTripDateText(long startDateMillis, long endDateMillis) {
         Calendar startDateCalendar = Calendar.getInstance(Locale.getDefault());
@@ -72,7 +71,7 @@ public class Utils {
             fos = new FileOutputStream(photoFile);
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (IOException e) {
-            Log.d(LOG_TAG, "IOException while saving bitmap to internal storage");
+            Timber.e("IOException while saving bitmap to internal storage");
             e.printStackTrace();
         } finally {
             try {
@@ -80,7 +79,7 @@ public class Utils {
                     fos.close();
                 }
             } catch (IOException e) {
-                Log.d(LOG_TAG, "IOException while saving bitmap to internal storage");
+                Timber.e("IOException while saving bitmap to internal storage");
                 e.printStackTrace();
             }
         }
@@ -109,7 +108,7 @@ public class Utils {
         try {
             isDeleted = file.delete();
         } catch (SecurityException e) {
-            Log.d(LOG_TAG, "SecurityException while deleting bitmap from internal storage");
+            Timber.e("SecurityException while deleting bitmap from internal storage");
             e.printStackTrace();
         }
 

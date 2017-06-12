@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,6 +43,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -53,7 +53,6 @@ public class TripFactoryFragment extends BaseFragment implements
         AlertDialogFragment.OnAlertListener,
         DestinationAdapter.OnDestinationClickListener {
 
-    private static final String LOG_TAG = TripFactoryFragment.class.getSimpleName();
     private static final String ARG_TRIP = "arg_trip";
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String TAG_ALERT_DIALOG_FRAGMENT = "tag_alert_dialog_fragment";
@@ -430,7 +429,7 @@ public class TripFactoryFragment extends BaseFragment implements
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
                         Toast.LENGTH_SHORT).show();
-                Log.i(LOG_TAG, status.getStatusMessage());
+                Timber.i(status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
@@ -449,7 +448,7 @@ public class TripFactoryFragment extends BaseFragment implements
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
                 Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
                         Toast.LENGTH_SHORT).show();
-                Log.i(LOG_TAG, status.getStatusMessage());
+                Timber.i(status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
