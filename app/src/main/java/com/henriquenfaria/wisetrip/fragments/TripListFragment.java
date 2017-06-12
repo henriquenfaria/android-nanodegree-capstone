@@ -1,8 +1,12 @@
 package com.henriquenfaria.wisetrip.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -47,9 +51,7 @@ public class TripListFragment extends BaseFragment {
     private ChildEventListener mTripsEventListener;
     private ValueEventListener mValueEventListener;
 
-    // Use this variable to control whether to call or not the PlacePhotoIntentService because
-    // onChildAdded is called for every item previously present
-    private boolean mIsInitialDataLoaded;
+    private PlacePhotoReceiver mPlacePhotoReceiver;
 
 
     @Override
@@ -93,6 +95,8 @@ public class TripListFragment extends BaseFragment {
 
         mTripListRecyclerView.setAdapter(mTripAdapter);
 
+        mPlacePhotoReceiver = new PlacePhotoReceiver();
+
         return rootView;
     }
 
@@ -103,18 +107,15 @@ public class TripListFragment extends BaseFragment {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Log.d(LOG_TAG, "onChildAdded");
 
-                    if (mIsInitialDataLoaded) {
-                        Log.d(LOG_TAG, "onChildAdded - mIsInitialDataLoaded");
-                        Trip trip = dataSnapshot.getValue(Trip.class);
-                        if (trip != null) {
-                            Intent placePhotoIntentService = new Intent(mFragmentActivity,
-                                    PlacePhotoIntentService.class);
-                            placePhotoIntentService.setAction(Constants.Action.ACTION_GET_PHOTO);
-                            List<Destination> destinations = trip.getDestinations();
-                            if (destinations.size() > 0) {
-                                placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
-                                mFragmentActivity.startService(placePhotoIntentService);
-                            }
+                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    if (trip != null) {
+                        Intent placePhotoIntentService = new Intent(mFragmentActivity,
+                                PlacePhotoIntentService.class);
+                        placePhotoIntentService.setAction(Constants.Action.ACTION_ADD_PHOTO);
+                        List<Destination> destinations = trip.getDestinations();
+                        if (destinations.size() > 0) {
+                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                            mFragmentActivity.startService(placePhotoIntentService);
                         }
                     }
                 }
@@ -122,33 +123,30 @@ public class TripListFragment extends BaseFragment {
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     Log.d(LOG_TAG, "onChildChanged");
-                    if (mIsInitialDataLoaded) {
-                        Log.d(LOG_TAG, "onChildChanged - mIsInitialDataLoaded");
-                        Trip trip = dataSnapshot.getValue(Trip.class);
-                        if (trip != null) {
-                            Intent placePhotoIntentService = new Intent(mFragmentActivity,
-                                    PlacePhotoIntentService.class);
-                            placePhotoIntentService.setAction(Constants.Action.ACTION_GET_PHOTO);
-                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
-                            mFragmentActivity.startService(placePhotoIntentService);
-                        }
+
+                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    if (trip != null) {
+                        Intent placePhotoIntentService = new Intent(mFragmentActivity,
+                                PlacePhotoIntentService.class);
+                        placePhotoIntentService.setAction(Constants.Action.ACTION_CHANGE_PHOTO);
+                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                        mFragmentActivity.startService(placePhotoIntentService);
                     }
                 }
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Log.d(LOG_TAG, "onChildRemoved");
-                    if (mIsInitialDataLoaded) {
-                        Log.d(LOG_TAG, "onChildRemoved - mIsInitialDataLoaded");
-                        Trip trip = dataSnapshot.getValue(Trip.class);
-                        if (trip != null) {
-                            Intent placePhotoIntentService = new Intent(mFragmentActivity,
-                                    PlacePhotoIntentService.class);
-                            placePhotoIntentService.setAction(Constants.Action.ACTION_DELETE_PHOTO);
-                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
-                            mFragmentActivity.startService(placePhotoIntentService);
-                        }
+
+                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    if (trip != null) {
+                        Intent placePhotoIntentService = new Intent(mFragmentActivity,
+                                PlacePhotoIntentService.class);
+                        placePhotoIntentService.setAction(Constants.Action.ACTION_REMOVE_PHOTO);
+                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                        mFragmentActivity.startService(placePhotoIntentService);
                     }
+
                 }
 
                 @Override
@@ -165,13 +163,13 @@ public class TripListFragment extends BaseFragment {
             mUserTripReference.addChildEventListener(mTripsEventListener);
         }
 
-        if (mValueEventListener == null) {
+        /*if (mValueEventListener == null) {
             mValueEventListener = new ValueEventListener() {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.d(LOG_TAG, "onDataChange");
-                    mIsInitialDataLoaded = true;
+
                 }
 
                 @Override
@@ -181,7 +179,7 @@ public class TripListFragment extends BaseFragment {
             };
             mUserTripReference.addListenerForSingleValueEvent(mValueEventListener);
 
-        }
+        }*/
     }
 
     private void detachDatabaseReadListener() {
@@ -206,4 +204,31 @@ public class TripListFragment extends BaseFragment {
         detachDatabaseReadListener();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mPlacePhotoReceiver != null) {
+            LocalBroadcastManager.getInstance(mFragmentActivity)
+                    .registerReceiver(mPlacePhotoReceiver, new IntentFilter(Constants.Action.ACTION_PLACE_PHOTO_RESULT));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mPlacePhotoReceiver != null) {
+            LocalBroadcastManager.getInstance(mFragmentActivity).unregisterReceiver(mPlacePhotoReceiver);
+        }
+    }
+
+    private class PlacePhotoReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mTripAdapter != null) {
+                //TODO: Find a way to update just the modified items, not the whole list
+                // mTripAdapter.notifyItemChanged(itemPosition));
+                mTripAdapter.notifyItemRangeChanged(0, mTripAdapter.getItemCount());
+            }
+        }
+    }
 }

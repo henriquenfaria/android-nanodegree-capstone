@@ -31,7 +31,6 @@ public class Trip implements Parcelable {
         destinations = new ArrayList<>();
     }
 
-
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -75,6 +74,7 @@ public class Trip implements Parcelable {
     public void setEndDate(Long endDate) {
         this.endDate = endDate;
     }
+
 
     public Map<String, Traveler> getTravelers() {
         return travelers;

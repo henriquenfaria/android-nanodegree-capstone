@@ -23,7 +23,9 @@ public class Constants {
 
     // Intent actions
     public static class Action {
-        public static final String ACTION_GET_PHOTO = "action_get_photo";
-        public static final String ACTION_DELETE_PHOTO = "action_delete_photo";
+        public static final String ACTION_ADD_PHOTO = "action_add_photo";
+        public static final String ACTION_CHANGE_PHOTO = "action_change_photo";
+        public static final String ACTION_REMOVE_PHOTO = "action_remove_photo";
+        public static final String ACTION_PLACE_PHOTO_RESULT = "action_place_photo_result";
     }
 }

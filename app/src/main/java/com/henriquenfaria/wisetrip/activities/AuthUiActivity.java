@@ -13,6 +13,8 @@ import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.Arrays;
 
@@ -126,12 +128,11 @@ public class AuthUiActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: Delete it if not needed in the future
     private void onSignInInitialize() {
     }
 
-    // TODO: Delete it if not needed in the future
     private void onSignOutCleanup() {
+        // Delete all Trip photos on sign out
+        Utils.deleteFolderFromInternalStorage(Constants.Global.DESTINATION_PHOTO_DIR);
     }
-
 }

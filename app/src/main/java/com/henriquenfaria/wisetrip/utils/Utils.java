@@ -62,7 +62,8 @@ public class Utils {
         return travelersString.toString();
     }
 
-    public static void saveBitmapToInternalStorage(Bitmap bitmapImage, String directory, String fileName) {
+    public static void saveBitmapToInternalStorage(Bitmap bitmapImage, String directory,
+                                                   String fileName) {
         FileOutputStream fos = null;
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
@@ -96,7 +97,6 @@ public class Utils {
         }
 
         return null;
-
     }
 
     public static boolean deleteFileFromInternalStorage(String directory, String fileName) {
@@ -104,6 +104,7 @@ public class Utils {
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File file = new File(directoryFile, fileName);
         boolean isDeleted = false;
+
 
         try {
             isDeleted = file.delete();
@@ -115,4 +116,23 @@ public class Utils {
         return isDeleted;
     }
 
+    public static boolean deleteFolderFromInternalStorage(String directory) {
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
+        if (directoryFile.isDirectory()) {
+            for (File child : directoryFile.listFiles()) {
+                child.delete();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isFileExists(String directory, String fileName) {
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
+        File file = new File(directoryFile, fileName);
+        return file.exists();
+    }
 }
