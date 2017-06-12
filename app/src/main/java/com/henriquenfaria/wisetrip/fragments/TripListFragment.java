@@ -227,7 +227,7 @@ public class TripListFragment extends BaseFragment {
             if (mTripAdapter != null) {
                 //TODO: Find a way to update just the modified items, not the whole list
                 // mTripAdapter.notifyItemChanged(itemPosition));
-                mTripAdapter.notifyItemRangeChanged(0, mTripAdapter.getItemCount());
+                mTripAdapter.notifyDataSetChanged();
             }
         }
     }
