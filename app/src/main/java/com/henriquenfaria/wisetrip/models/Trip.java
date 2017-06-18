@@ -2,6 +2,7 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Trip implements Parcelable {
+public class Trip implements Parcelable, Comparable<Trip> {
 
     private String id;
     private String title;
@@ -20,6 +21,12 @@ public class Trip implements Parcelable {
     private Long endDate;
     private Map<String, Traveler> travelers;
     private List<Destination> destinations;
+
+
+
+    public enum State {
+        CURRENT, UPCOMING, PAST
+    }
 
     public Trip() {
         // Required for Firebase
@@ -75,7 +82,6 @@ public class Trip implements Parcelable {
         this.endDate = endDate;
     }
 
-
     public Map<String, Traveler> getTravelers() {
         return travelers;
     }
@@ -88,9 +94,28 @@ public class Trip implements Parcelable {
         return destinations;
     }
 
-    public void setDestinations(List<Destination> destinations) {
-        this.destinations = destinations;
+    public State getState(long currentMillis){
+        if (currentMillis >= startDate && currentMillis <= endDate) {
+            return State.CURRENT;
+        } else if (endDate < currentMillis) {
+            return State.PAST;
+        } else {
+            return State.UPCOMING;
+        }
     }
+
+   /* @Override
+    public int compare(Trip trip1, Trip trip2) {
+        // Ascending order using start date
+        return  (int) (trip1.getStartDate() - trip2.getStartDate());
+    }*/
+
+    @Override
+    public int compareTo(@NonNull Trip trip) {
+        // Ascending order using start date
+        return (int) (this.getStartDate() - trip.getStartDate());
+    }
+
 
     @Override
     public int describeContents() {
@@ -137,6 +162,8 @@ public class Trip implements Parcelable {
             return new Trip[size];
         }
     };
+
+
 }
 
 

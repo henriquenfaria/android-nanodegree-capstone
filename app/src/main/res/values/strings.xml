@@ -34,6 +34,9 @@
     <string name="cancel">Cancel</string>
     <string name="title_delete_trip">Delete Trip</string>
     <string name="message_delete_trip">Do you want to permanently delete this Trip?</string>
+    <string name="current">Current</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="past">Past</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

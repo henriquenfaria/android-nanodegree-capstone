@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,46 +19,60 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.TripFirebaseHolder;
-import com.henriquenfaria.wisetrip.data.TripFirebaseRecyclerAdapter;
+import com.henriquenfaria.wisetrip.data.TripListSection;
 import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import timber.log.Timber;
 
 public class TripListFragment extends BaseFragment {
+
 
     @BindView(R.id.trip_list_recycler_view)
     protected RecyclerView mTripListRecyclerView;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUserTripReference;
+    private Query mUserTripQuery;
     private FirebaseUser mCurrentUser;
-    private TripFirebaseRecyclerAdapter mTripAdapter;
+    private SectionedRecyclerViewAdapter mTripAdapter;
     private ChildEventListener mTripsEventListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
+
+    private ArrayList<Trip> mUpcomingTrips;
+    private ArrayList<Trip> mCurrentTrips;
+    private ArrayList<Trip> mPastTrips;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mUpcomingTrips = new ArrayList<>();
+        mCurrentTrips = new ArrayList<>();
+        mPastTrips = new ArrayList<>();
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
-        mUserTripReference = mFirebaseDatabase.getReference()
+        mUserTripQuery = mFirebaseDatabase.getReference()
                 .child("user-trips")
-                .child(mCurrentUser.getUid());
+                .child(mCurrentUser.getUid())
+                //TODO: Need to order by child?
+                .orderByChild("startDate");
 
-        attachDatabaseReadListener();
+        // attachDatabaseReadListener();
     }
 
     @Override
@@ -68,13 +83,16 @@ public class TripListFragment extends BaseFragment {
 
         ButterKnife.bind(this, rootView);
 
+        // TODO: Another possible solution for descending ordering is to save a inverted timestamp
+        // -1 * new Date().getTime();
+        /*LinearLayoutManager reversedLayoutManager = new LinearLayoutManager(mFragmentActivity);
+        reversedLayoutManager.setReverseLayout(true);
+        reversedLayoutManager.setStackFromEnd(true);*/
+
+        mTripListRecyclerView.setLayoutManager(/*reversedLayoutManager*/new LinearLayoutManager
+                (mFragmentActivity));
         mTripListRecyclerView.setHasFixedSize(false);
-        mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        mTripAdapter = new TripFirebaseRecyclerAdapter(Trip.class, R.layout.trip_item,
-                TripFirebaseHolder.class, mUserTripReference) {
-
-        };
+        mTripAdapter = new SectionedRecyclerViewAdapter();
 
         // TODO: If date is properly indexed, use:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
@@ -87,6 +105,8 @@ public class TripListFragment extends BaseFragment {
          */
 
         mTripListRecyclerView.setAdapter(mTripAdapter);
+
+        attachDatabaseReadListener();
 
         mPlacePhotoReceiver = new PlacePhotoReceiver();
 
@@ -102,6 +122,16 @@ public class TripListFragment extends BaseFragment {
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null) {
+                        Trip.State state = trip.getState(System.currentTimeMillis());
+                        int index = addOrderedTripToList(trip, getTripList(state));
+                        if (index >= 0) {
+                            if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
+                                mTripAdapter.notifyItemInsertedInSection(state.name(), index);
+                            } else {
+                                recreateSections();
+                            }
+                        }
+
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_ADD_PHOTO);
@@ -119,6 +149,19 @@ public class TripListFragment extends BaseFragment {
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null) {
+                        if (removeTripFromAllLists(trip)) {
+                            Trip.State state = trip.getState(System.currentTimeMillis());
+                            int index = addOrderedTripToList(trip, getTripList(state));
+                            if (index >= 0) {
+                                if (mTripAdapter.getSection(state.name())
+                                        instanceof TripListSection) {
+                                    mTripAdapter.notifyItemInsertedInSection(state.name(), index);
+                                } else {
+                                    recreateSections();
+                                }
+                            }
+                        }
+
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_CHANGE_PHOTO);
@@ -133,18 +176,33 @@ public class TripListFragment extends BaseFragment {
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null) {
+                        Trip.State state = trip.getState(System.currentTimeMillis());
+                        int index = removeTripFromList(trip, getTripList(state));
+                        if (index >= 0) {
+                            if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
+                                if (getTripList(state).isEmpty()) {
+                                    mTripAdapter.removeSection(state.name());
+                                    mTripAdapter.notifyDataSetChanged();
+                                } else {
+                                    mTripAdapter.notifyItemRemovedFromSection(state.name(), index);
+                                    mTripAdapter.notifyItemRangeChangedInSection
+                                            (state.name(), index, getTripList(state).size());
+                                }
+                            }
+                        }
+
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_REMOVE_PHOTO);
                         placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
                         mFragmentActivity.startService(placePhotoIntentService);
                     }
-
                 }
 
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildMoved");
+                    //TODO: Implementation needed?
                 }
 
                 @Override
@@ -153,13 +211,13 @@ public class TripListFragment extends BaseFragment {
                 }
 
             };
-            mUserTripReference.addChildEventListener(mTripsEventListener);
+            mUserTripQuery.addChildEventListener(mTripsEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mTripsEventListener != null) {
-            mUserTripReference.removeEventListener(mTripsEventListener);
+            mUserTripQuery.removeEventListener(mTripsEventListener);
             mTripsEventListener = null;
         }
     }
@@ -167,11 +225,6 @@ public class TripListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (mTripAdapter != null) {
-            mTripAdapter.cleanup();
-        }
-
         detachDatabaseReadListener();
     }
 
@@ -180,7 +233,8 @@ public class TripListFragment extends BaseFragment {
         super.onResume();
         if (mPlacePhotoReceiver != null) {
             LocalBroadcastManager.getInstance(mFragmentActivity)
-                    .registerReceiver(mPlacePhotoReceiver, new IntentFilter(Constants.Action.ACTION_PLACE_PHOTO_RESULT));
+                    .registerReceiver(mPlacePhotoReceiver, new IntentFilter(Constants.Action
+                            .ACTION_PLACE_PHOTO_RESULT));
         }
     }
 
@@ -188,7 +242,8 @@ public class TripListFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         if (mPlacePhotoReceiver != null) {
-            LocalBroadcastManager.getInstance(mFragmentActivity).unregisterReceiver(mPlacePhotoReceiver);
+            LocalBroadcastManager.getInstance(mFragmentActivity).unregisterReceiver
+                    (mPlacePhotoReceiver);
         }
     }
 
@@ -200,6 +255,114 @@ public class TripListFragment extends BaseFragment {
                 // mTripAdapter.notifyItemChanged(itemPosition));
                 mTripAdapter.notifyDataSetChanged();
             }
+        }
+    }
+
+    // Insert a new trip to the list, sort the list and return the final item position in the list
+    private int addOrderedTripToList(Trip trip, ArrayList<Trip> sectionTripList) {
+        if (TextUtils.isEmpty(trip.getId())) {
+            return -1;
+        } else {
+            sectionTripList.add(trip);
+            Collections.sort(sectionTripList);
+            for (int i = 0; i < sectionTripList.size(); i++) {
+                if (TextUtils.equals(trip.getId(), sectionTripList.get(i).getId())) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Remove a Trip and return the index position of the trip in the array
+    private int removeTripFromList(Trip trip, ArrayList<Trip> sectionTripList) {
+        if (TextUtils.isEmpty(trip.getId()) || sectionTripList.size() <= 0) {
+            return -1;
+        } else {
+            for (int i = 0; i < sectionTripList.size(); i++) {
+                if (TextUtils.equals(trip.getId(), sectionTripList.get(i).getId())) {
+                    sectionTripList.remove(i);
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    // Search inside all lists for a Trip and remove it, returns true on a successful removal
+    private boolean removeTripFromAllLists(Trip trip) {
+        if (TextUtils.isEmpty(trip.getId())) {
+            return false;
+        } else {
+            for (Trip.State state : Trip.State.values()) {
+                int index = removeTripFromList(trip, getTripList(state));
+                if (index >= 0) {
+                    if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
+                        if (getTripList(state).isEmpty()) {
+                            mTripAdapter.removeSection(state.name());
+                            mTripAdapter.notifyDataSetChanged();
+                        } else {
+                            mTripAdapter.notifyItemRemovedFromSection(state.name(), index);
+                            mTripAdapter.notifyItemRangeChangedInSection
+                                    (state.name(), index, getTripList(state).size());
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // We must always keep sections order (Current - Upcoming - Past).
+    // To keep the correct order, we must first remove all sections and then add them back in order.
+    private void recreateSections() {
+        if (mTripAdapter != null) {
+            mTripAdapter.removeAllSections();
+            for (Trip.State state : Trip.State.values()) {
+                // ArrayList<Trip> list = getTripList(state);
+                if (!getTripList(state).isEmpty()) {
+                    mTripAdapter.addSection(state.name(), new TripListSection
+                            (mFragmentActivity, getSectionTitle(mFragmentActivity, state),
+                                    getTripList(state)));
+                }
+            }
+
+            mTripAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private ArrayList<Trip> getTripList(Trip.State state) {
+        switch (state) {
+            case CURRENT:
+                return mCurrentTrips;
+
+            case UPCOMING:
+                return mUpcomingTrips;
+
+            case PAST:
+                return mPastTrips;
+
+            default:
+                Timber.e("Can't find correct Trip list");
+                throw new IllegalArgumentException();
+        }
+    }
+
+    private String getSectionTitle(Context context, Trip.State state) {
+        switch (state) {
+            case CURRENT:
+                return context.getString(R.string.current);
+
+            case UPCOMING:
+                return context.getString(R.string.upcoming);
+
+            case PAST:
+                return context.getString(R.string.past);
+
+            default:
+                Timber.e("Can't find correct Trip title");
+                throw new IllegalArgumentException();
         }
     }
 }

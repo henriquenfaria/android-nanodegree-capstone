@@ -37,6 +37,8 @@ dependencies {
     compile 'com.google.firebase:firebase-database:10.2.6'
     compile 'com.google.firebase:firebase-auth:10.2.6'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+
+    //TODO: Remove if not used anymore
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
 
     //Butter Knife
@@ -50,6 +52,9 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
     compile 'com.android.support:support-v4:25.3.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
+
+    //SectionedRecyclerViewAdapter
+    compile 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.0.5'
 
     // CircleImageView for traveler photos
     compile 'de.hdodenhof:circleimageview:2.1.0'

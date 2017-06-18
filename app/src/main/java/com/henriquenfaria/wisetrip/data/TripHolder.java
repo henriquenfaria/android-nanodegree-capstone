@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 
-public class TripFirebaseHolder extends RecyclerView.ViewHolder {
+public class TripHolder extends RecyclerView.ViewHolder {
 
     private OnTripItemClickListener mOnTripItemClickListener;
     private OnEditTripClickListener mOnEditTripClickListener;
@@ -46,21 +46,21 @@ public class TripFirebaseHolder extends RecyclerView.ViewHolder {
     protected ImageView mEditButton;
 
 
-    public TripFirebaseHolder(View itemView) {
+    public TripHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
 
         mTripCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnTripItemClickListener.onTripItemClick(v, getAdapterPosition());
+                mOnTripItemClickListener.onTripItemClick(v);
             }
         });
 
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnEditTripClickListener.onEditTripClick(v, getAdapterPosition());
+                mOnEditTripClickListener.onEditTripClick(v);
             }
         });
     }
@@ -95,19 +95,19 @@ public class TripFirebaseHolder extends RecyclerView.ViewHolder {
     }
 
     public interface OnTripItemClickListener {
-        void onTripItemClick(View view, int position);
+        void onTripItemClick(View view);
     }
 
     public interface OnEditTripClickListener {
-        void onEditTripClick(View view, int position);
+        void onEditTripClick(View view);
     }
 
-    public void setOnTripItemClickListener(TripFirebaseHolder.OnTripItemClickListener
+    public void setOnTripItemClickListener(TripHolder.OnTripItemClickListener
                                                    clickListener) {
         mOnTripItemClickListener = clickListener;
     }
 
-    public void setOnEditTripClickListener(TripFirebaseHolder.OnEditTripClickListener
+    public void setOnEditTripClickListener(TripHolder.OnEditTripClickListener
                                                    clickListener) {
         mOnEditTripClickListener = clickListener;
     }

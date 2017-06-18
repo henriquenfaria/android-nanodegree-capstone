@@ -15,44 +15,20 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 
 public class DestinationAdapter extends
         RecyclerView.Adapter<DestinationAdapter.DestinationHolder> {
 
-    private static final int FOOTER_VIEW = 1;
+    private static final int FOOTER_VIEW_TYPE = 0;
+    private static final int ITEM_VIEW_TYPE = 1;
 
     private Context mContext;
     private OnDestinationClickListener mOnDestinationClickListener;
     private List<Destination> mDestinations;
     private boolean mIsFooterError;
 
-
-    public static class DestinationHolder extends RecyclerView.ViewHolder {
-        public TextView destinationText;
-
-        public DestinationHolder(View itemView) {
-            super(itemView);
-            destinationText = (TextView) itemView.findViewById(R.id.destination_text);
-        }
-    }
-
-    public static class FooterHolder extends DestinationHolder {
-        public FooterHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    public static class ItemHolder extends DestinationHolder {
-        public TextView descriptionText;
-        public ImageView removeDestinationButton;
-
-        public ItemHolder(View itemView) {
-            super(itemView);
-            descriptionText = (TextView) itemView.findViewById(R.id.destination_description_text);
-            removeDestinationButton = (ImageView) itemView.findViewById(R.id
-                    .remove_destination_button);
-        }
-    }
 
     public DestinationAdapter(Context context, OnDestinationClickListener
             onDestinationClickListener, List<Destination> destinations) {
@@ -63,18 +39,20 @@ public class DestinationAdapter extends
 
     @Override
     public DestinationHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == FOOTER_VIEW) {
-            View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.destination_footer, parent, false);
-
-            return new FooterHolder(itemView);
-
-        } else {
-            View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.destination_item, parent, false);
-
-            return new ItemHolder(itemView);
+        switch (viewType) {
+            case FOOTER_VIEW_TYPE:
+                View footer = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.destination_footer, parent, false);
+                return new FooterHolder(footer);
+            case ITEM_VIEW_TYPE:
+                View destination = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.destination_item, parent, false);
+                return new ItemHolder(destination);
+            default:
+                Timber.e("Unknown viewType");
+                throw new IllegalStateException();
         }
+
     }
 
     @Override
@@ -94,9 +72,9 @@ public class DestinationAdapter extends
                     mContext.getString(R.string.mandatory_field) : null);
 
             if (mDestinations != null && mDestinations.size() > 0) {
-                footer.destinationText.setHint(R.string. hint_where_are_you_going);
+                footer.destinationText.setHint(R.string.hint_where_are_you_going);
             } else {
-                footer.destinationText.setHint(R.string. hint_where_are_you_going_required);
+                footer.destinationText.setHint(R.string.hint_where_are_you_going_required);
             }
 
         } else if (viewHolder instanceof ItemHolder) {
@@ -148,17 +126,16 @@ public class DestinationAdapter extends
     public int getItemViewType(int position) {
         if (position == mDestinations.size()) {
             // Footer will be in the last position
-            return FOOTER_VIEW;
+            return FOOTER_VIEW_TYPE;
+        } else {
+            return ITEM_VIEW_TYPE;
         }
-
-        return super.getItemViewType(position);
     }
 
     public void swap(List<Destination> list) {
         mDestinations = list;
         notifyDataSetChanged();
     }
-
 
     public void setFooterError(boolean footerError) {
         mIsFooterError = footerError;
@@ -170,5 +147,32 @@ public class DestinationAdapter extends
         void onDestinationRemoveItemClick(int position);
 
         void onDestinationFooterClick(int position);
+    }
+
+    public static class DestinationHolder extends RecyclerView.ViewHolder {
+        public TextView destinationText;
+
+        public DestinationHolder(View itemView) {
+            super(itemView);
+            destinationText = (TextView) itemView.findViewById(R.id.destination_text);
+        }
+    }
+
+    public static class FooterHolder extends DestinationHolder {
+        public FooterHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public static class ItemHolder extends DestinationHolder {
+        public TextView descriptionText;
+        public ImageView removeDestinationButton;
+
+        public ItemHolder(View itemView) {
+            super(itemView);
+            descriptionText = (TextView) itemView.findViewById(R.id.destination_description_text);
+            removeDestinationButton = (ImageView) itemView.findViewById(R.id
+                    .remove_destination_button);
+        }
     }
 }
