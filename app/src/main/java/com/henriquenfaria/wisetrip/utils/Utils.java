@@ -2,8 +2,10 @@ package com.henriquenfaria.wisetrip.utils;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 
 import com.henriquenfaria.wisetrip.models.Traveler;
 
@@ -17,7 +19,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /* Utility class with static helper methods */
 public class Utils {
@@ -61,10 +62,11 @@ public class Utils {
         return travelersString.toString();
     }
 
-    public static void saveBitmapToInternalStorage(Bitmap bitmapImage, String directory,
+    public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String
+            directory,
                                                    String fileName) {
         FileOutputStream fos = null;
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File photoFile = new File(directoryFile, fileName);
         try {
@@ -85,8 +87,9 @@ public class Utils {
         }
     }
 
-    public static Bitmap getBitmapFromInternalStorage(String directory, String fileName) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+    public static Bitmap getBitmapFromInternalStorage(Context context, String directory, String
+            fileName) {
+        ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File photoFile = new File(directoryFile, fileName);
 
@@ -98,8 +101,9 @@ public class Utils {
         return null;
     }
 
-    public static boolean deleteFileFromInternalStorage(String directory, String fileName) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+    public static boolean deleteFileFromInternalStorage(Context context, String directory, String
+            fileName) {
+        ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File file = new File(directoryFile, fileName);
         boolean isDeleted = false;
@@ -115,8 +119,8 @@ public class Utils {
         return isDeleted;
     }
 
-    public static boolean deleteFolderFromInternalStorage(String directory) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+    public static boolean deleteFolderFromInternalStorage(Context context, String directory) {
+        ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         if (directoryFile.isDirectory()) {
             for (File child : directoryFile.listFiles()) {
@@ -128,10 +132,23 @@ public class Utils {
         }
     }
 
-    public static boolean isFileExists(String directory, String fileName) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+    public static boolean isFileExists(Context context, String directory, String fileName) {
+        ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File file = new File(directoryFile, fileName);
         return file.exists();
+    }
+
+    public static void saveBooleanToSharedPrefs(Context context, String key, boolean value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public static boolean getBooleanFromSharedPrefs(Context context, String key,
+                                                    boolean defaultValue) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getBoolean(key, defaultValue);
     }
 }

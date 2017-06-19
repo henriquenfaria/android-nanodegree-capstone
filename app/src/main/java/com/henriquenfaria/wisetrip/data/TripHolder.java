@@ -22,8 +22,6 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
 
 public class TripHolder extends RecyclerView.ViewHolder {
 
@@ -73,9 +71,9 @@ public class TripHolder extends RecyclerView.ViewHolder {
         mTripDate.setText(tripDate);
     }
 
-    public void setTripPhoto(String tripId) {
+    public void setTripPhoto(Context context, String tripId) {
         if (!TextUtils.isEmpty(tripId)) {
-            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+            ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
             File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
                     Context.MODE_PRIVATE);
             File photoFile = new File(directoryFile, tripId);

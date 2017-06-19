@@ -9,8 +9,6 @@ public class Constants {
         public static final int MAX_DESTINATIONS = 10;
         // Max Trip travelers
         public static final int MAX_TRAVELERS = 10;
-        // Max height for Trip photo
-        public static final String MAX_PHOTO_HEIGHT = "400";
         // Internal Storage directory for destination photos
         public static final String DESTINATION_PHOTO_DIR = "destinations";
     }
@@ -18,7 +16,13 @@ public class Constants {
     // Intent extras
     public static class Extra {
         public static final String EXTRA_TRIP = "extra_trip";
+        public static final String EXTRA_UPDATE_TRIP_LIST = "extra_update_trip_list";
         public static final String EXTRA_TRAVELER = "extra_traveler";
+    }
+
+    // Intent extras
+    public static class Preferences {
+        public static final String SIGN_IN_UPDATE_TRIP_LIST = "sign_in_update_trip_list";
     }
 
     // Intent actions
@@ -26,6 +30,7 @@ public class Constants {
         public static final String ACTION_ADD_PHOTO = "action_add_photo";
         public static final String ACTION_CHANGE_PHOTO = "action_change_photo";
         public static final String ACTION_REMOVE_PHOTO = "action_remove_photo";
-        public static final String ACTION_PLACE_PHOTO_RESULT = "action_place_photo_result";
+        public static final String ACTION_SIGN_OUT_CLEAN_UP = "action_sign_out_clean_up";
+        public static final String ACTION_UPDATE_TRIP_LIST = "action_update_trip_list";
     }
 }

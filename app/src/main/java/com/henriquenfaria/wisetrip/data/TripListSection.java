@@ -23,7 +23,6 @@ public class TripListSection extends StatelessSection {
     String mTitle;
     List<Trip> mTripList;
 
-
     public TripListSection(Context context, String title, List<Trip> tripList) {
         super(R.layout.trip_header_item, R.layout.trip_item);
         mContext = context;
@@ -48,12 +47,12 @@ public class TripListSection extends StatelessSection {
         tripHolder.setTripTitle(mTripList.get(position).getTitle());
         tripHolder.setTripDate(Utils.getFormattedFullTripDateText(mTripList.get(position).getStartDate(),
                 mTripList.get(position).getEndDate()));
-        tripHolder.setTripPhoto(mTripList.get(position).getId());
+        tripHolder.setTripPhoto(mContext, mTripList.get(position).getId());
         tripHolder.setOnTripItemClickListener(new TripHolder.OnTripItemClickListener() {
             @Override
             public void onTripItemClick(View view) {
                 // TODO: Remove Toast and call Trip main screen
-                Toast.makeText(view.getContext(), mTripList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, mTripList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
 

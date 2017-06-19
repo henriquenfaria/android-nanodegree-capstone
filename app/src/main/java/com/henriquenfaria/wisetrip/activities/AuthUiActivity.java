@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -13,6 +14,7 @@ import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
@@ -130,7 +132,11 @@ public class AuthUiActivity extends AppCompatActivity {
     }
 
     private void onSignOutCleanup() {
-        // Delete all Trip photos on sign out
-        Utils.deleteFolderFromInternalStorage(Constants.Global.DESTINATION_PHOTO_DIR);
+        // Start photo's clean up task
+        Utils.saveBooleanToSharedPrefs(this, Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, true);
+        Glide.get(this).clearMemory();
+        Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
+        placePhotoIntentService.setAction(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP);
+        startService(placePhotoIntentService);
     }
 }

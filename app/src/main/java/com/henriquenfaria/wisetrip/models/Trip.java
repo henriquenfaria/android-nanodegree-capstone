@@ -23,7 +23,6 @@ public class Trip implements Parcelable, Comparable<Trip> {
     private List<Destination> destinations;
 
 
-
     public enum State {
         CURRENT, UPCOMING, PAST
     }
@@ -94,7 +93,7 @@ public class Trip implements Parcelable, Comparable<Trip> {
         return destinations;
     }
 
-    public State getState(long currentMillis){
+    public State getState(long currentMillis) {
         if (currentMillis >= startDate && currentMillis <= endDate) {
             return State.CURRENT;
         } else if (endDate < currentMillis) {
@@ -104,18 +103,13 @@ public class Trip implements Parcelable, Comparable<Trip> {
         }
     }
 
-   /* @Override
-    public int compare(Trip trip1, Trip trip2) {
-        // Ascending order using start date
-        return  (int) (trip1.getStartDate() - trip2.getStartDate());
-    }*/
-
     @Override
     public int compareTo(@NonNull Trip trip) {
+        // TODO: Implement desc order for PAST items
+
         // Ascending order using start date
         return (int) (this.getStartDate() - trip.getStartDate());
     }
-
 
     @Override
     public int describeContents() {

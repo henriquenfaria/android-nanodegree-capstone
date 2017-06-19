@@ -21,12 +21,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.TripListSection;
 import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +51,7 @@ public class TripListFragment extends BaseFragment {
     private FirebaseUser mCurrentUser;
     private SectionedRecyclerViewAdapter mTripAdapter;
     private ChildEventListener mTripsEventListener;
+    private ValueEventListener mTripsValueListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
 
     private ArrayList<Trip> mUpcomingTrips;
@@ -138,6 +141,9 @@ public class TripListFragment extends BaseFragment {
                         List<Destination> destinations = trip.getDestinations();
                         if (destinations.size() > 0) {
                             placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_UPDATE_TRIP_LIST,
+                                    Utils.getBooleanFromSharedPrefs(mFragmentActivity,
+                                            Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, true));
                             mFragmentActivity.startService(placePhotoIntentService);
                         }
                     }
@@ -211,7 +217,26 @@ public class TripListFragment extends BaseFragment {
                 }
 
             };
+            if (mTripsValueListener == null) {
+                mTripsValueListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Force update list after sign in, after initial load, remove force update
+                        if (Utils.getBooleanFromSharedPrefs(mFragmentActivity,
+                                Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, true)) {
+                            Utils.saveBooleanToSharedPrefs(mFragmentActivity,
+                                    Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, false);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+            }
             mUserTripQuery.addChildEventListener(mTripsEventListener);
+            mUserTripQuery.addValueEventListener(mTripsValueListener);
         }
     }
 
@@ -219,6 +244,11 @@ public class TripListFragment extends BaseFragment {
         if (mTripsEventListener != null) {
             mUserTripQuery.removeEventListener(mTripsEventListener);
             mTripsEventListener = null;
+        }
+
+        if (mTripsValueListener != null) {
+            mUserTripQuery.removeEventListener(mTripsValueListener);
+            mTripsValueListener = null;
         }
     }
 
@@ -233,8 +263,8 @@ public class TripListFragment extends BaseFragment {
         super.onResume();
         if (mPlacePhotoReceiver != null) {
             LocalBroadcastManager.getInstance(mFragmentActivity)
-                    .registerReceiver(mPlacePhotoReceiver, new IntentFilter(Constants.Action
-                            .ACTION_PLACE_PHOTO_RESULT));
+                    .registerReceiver(mPlacePhotoReceiver,
+                            new IntentFilter(Constants.Action.ACTION_UPDATE_TRIP_LIST));
         }
     }
 
@@ -242,8 +272,8 @@ public class TripListFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         if (mPlacePhotoReceiver != null) {
-            LocalBroadcastManager.getInstance(mFragmentActivity).unregisterReceiver
-                    (mPlacePhotoReceiver);
+            LocalBroadcastManager.getInstance(mFragmentActivity)
+                    .unregisterReceiver(mPlacePhotoReceiver);
         }
     }
 

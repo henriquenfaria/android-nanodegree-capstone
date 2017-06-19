@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.PlacePhotoMetadata;
@@ -37,30 +38,53 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent != null && intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-            Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
-            if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                if (intent.getAction().equals(Constants.Action.ACTION_ADD_PHOTO)) {
+        if (intent.getAction().equals(Constants.Action.ACTION_ADD_PHOTO)) {
+            if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
+                Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     // Retrieves the photo of first trip's destination, save it in the internal
                     // storage and update Firebase db with the photo's attributions
-                    if (!Utils.isFileExists(Constants.Global.DESTINATION_PHOTO_DIR, trip.getId())) {
-                        addDestinationPhoto(trip, false);
+                    if (!Utils.isFileExists(getApplicationContext(),
+                            Constants.Global.DESTINATION_PHOTO_DIR, trip.getId())) {
+                        boolean updateTripList = intent.getBooleanExtra(Constants.Extra
+                                .EXTRA_UPDATE_TRIP_LIST, false);
+                        addDestinationPhoto(trip, updateTripList);
                     }
-                } else if (intent.getAction().equals(Constants.Action.ACTION_CHANGE_PHOTO)) {
-                    addDestinationPhoto(trip, true);
-                } else if (intent.getAction().equals(Constants.Action.ACTION_REMOVE_PHOTO)) {
+                }
+            }
+        } else if (intent.getAction().equals(Constants.Action.ACTION_CHANGE_PHOTO)) {
+            if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
+                Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                if (trip != null && !TextUtils.isEmpty(trip.getId())) {
+                    boolean updateTripList = intent.getBooleanExtra(Constants.Extra
+                                    .EXTRA_UPDATE_TRIP_LIST, false);
+                    addDestinationPhoto(trip, updateTripList);
+                }
+            }
+        } else if (intent.getAction().equals(Constants.Action.ACTION_REMOVE_PHOTO)) {
+
+            if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
+                Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     // Deletes from the internal storage the photo of the first trip's destination
-                    boolean isDeleted = Utils.deleteFileFromInternalStorage(
-                            Constants.Global.DESTINATION_PHOTO_DIR, trip.getId());
+                    boolean isDeleted = Utils.deleteFileFromInternalStorage
+                            (getApplicationContext(),
+                                    Constants.Global.DESTINATION_PHOTO_DIR, trip.getId());
                     if (isDeleted) {
                         Timber.d("destination photo deleted");
                     }
                 }
             }
+
+        } else if (intent.getAction().equals(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP)) {
+            // Remove local photos and clean Glide's cache and memory
+            Utils.deleteFolderFromInternalStorage(getApplicationContext(),
+                    Constants.Global.DESTINATION_PHOTO_DIR);
+            Glide.get(this).clearDiskCache();
         }
     }
 
-    private void addDestinationPhoto(Trip trip, boolean isChange) {
+    private void addDestinationPhoto(Trip trip, boolean updateTripList) {
         Timber.d("addDestinationPhoto()");
         GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -85,13 +109,14 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     CharSequence attribution = photo.getAttributions();
 
                     if (image != null) {
-                        Utils.saveBitmapToInternalStorage(image, Constants.Global
-                                .DESTINATION_PHOTO_DIR, trip.getId());
+                        Utils.saveBitmapToInternalStorage(getApplicationContext(), image,
+                                Constants.Global
+                                        .DESTINATION_PHOTO_DIR, trip.getId());
 
                         addDestinationPhotoAttribution(trip, attribution);
 
-                        if (!isChange) {
-                            sendResultBroadcast();
+                        if (updateTripList) {
+                            sendUpdateTripListBroadcast();
                         }
                     }
 
@@ -99,12 +124,6 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                 }
             }
         }
-    }
-
-    private void sendResultBroadcast() {
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(Constants.Action.ACTION_PLACE_PHOTO_RESULT);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
     private void addDestinationPhotoAttribution(Trip trip, CharSequence attribution) {
@@ -123,6 +142,13 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
         destinationReference.setValue(attribution);
     }
+
+    private void sendUpdateTripListBroadcast() {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(Constants.Action.ACTION_UPDATE_TRIP_LIST);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
