@@ -16,14 +16,9 @@ public class Constants {
     // Intent extras
     public static class Extra {
         public static final String EXTRA_TRIP = "extra_trip";
-        public static final String EXTRA_UPDATE_TRIP_LIST = "extra_update_trip_list";
         public static final String EXTRA_TRAVELER = "extra_traveler";
     }
 
-    // Intent extras
-    public static class Preferences {
-        public static final String SIGN_IN_UPDATE_TRIP_LIST = "sign_in_update_trip_list";
-    }
 
     // Intent actions
     public static class Action {

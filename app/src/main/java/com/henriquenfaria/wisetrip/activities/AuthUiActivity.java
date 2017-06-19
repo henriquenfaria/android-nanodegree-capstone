@@ -16,7 +16,6 @@ import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
-import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.Arrays;
 
@@ -133,7 +132,6 @@ public class AuthUiActivity extends AppCompatActivity {
 
     private void onSignOutCleanup() {
         // Start photo's clean up task
-        Utils.saveBooleanToSharedPrefs(this, Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, true);
         Glide.get(this).clearMemory();
         Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
         placePhotoIntentService.setAction(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP);

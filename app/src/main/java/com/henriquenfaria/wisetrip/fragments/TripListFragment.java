@@ -10,7 +10,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +19,18 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.TripListSection;
 import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
-import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -48,16 +46,27 @@ public class TripListFragment extends BaseFragment {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private Query mUserTripQuery;
+    private DatabaseReference mUserTripReference;
     private FirebaseUser mCurrentUser;
     private SectionedRecyclerViewAdapter mTripAdapter;
     private ChildEventListener mTripsEventListener;
-    private ValueEventListener mTripsValueListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
 
     private ArrayList<Trip> mUpcomingTrips;
     private ArrayList<Trip> mCurrentTrips;
     private ArrayList<Trip> mPastTrips;
+
+    private Comparator<Trip> mAscComparator = new Comparator<Trip>() {
+        public int compare(Trip t1, Trip t2) {
+            return t1.getStartDate().compareTo(t2.getStartDate());
+        }
+    };
+
+    private Comparator<Trip> mDecComparator = new Comparator<Trip>() {
+        public int compare(Trip t1, Trip t2) {
+            return t2.getStartDate().compareTo(t1.getStartDate());
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,11 +79,11 @@ public class TripListFragment extends BaseFragment {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
-        mUserTripQuery = mFirebaseDatabase.getReference()
+        //TODO: Need to order by child?
+        mUserTripReference = mFirebaseDatabase.getReference()
                 .child("user-trips")
-                .child(mCurrentUser.getUid())
-                //TODO: Need to order by child?
-                .orderByChild("startDate");
+                .child(mCurrentUser.getUid());
+
 
         // attachDatabaseReadListener();
     }
@@ -142,9 +151,6 @@ public class TripListFragment extends BaseFragment {
                         List<Destination> destinations = trip.getDestinations();
                         if (destinations.size() > 0) {
                             placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
-                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_UPDATE_TRIP_LIST,
-                                    Utils.getBooleanFromSharedPrefs(mFragmentActivity,
-                                            Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, true));
                             mFragmentActivity.startService(placePhotoIntentService);
                         }
                     }
@@ -192,9 +198,8 @@ public class TripListFragment extends BaseFragment {
                                     mTripAdapter.notifyDataSetChanged();
                                 } else {
                                     mTripAdapter.notifyItemRemovedFromSection(state.name(), index);
-                                    //TODO: To fix grey Trip CardView after removing trip. Check!
-                                   /* mTripAdapter.notifyItemRangeChangedInSection
-                                            (state.name(), index, getTripList(state).size());*/
+                                    mTripAdapter.notifyItemRangeChangedInSection
+                                            (state.name(), index, getTripList(state).size());
 
                                 }
                             }
@@ -220,38 +225,17 @@ public class TripListFragment extends BaseFragment {
                 }
 
             };
-            if (mTripsValueListener == null) {
-                mTripsValueListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Force update list after sign in, after initial load, remove force update
-                        if (Utils.getBooleanFromSharedPrefs(mFragmentActivity,
-                                Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, true)) {
-                            Utils.saveBooleanToSharedPrefs(mFragmentActivity,
-                                    Constants.Preferences.SIGN_IN_UPDATE_TRIP_LIST, false);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                };
-            }
-            mUserTripQuery.addChildEventListener(mTripsEventListener);
-            mUserTripQuery.addValueEventListener(mTripsValueListener);
+            mUserTripReference.addChildEventListener(mTripsEventListener);
+
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mTripsEventListener != null) {
-            mUserTripQuery.removeEventListener(mTripsEventListener);
+            mUserTripReference.removeEventListener(mTripsEventListener);
             mTripsEventListener = null;
-        }
-
-        if (mTripsValueListener != null) {
-            mUserTripQuery.removeEventListener(mTripsValueListener);
-            mTripsValueListener = null;
         }
     }
 
@@ -296,8 +280,16 @@ public class TripListFragment extends BaseFragment {
         if (TextUtils.isEmpty(trip.getId())) {
             return -1;
         } else {
+            //TODO: Must improve logic performance of below algorithm
             sectionTripList.add(trip);
-            Collections.sort(sectionTripList);
+
+            // Desc order for past Trips
+            if (sectionTripList == mPastTrips) {
+                Collections.sort(sectionTripList, mDecComparator);
+            } else {
+                Collections.sort(sectionTripList, mAscComparator);
+            }
+
             for (int i = 0; i < sectionTripList.size(); i++) {
                 if (TextUtils.equals(trip.getId(), sectionTripList.get(i).getId())) {
                     return i;
@@ -336,9 +328,8 @@ public class TripListFragment extends BaseFragment {
                             mTripAdapter.notifyDataSetChanged();
                         } else {
                             mTripAdapter.notifyItemRemovedFromSection(state.name(), index);
-                            //TODO: To fix grey Trip CardView after removing trip. Check!
-                           /* mTripAdapter.notifyItemRangeChangedInSection
-                                    (state.name(), index, getTripList(state).size());*/
+                            mTripAdapter.notifyItemRangeChangedInSection
+                                    (state.name(), index, getTripList(state).size());
                         }
                         return true;
                     }

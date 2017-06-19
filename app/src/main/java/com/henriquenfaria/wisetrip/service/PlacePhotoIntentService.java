@@ -46,9 +46,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     // storage and update Firebase db with the photo's attributions
                     if (!Utils.isFileExists(getApplicationContext(),
                             Constants.Global.DESTINATION_PHOTO_DIR, trip.getId())) {
-                        boolean updateTripList = intent.getBooleanExtra(Constants.Extra
-                                .EXTRA_UPDATE_TRIP_LIST, false);
-                        addDestinationPhoto(trip, updateTripList);
+                        addDestinationPhoto(trip, true);
                     }
                 }
             }
@@ -56,9 +54,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                    boolean updateTripList = intent.getBooleanExtra(Constants.Extra
-                                    .EXTRA_UPDATE_TRIP_LIST, false);
-                    addDestinationPhoto(trip, updateTripList);
+                    addDestinationPhoto(trip, true);
                 }
             }
         } else if (intent.getAction().equals(Constants.Action.ACTION_REMOVE_PHOTO)) {
@@ -113,7 +109,8 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                                 Constants.Global
                                         .DESTINATION_PHOTO_DIR, trip.getId());
 
-                        addDestinationPhotoAttribution(trip, attribution);
+                        // TODO: Must modify this method to save the attribution to another place
+                        // addDestinationPhotoAttribution(trip, attribution);
 
                         if (updateTripList) {
                             sendUpdateTripListBroadcast();
@@ -126,6 +123,8 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         }
     }
 
+    // TODO: Must move this code to another path, like: photo-attribution
+    // Calling it like this is making onChildChanged be executed
     private void addDestinationPhotoAttribution(Trip trip, CharSequence attribution) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();

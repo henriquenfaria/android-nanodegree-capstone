@@ -2,7 +2,6 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Trip implements Parcelable, Comparable<Trip> {
+public class Trip implements Parcelable {
 
     private String id;
     private String title;
@@ -94,21 +93,13 @@ public class Trip implements Parcelable, Comparable<Trip> {
     }
 
     public State getState(long currentMillis) {
-        if (currentMillis >= startDate && currentMillis <= endDate) {
+        if (currentMillis >= this.startDate && currentMillis <= this.endDate) {
             return State.CURRENT;
-        } else if (endDate < currentMillis) {
+        } else if (this.endDate < currentMillis) {
             return State.PAST;
         } else {
             return State.UPCOMING;
         }
-    }
-
-    @Override
-    public int compareTo(@NonNull Trip trip) {
-        // TODO: Implement desc order for PAST items
-
-        // Ascending order using start date
-        return (int) (this.getStartDate() - trip.getStartDate());
     }
 
     @Override
