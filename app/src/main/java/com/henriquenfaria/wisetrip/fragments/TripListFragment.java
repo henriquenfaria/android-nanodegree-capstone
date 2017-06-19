@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,8 +192,10 @@ public class TripListFragment extends BaseFragment {
                                     mTripAdapter.notifyDataSetChanged();
                                 } else {
                                     mTripAdapter.notifyItemRemovedFromSection(state.name(), index);
-                                    mTripAdapter.notifyItemRangeChangedInSection
-                                            (state.name(), index, getTripList(state).size());
+                                    //TODO: To fix grey Trip CardView after removing trip. Check!
+                                   /* mTripAdapter.notifyItemRangeChangedInSection
+                                            (state.name(), index, getTripList(state).size());*/
+
                                 }
                             }
                         }
@@ -333,8 +336,9 @@ public class TripListFragment extends BaseFragment {
                             mTripAdapter.notifyDataSetChanged();
                         } else {
                             mTripAdapter.notifyItemRemovedFromSection(state.name(), index);
-                            mTripAdapter.notifyItemRangeChangedInSection
-                                    (state.name(), index, getTripList(state).size());
+                            //TODO: To fix grey Trip CardView after removing trip. Check!
+                           /* mTripAdapter.notifyItemRangeChangedInSection
+                                    (state.name(), index, getTripList(state).size());*/
                         }
                         return true;
                     }
@@ -353,8 +357,7 @@ public class TripListFragment extends BaseFragment {
                 // ArrayList<Trip> list = getTripList(state);
                 if (!getTripList(state).isEmpty()) {
                     mTripAdapter.addSection(state.name(), new TripListSection
-                            (mFragmentActivity, getSectionTitle(mFragmentActivity, state),
-                                    getTripList(state)));
+                            (getSectionTitle(mFragmentActivity, state), getTripList(state)));
                 }
             }
 

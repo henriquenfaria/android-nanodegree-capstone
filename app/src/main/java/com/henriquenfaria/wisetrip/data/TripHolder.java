@@ -25,23 +25,18 @@ import butterknife.ButterKnife;
 
 public class TripHolder extends RecyclerView.ViewHolder {
 
-    private OnTripItemClickListener mOnTripItemClickListener;
-    private OnEditTripClickListener mOnEditTripClickListener;
-
     @BindView(R.id.trip_card)
     protected CardView mTripCard;
-
     @BindView(R.id.trip_photo)
     protected ImageView mTripPhoto;
-
     @BindView(R.id.trip_title)
     protected TextView mTripTitle;
-
     @BindView(R.id.trip_date)
     protected TextView mTripDate;
-
     @BindView(R.id.edit_button)
     protected ImageView mEditButton;
+    private OnTripItemClickListener mOnTripItemClickListener;
+    private OnEditTripClickListener mOnEditTripClickListener;
 
 
     public TripHolder(View itemView) {
@@ -71,34 +66,30 @@ public class TripHolder extends RecyclerView.ViewHolder {
         mTripDate.setText(tripDate);
     }
 
-    public void setTripPhoto(Context context, String tripId) {
+    public void setTripPhoto(String tripId) {
         if (!TextUtils.isEmpty(tripId)) {
-            ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+            ContextWrapper cw = new ContextWrapper(mTripPhoto.getContext().getApplicationContext());
             File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
                     Context.MODE_PRIVATE);
             File photoFile = new File(directoryFile, tripId);
+            ObjectKey signatureKey = new ObjectKey(photoFile.lastModified() + photoFile.length());
 
             RequestOptions requestOptions =
                     new RequestOptions()
+                            .centerCrop()
                             .error(R.drawable.trip_card_default)
-                            .placeholder(R.color.tripCardPlaceholderBackground)
-                            .signature(new ObjectKey(String.valueOf(photoFile.lastModified())))
+                            .signature(signatureKey)
                             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
 
             Glide.with(mTripPhoto.getContext())
                     .load(photoFile)
                     .apply(requestOptions)
                     .into(mTripPhoto);
+        } else {
+            Glide.with(mTripPhoto.getContext()).clear(mTripPhoto);
         }
     }
 
-    public interface OnTripItemClickListener {
-        void onTripItemClick(View view);
-    }
-
-    public interface OnEditTripClickListener {
-        void onEditTripClick(View view);
-    }
 
     public void setOnTripItemClickListener(TripHolder.OnTripItemClickListener
                                                    clickListener) {
@@ -108,5 +99,13 @@ public class TripHolder extends RecyclerView.ViewHolder {
     public void setOnEditTripClickListener(TripHolder.OnEditTripClickListener
                                                    clickListener) {
         mOnEditTripClickListener = clickListener;
+    }
+
+    public interface OnTripItemClickListener {
+        void onTripItemClick(View view);
+    }
+
+    public interface OnEditTripClickListener {
+        void onEditTripClick(View view);
     }
 }

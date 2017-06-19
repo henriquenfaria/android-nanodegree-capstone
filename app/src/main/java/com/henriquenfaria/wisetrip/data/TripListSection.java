@@ -18,14 +18,11 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
 public class TripListSection extends StatelessSection {
 
-    //TODO: Is it safe? What about memory leak on orientation change?
-    Context mContext;
     String mTitle;
     List<Trip> mTripList;
 
-    public TripListSection(Context context, String title, List<Trip> tripList) {
+    public TripListSection(String title, List<Trip> tripList) {
         super(R.layout.trip_header_item, R.layout.trip_item);
-        mContext = context;
         mTitle = title;
         mTripList = tripList;
     }
@@ -40,6 +37,7 @@ public class TripListSection extends StatelessSection {
         return new TripHolder(view);
     }
 
+
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final TripHolder tripHolder = (TripHolder) holder;
@@ -47,12 +45,12 @@ public class TripListSection extends StatelessSection {
         tripHolder.setTripTitle(mTripList.get(position).getTitle());
         tripHolder.setTripDate(Utils.getFormattedFullTripDateText(mTripList.get(position).getStartDate(),
                 mTripList.get(position).getEndDate()));
-        tripHolder.setTripPhoto(mContext, mTripList.get(position).getId());
+        tripHolder.setTripPhoto(mTripList.get(position).getId());
         tripHolder.setOnTripItemClickListener(new TripHolder.OnTripItemClickListener() {
             @Override
             public void onTripItemClick(View view) {
                 // TODO: Remove Toast and call Trip main screen
-                Toast.makeText(mContext, mTripList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), mTripList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -60,9 +58,7 @@ public class TripListSection extends StatelessSection {
             @Override
             public void onEditTripClick(View view) {
                 Context context = view.getContext();
-
                 Intent intent = new Intent(context, TripFactoryActivity.class);
-               // sectionAdapter.getPositionInSection(itemHolder.getAdapterPosition())
                 intent.putExtra(Constants.Extra.EXTRA_TRIP, mTripList.get(position));
                 context.startActivity(intent);
             }
@@ -79,13 +75,5 @@ public class TripListSection extends StatelessSection {
         HeaderHolder headerHolder = (HeaderHolder) holder;
         headerHolder.setHeaderTitle(mTitle);
     }
-
-    /*public List<Trip> getTripList() {
-        return mTripList;
-    }
-
-    public void setTripList(List<Trip> tripList) {
-        mTripList = tripList;
-    }*/
 
 }
