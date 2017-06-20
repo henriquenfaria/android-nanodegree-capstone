@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 
 import com.henriquenfaria.wisetrip.models.Traveler;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,8 +64,7 @@ public class Utils {
     }
 
     public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String
-            directory,
-                                                   String fileName) {
+            directory, String fileName) {
         FileOutputStream fos = null;
         ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
@@ -101,16 +101,18 @@ public class Utils {
         return null;
     }
 
-    public static boolean deleteFileFromInternalStorage(Context context, String directory, String
-            fileName) {
+    public static boolean deleteFileFromInternalStorage(Context context, String directory,
+                                                        String fileName, boolean clearPicassoCache) {
         ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File file = new File(directoryFile, fileName);
         boolean isDeleted = false;
 
-
         try {
             isDeleted = file.delete();
+            if (isDeleted && clearPicassoCache) {
+                Picasso.with(context).invalidate(file);
+            }
         } catch (SecurityException e) {
             Timber.e("SecurityException while deleting bitmap from internal storage");
             e.printStackTrace();
@@ -119,12 +121,16 @@ public class Utils {
         return isDeleted;
     }
 
-    public static boolean deleteFolderFromInternalStorage(Context context, String directory) {
+    public static boolean deleteFolderFromInternalStorage(Context context, String directory,
+                                                          boolean clearPicassoCache) {
         ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         if (directoryFile.isDirectory()) {
-            for (File child : directoryFile.listFiles()) {
-                child.delete();
+            for (File childFiled : directoryFile.listFiles()) {
+                boolean isDeleted = childFiled.delete();
+                if (isDeleted && clearPicassoCache) {
+                    Picasso.with(context).invalidate(childFiled);
+                }
             }
             return true;
         } else {

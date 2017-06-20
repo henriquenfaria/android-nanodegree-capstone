@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -132,7 +131,6 @@ public class AuthUiActivity extends AppCompatActivity {
 
     private void onSignOutCleanup() {
         // Start photo's clean up task
-        Glide.get(this).clearMemory();
         Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
         placePhotoIntentService.setAction(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP);
         startService(placePhotoIntentService);

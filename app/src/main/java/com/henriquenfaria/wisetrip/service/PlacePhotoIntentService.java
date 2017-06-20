@@ -1,6 +1,8 @@
 package com.henriquenfaria.wisetrip.service;
 
 import android.app.IntentService;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -9,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.PlacePhotoMetadata;
@@ -23,7 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
@@ -65,7 +68,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     // Deletes from the internal storage the photo of the first trip's destination
                     boolean isDeleted = Utils.deleteFileFromInternalStorage
                             (getApplicationContext(),
-                                    Constants.Global.DESTINATION_PHOTO_DIR, trip.getId());
+                                    Constants.Global.DESTINATION_PHOTO_DIR, trip.getId(), true);
                     if (isDeleted) {
                         Timber.d("destination photo deleted");
                     }
@@ -73,10 +76,9 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
             }
 
         } else if (intent.getAction().equals(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP)) {
-            // Remove local photos and clean Glide's cache and memory
+            // Remove local photos and clear Picasso cache
             Utils.deleteFolderFromInternalStorage(getApplicationContext(),
-                    Constants.Global.DESTINATION_PHOTO_DIR);
-            Glide.get(this).clearDiskCache();
+                    Constants.Global.DESTINATION_PHOTO_DIR, true);
         }
     }
 
@@ -108,6 +110,13 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                         Utils.saveBitmapToInternalStorage(getApplicationContext(), image,
                                 Constants.Global
                                         .DESTINATION_PHOTO_DIR, trip.getId());
+
+                        // Invalidate Picasso cache for modified trip photo
+                        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+                        File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
+                                Context.MODE_PRIVATE);
+                        File photoFile = new File(directoryFile, trip.getId());
+                        Picasso.with(getApplicationContext()).invalidate(photoFile);
 
                         // TODO: Must modify this method to save the attribution to another place
                         // addDestinationPhotoAttribution(trip, attribution);

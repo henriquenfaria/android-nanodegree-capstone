@@ -10,12 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -72,21 +70,15 @@ public class TripHolder extends RecyclerView.ViewHolder {
             File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
                     Context.MODE_PRIVATE);
             File photoFile = new File(directoryFile, tripId);
-            ObjectKey signatureKey = new ObjectKey(photoFile.lastModified() + photoFile.length());
 
-            RequestOptions requestOptions =
-                    new RequestOptions()
-                            .centerCrop()
-                            .error(R.drawable.trip_card_default)
-                            .signature(signatureKey)
-                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
-
-            Glide.with(mTripPhoto.getContext())
+            Picasso.with(mTripPhoto.getContext())
                     .load(photoFile)
-                    .apply(requestOptions)
+                    .networkPolicy(
+                            NetworkPolicy.NO_CACHE,
+                            NetworkPolicy.OFFLINE,
+                            NetworkPolicy.NO_STORE)
+                    .error(R.drawable.trip_card_default)
                     .into(mTripPhoto);
-        } else {
-            Glide.with(mTripPhoto.getContext()).clear(mTripPhoto);
         }
     }
 

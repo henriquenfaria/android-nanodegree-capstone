@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.Traveler;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -26,23 +25,6 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
     private Cursor mCursor;
     private Context mContext;
-
-    public class TravelerHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.traveler_item)
-        protected View rootView;
-
-        @BindView(R.id.traveler_photo)
-        protected CircleImageView travelerPhoto;
-
-        @BindView(R.id.traveler_name)
-        protected TextView travelerName;
-
-        public TravelerHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
 
     public TravelerAdapter(Cursor cursor) {
         mCursor = cursor;
@@ -56,7 +38,6 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
         return new TravelerHolder(itemView);
     }
-
 
     @Override
     public void onBindViewHolder(final TravelerHolder holder, int position) {
@@ -111,15 +92,10 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
         holder.travelerName.setText(traveler.getName());
 
-        RequestOptions requestOptions =
-                new RequestOptions()
-                        .dontAnimate()
-                        .placeholder(R.drawable.ic_default_traveler_photo)
-                        .error(R.drawable.ic_default_traveler_photo);
-        Glide.with(mContext)
+        Picasso.with(mContext)
                 .load(traveler.getPhotoUri())
-                .apply(requestOptions)
-                .into(holder.travelerPhoto);
+                .placeholder(R.drawable.ic_default_traveler_photo)
+                .error(R.drawable.ic_default_traveler_photo);
 
     }
 
@@ -157,5 +133,22 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         HashMap<String, Traveler> getTravelerHashMap();
 
         void setTravelerHashMap(HashMap<String, Traveler> travelerHashMap);
+    }
+
+    public class TravelerHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.traveler_item)
+        protected View rootView;
+
+        @BindView(R.id.traveler_photo)
+        protected CircleImageView travelerPhoto;
+
+        @BindView(R.id.traveler_name)
+        protected TextView travelerName;
+
+        public TravelerHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
     }
 }
