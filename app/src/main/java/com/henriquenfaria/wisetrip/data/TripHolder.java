@@ -75,8 +75,9 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     .load(photoFile)
                     .networkPolicy(
                             NetworkPolicy.NO_CACHE,
-                            NetworkPolicy.OFFLINE,
-                            NetworkPolicy.NO_STORE)
+                            NetworkPolicy.NO_STORE,
+                            NetworkPolicy.OFFLINE)
+                    .noPlaceholder()
                     .error(R.drawable.trip_card_default)
                     .into(mTripPhoto);
         }

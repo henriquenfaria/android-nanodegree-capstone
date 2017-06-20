@@ -95,7 +95,8 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         Picasso.with(mContext)
                 .load(traveler.getPhotoUri())
                 .placeholder(R.drawable.ic_default_traveler_photo)
-                .error(R.drawable.ic_default_traveler_photo);
+                .error(R.drawable.ic_default_traveler_photo)
+                .into(holder.travelerPhoto);
 
     }
 
