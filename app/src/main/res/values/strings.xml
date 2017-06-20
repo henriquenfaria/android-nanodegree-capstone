@@ -37,6 +37,7 @@
     <string name="current">Current</string>
     <string name="upcoming">Upcoming</string>
     <string name="past">Past</string>
+    <string name="no_saved_yet">No saved trips</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

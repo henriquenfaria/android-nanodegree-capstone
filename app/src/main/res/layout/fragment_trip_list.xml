@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
+
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/trip_list_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/activity_horizontal_margin"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginStart="@dimen/activity_horizontal_margin"
-    android:scrollbarStyle="outsideInset"
-    android:scrollbars="vertical"/>
+>
+
+    <com.henriquenfaria.wisetrip.data.CustomRecyclerView
+
+        android:id="@+id/trip_list_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbars="vertical"/>
+
+    <TextView
+        android:id="@+id/empty_trip_list_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/no_saved_yet"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+</RelativeLayout>
+
+

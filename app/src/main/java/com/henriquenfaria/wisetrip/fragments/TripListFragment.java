@@ -9,11 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.CustomRecyclerView;
 import com.henriquenfaria.wisetrip.data.TripListSection;
 import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
@@ -40,7 +41,10 @@ public class TripListFragment extends BaseFragment {
 
 
     @BindView(R.id.trip_list_recycler_view)
-    protected RecyclerView mTripListRecyclerView;
+    protected CustomRecyclerView mTripListRecyclerView;
+
+    @BindView(R.id.empty_trip_list_text)
+    protected TextView mEmptyTripListText;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -170,6 +174,8 @@ public class TripListFragment extends BaseFragment {
         mTripListRecyclerView.setLayoutManager(/*reversedLayoutManager*/new LinearLayoutManager
                 (mFragmentActivity));
         mTripListRecyclerView.setHasFixedSize(false);
+        mTripListRecyclerView.setEmptyView(mEmptyTripListText);
+
         mTripAdapter = new SectionedRecyclerViewAdapter();
 
         // TODO: If date is properly indexed, use:
