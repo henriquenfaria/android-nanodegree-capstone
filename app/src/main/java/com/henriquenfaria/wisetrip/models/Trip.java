@@ -2,9 +2,13 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,19 +16,25 @@ import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Trip implements Parcelable {
+public class Trip implements Parcelable, Comparable<Trip> {
 
+    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
+        @Override
+        public Trip createFromParcel(Parcel source) {
+            return new Trip(source);
+        }
+
+        @Override
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
     private String id;
     private String title;
     private Long startDate;
     private Long endDate;
     private Map<String, Traveler> travelers;
     private List<Destination> destinations;
-
-
-    public enum State {
-        CURRENT, UPCOMING, PAST
-    }
 
     public Trip() {
         // Required for Firebase
@@ -34,6 +44,21 @@ public class Trip implements Parcelable {
         endDate = -1L;
         travelers = new HashMap<>();
         destinations = new ArrayList<>();
+    }
+
+    protected Trip(Parcel in) {
+        this.id = in.readString();
+        this.title = in.readString();
+        this.startDate = (Long) in.readValue(Long.class.getClassLoader());
+        this.endDate = (Long) in.readValue(Long.class.getClassLoader());
+        int travelersSize = in.readInt();
+        this.travelers = new HashMap<>(travelersSize);
+        for (int i = 0; i < travelersSize; i++) {
+            String key = in.readString();
+            Traveler value = in.readParcelable(Traveler.class.getClassLoader());
+            this.travelers.put(key, value);
+        }
+        this.destinations = in.createTypedArrayList(Destination.CREATOR);
     }
 
     @Exclude
@@ -121,34 +146,41 @@ public class Trip implements Parcelable {
         dest.writeTypedList(this.destinations);
     }
 
-    protected Trip(Parcel in) {
-        this.id = in.readString();
-        this.title = in.readString();
-        this.startDate = (Long) in.readValue(Long.class.getClassLoader());
-        this.endDate = (Long) in.readValue(Long.class.getClassLoader());
-        int travelersSize = in.readInt();
-        this.travelers = new HashMap<>(travelersSize);
-        for (int i = 0; i < travelersSize; i++) {
-            String key = in.readString();
-            Traveler value = in.readParcelable(Traveler.class.getClassLoader());
-            this.travelers.put(key, value);
-        }
-        this.destinations = in.createTypedArrayList(Destination.CREATOR);
+    @Override
+    public int compareTo(@NonNull Trip trip) {
+        return this.getStartDate().compareTo(trip.getStartDate());
     }
 
-    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
-        @Override
-        public Trip createFromParcel(Parcel source) {
-            return new Trip(source);
+    @Override
+    public int hashCode() {
+         /* We only need to use id to compare if a Trip is the same. Since id is unique,
+          we can ignore the other properties. It will increase the performance*/
+        return new HashCodeBuilder(17, 31)
+                .append(id)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Trip)) {
+            return false;
         }
 
-        @Override
-        public Trip[] newArray(int size) {
-            return new Trip[size];
+        if (obj == this) {
+            return true;
         }
-    };
 
+         /* We only need to use id to compare if a Trip is the same. Since id is unique,
+          we can ignore the other properties. It will increase the performance*/
+        Trip trip = (Trip) obj;
+        return new EqualsBuilder()
+                .append(id, trip.id)
+                .isEquals();
+    }
 
+    public enum State {
+        CURRENT, UPCOMING, PAST
+    }
 }
 
 

@@ -2,6 +2,7 @@ package com.henriquenfaria.wisetrip.data;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
@@ -19,9 +20,9 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 public class TripListSection extends StatelessSection {
 
     String mTitle;
-    List<Trip> mTripList;
+    SortedList<Trip> mTripList;
 
-    public TripListSection(String title, List<Trip> tripList) {
+    public TripListSection(String title, SortedList<Trip> tripList) {
         super(R.layout.trip_header_item, R.layout.trip_item);
         mTitle = title;
         mTripList = tripList;
