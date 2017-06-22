@@ -11,6 +11,8 @@ public class Constants {
         public static final int MAX_TRAVELERS = 10;
         // Internal Storage directory for destination photos
         public static final String DESTINATION_PHOTO_DIR = "destinations";
+        // 24 hours in milliseconds
+        public static final long DAY_IN_MILLIS = 86400000L;
     }
 
     // Intent extras

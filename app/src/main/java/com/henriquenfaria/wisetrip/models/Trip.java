@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.henriquenfaria.wisetrip.utils.Constants;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -118,7 +119,7 @@ public class Trip implements Parcelable, Comparable<Trip> {
     }
 
     public State getState(long currentMillis) {
-        if (currentMillis >= this.startDate && currentMillis <= this.endDate) {
+        if (currentMillis >= this.startDate && currentMillis <= (this.endDate + Constants.Global.DAY_IN_MILLIS)) {
             return State.CURRENT;
         } else if (this.endDate < currentMillis) {
             return State.PAST;
