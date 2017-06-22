@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -69,17 +70,35 @@ public class TripHolder extends RecyclerView.ViewHolder {
             ContextWrapper cw = new ContextWrapper(mTripPhoto.getContext().getApplicationContext());
             File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
                     Context.MODE_PRIVATE);
-            File photoFile = new File(directoryFile, tripId);
+            final File photoFile = new File(directoryFile, tripId);
 
             Picasso.with(mTripPhoto.getContext())
-                    .load(photoFile)
+                    .load(R.drawable.trip_card_default)
                     .networkPolicy(
                             NetworkPolicy.NO_CACHE,
                             NetworkPolicy.NO_STORE,
                             NetworkPolicy.OFFLINE)
-                    .noPlaceholder()
+                    .placeholder(R.color.tripCardPlaceholderBackground)
                     .error(R.drawable.trip_card_default)
-                    .into(mTripPhoto);
+                    .into(mTripPhoto, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            Picasso.with(mTripPhoto.getContext())
+                                    .load(photoFile)
+                                    .networkPolicy(
+                                            NetworkPolicy.NO_CACHE,
+                                            NetworkPolicy.NO_STORE,
+                                            NetworkPolicy.OFFLINE)
+                                    .placeholder(R.color.tripCardPlaceholderBackground)
+                                    .error(R.drawable.trip_card_default)
+                                    .into(mTripPhoto);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
         }
     }
 
