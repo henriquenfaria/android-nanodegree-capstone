@@ -41,7 +41,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent.getAction().equals(Constants.Action.ACTION_ADD_PHOTO)) {
+        if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_ADD_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
@@ -53,15 +53,14 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     }
                 }
             }
-        } else if (intent.getAction().equals(Constants.Action.ACTION_CHANGE_PHOTO)) {
+        } else if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_CHANGE_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     addDestinationPhoto(trip, true);
                 }
             }
-        } else if (intent.getAction().equals(Constants.Action.ACTION_REMOVE_PHOTO)) {
-
+        } else if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_REMOVE_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
@@ -74,8 +73,8 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     }
                 }
             }
-
-        } else if (intent.getAction().equals(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP)) {
+        } else if (TextUtils.equals(intent.getAction(),
+                Constants.Action.ACTION_SIGN_OUT_CLEAN_UP)) {
             // Remove local photos and clear Picasso cache
             Utils.deleteFolderFromInternalStorage(getApplicationContext(),
                     Constants.Global.DESTINATION_PHOTO_DIR, true);
@@ -93,40 +92,40 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         googleApiClient.blockingConnect(30, TimeUnit.SECONDS);
 
         if (googleApiClient.isConnected()) {
-            PlacePhotoMetadataResult result = Places.GeoDataApi
-                    .getPlacePhotos(googleApiClient, trip.getDestinations().get(0).getId
-                            ()).await();
+            if (trip.getDestinations().size() > 0) {
+                PlacePhotoMetadataResult result = Places.GeoDataApi
+                        .getPlacePhotos(googleApiClient, trip.getDestinations().get(0).getId())
+                        .await();
 
-            if (result != null && result.getStatus().isSuccess()) {
-                PlacePhotoMetadataBuffer photoMetadataBuffer = result
-                        .getPhotoMetadata();
-                if (photoMetadataBuffer != null && photoMetadataBuffer.getCount() > 0) {
+                if (result != null && result.getStatus().isSuccess()) {
+                    PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
+                    if (photoMetadataBuffer != null && photoMetadataBuffer.getCount() > 0) {
 
-                    PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
-                    Bitmap image = photo.getPhoto(googleApiClient).await().getBitmap();
-                    CharSequence attribution = photo.getAttributions();
+                        PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
+                        Bitmap image = photo.getPhoto(googleApiClient).await().getBitmap();
+                        CharSequence attribution = photo.getAttributions();
 
-                    if (image != null) {
-                        Utils.saveBitmapToInternalStorage(getApplicationContext(), image,
-                                Constants.Global
-                                        .DESTINATION_PHOTO_DIR, trip.getId());
+                        if (image != null) {
+                            Utils.saveBitmapToInternalStorage(getApplicationContext(), image,
+                                    Constants.Global.DESTINATION_PHOTO_DIR, trip.getId());
 
-                        // Invalidate Picasso cache for modified trip photo
-                        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-                        File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
-                                Context.MODE_PRIVATE);
-                        File photoFile = new File(directoryFile, trip.getId());
-                        Picasso.with(getApplicationContext()).invalidate(photoFile);
+                            // Invalidate Picasso cache for modified trip photo
+                            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+                            File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
+                                    Context.MODE_PRIVATE);
+                            File photoFile = new File(directoryFile, trip.getId());
+                            Picasso.with(getApplicationContext()).invalidate(photoFile);
 
-                        // TODO: Must modify this method to save the attribution to another place
-                        // addDestinationPhotoAttribution(trip, attribution);
+                            // TODO: Must modify this method to save the attribution elsewhere
+                            // addDestinationPhotoAttribution(trip, attribution);
 
-                        if (updateTripList) {
-                            sendUpdateTripListBroadcast();
+                            if (updateTripList) {
+                                sendUpdateTripListBroadcast(trip);
+                            }
                         }
-                    }
 
-                    photoMetadataBuffer.release();
+                        photoMetadataBuffer.release();
+                    }
                 }
             }
         }
@@ -151,8 +150,9 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         destinationReference.setValue(attribution);
     }
 
-    private void sendUpdateTripListBroadcast() {
+    private void sendUpdateTripListBroadcast(Trip trip) {
         Intent broadcastIntent = new Intent();
+        broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, trip);
         broadcastIntent.setAction(Constants.Action.ACTION_UPDATE_TRIP_LIST);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }

@@ -73,32 +73,14 @@ public class TripHolder extends RecyclerView.ViewHolder {
             final File photoFile = new File(directoryFile, tripId);
 
             Picasso.with(mTripPhoto.getContext())
-                    .load(R.drawable.trip_card_default)
+                    .load(photoFile)
                     .networkPolicy(
                             NetworkPolicy.NO_CACHE,
                             NetworkPolicy.NO_STORE,
                             NetworkPolicy.OFFLINE)
                     .placeholder(R.color.tripCardPlaceholderBackground)
                     .error(R.drawable.trip_card_default)
-                    .into(mTripPhoto, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            Picasso.with(mTripPhoto.getContext())
-                                    .load(photoFile)
-                                    .networkPolicy(
-                                            NetworkPolicy.NO_CACHE,
-                                            NetworkPolicy.NO_STORE,
-                                            NetworkPolicy.OFFLINE)
-                                    .placeholder(R.color.tripCardPlaceholderBackground)
-                                    .error(R.drawable.trip_card_default)
-                                    .into(mTripPhoto);
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+                    .into(mTripPhoto);
         }
     }
 

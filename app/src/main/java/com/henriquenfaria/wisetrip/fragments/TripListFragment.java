@@ -376,12 +376,12 @@ public class TripListFragment extends BaseFragment {
         }
     }
 
+    // Can't use SortedList.indexOf method. Because we're only checking Trip's id
     private int getIndexOnSortedList(Trip searchTrip, SortedList<Trip> sortedList) {
         for (int i = 0; i < sortedList.size(); i++) {
             if (sortedList.get(i).equals(searchTrip)) {
                 return i;
             }
-
         }
         return SortedList.INVALID_POSITION;
     }
@@ -400,6 +400,23 @@ public class TripListFragment extends BaseFragment {
             default:
                 Timber.e("Can't find correct Trip list");
                 throw new IllegalArgumentException();
+        }
+    }
+
+    // Search for a Trip inside all sections lists and update it to make it display latest info
+    private void updateTripListItem(Trip trip) {
+        if (mTripAdapter != null) {
+            for (Trip.State state : Trip.State.values()) {
+                SortedList<Trip> currentList = getTripList(state);
+                if (currentList.size() > 0) {
+                    int index = getIndexOnSortedList(trip, currentList);
+                    if (index != SortedList.INVALID_POSITION) {
+                        mTripAdapter.notifyItemChangedInSection(state.name(), index);
+                        return;
+                    }
+                }
+            }
+            mTripAdapter.notifyDataSetChanged();
         }
     }
 
@@ -423,10 +440,11 @@ public class TripListFragment extends BaseFragment {
     private class PlacePhotoReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mTripAdapter != null) {
-                //TODO: Find a way to update just the modified items, not the whole list
-                // mTripAdapter.notifyItemChanged(itemPosition));
-                mTripAdapter.notifyDataSetChanged();
+            if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_UPDATE_TRIP_LIST)) {
+                if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
+                    Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                    updateTripListItem(trip);
+                }
             }
         }
     }
