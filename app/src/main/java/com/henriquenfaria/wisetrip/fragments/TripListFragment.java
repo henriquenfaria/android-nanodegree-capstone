@@ -354,7 +354,6 @@ public class TripListFragment extends BaseFragment {
                     return true;
                 }
             }
-
         }
         return false;
     }
