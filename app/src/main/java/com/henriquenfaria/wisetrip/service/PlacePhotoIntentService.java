@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.henriquenfaria.wisetrip.models.Attribution;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
@@ -100,7 +101,6 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                 if (result != null && result.getStatus().isSuccess()) {
                     PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
                     if (photoMetadataBuffer != null && photoMetadataBuffer.getCount() > 0) {
-
                         PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
                         Bitmap image = photo.getPhoto(googleApiClient).await().getBitmap();
                         CharSequence attribution = photo.getAttributions();
@@ -116,8 +116,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                             File photoFile = new File(directoryFile, trip.getId());
                             Picasso.with(getApplicationContext()).invalidate(photoFile);
 
-                            // TODO: Must modify this method to save the attribution elsewhere
-                            // addDestinationPhotoAttribution(trip, attribution);
+                            addDestinationPhotoAttribution(trip, attribution);
 
                             if (updateTripList) {
                                 sendUpdateTripListBroadcast(trip);
@@ -131,14 +130,30 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         }
     }
 
+    private void addDestinationPhotoAttribution(Trip trip, CharSequence attributionText) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference attributionsReference = firebaseDatabase.getReference()
+                .child("attributions")
+                .child(currentUser.getUid())
+                .child(trip.getId());
+
+        Attribution attribution = new Attribution();
+        attribution.setId(attributionsReference.getKey());
+        attribution.setText(attributionText != null ? attributionText.toString() : "");
+        attributionsReference.setValue(attribution);
+    }
+
+
     // TODO: Must move this code to another path, like: photo-attribution
     // Calling it like this is making onChildChanged be executed
-    private void addDestinationPhotoAttribution(Trip trip, CharSequence attribution) {
+    /*private void addDestinationPhotoAttributionSamePath(Trip trip, CharSequence attribution) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference userTripReference = firebaseDatabase.getReference()
-                .child("user-trips")
+                .child("trips")
                 .child(currentUser.getUid())
                 .child(trip.getId());
 
@@ -148,7 +163,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                 .child("attribution");
 
         destinationReference.setValue(attribution);
-    }
+    }*/
 
     private void sendUpdateTripListBroadcast(Trip trip) {
         Intent broadcastIntent = new Intent();
@@ -156,7 +171,6 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         broadcastIntent.setAction(Constants.Action.ACTION_UPDATE_TRIP_LIST);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

@@ -21,7 +21,6 @@ public class Traveler implements Parcelable {
         // Required for Firebase
     }
 
-
     public Traveler(Cursor cursor) {
         if (cursor != null) {
             name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));

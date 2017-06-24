@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.CustomRecyclerView;
 import com.henriquenfaria.wisetrip.data.TripListSection;
@@ -48,10 +49,12 @@ public class TripListFragment extends BaseFragment {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUserTripReference;
+    private DatabaseReference mTripsReference;
+    private DatabaseReference mAttributionsReference;
     private FirebaseUser mCurrentUser;
     private SectionedRecyclerViewAdapter mTripAdapter;
     private ChildEventListener mTripsEventListener;
+    private ValueEventListener mValueEventListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
 
     private SortedList<Trip> mUpcomingTrips;
@@ -150,8 +153,12 @@ public class TripListFragment extends BaseFragment {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
         //TODO: Need to order by child?
-        mUserTripReference = mFirebaseDatabase.getReference()
-                .child("user-trips")
+        mTripsReference = mFirebaseDatabase.getReference()
+                .child("trips")
+                .child(mCurrentUser.getUid());
+
+        mAttributionsReference = mFirebaseDatabase.getReference()
+                .child("attributions")
                 .child(mCurrentUser.getUid());
 
         // attachDatabaseReadListener();
@@ -164,12 +171,6 @@ public class TripListFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_trip_list, container, false);
 
         ButterKnife.bind(this, rootView);
-
-        // TODO: Another possible solution for descending ordering is to save a inverted timestamp
-        // -1 * new Date().getTime();
-        /*LinearLayoutManager reversedLayoutManager = new LinearLayoutManager(mFragmentActivity);
-        reversedLayoutManager.setReverseLayout(true);
-        reversedLayoutManager.setStackFromEnd(true);*/
 
         mTripListRecyclerView.setLayoutManager(/*reversedLayoutManager*/new LinearLayoutManager
                 (mFragmentActivity));
@@ -293,19 +294,18 @@ public class TripListFragment extends BaseFragment {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Timber.d("onCancelled");
+                    //TODO: Implementation needed?
                 }
 
             };
 
-
-            mUserTripReference.addChildEventListener(mTripsEventListener);
-
+            mTripsReference.addChildEventListener(mTripsEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mTripsEventListener != null) {
-            mUserTripReference.removeEventListener(mTripsEventListener);
+            mTripsReference.removeEventListener(mTripsEventListener);
             mTripsEventListener = null;
         }
     }

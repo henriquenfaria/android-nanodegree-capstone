@@ -21,19 +21,13 @@ public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
 
     private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
-    private static final String SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE =
-            "save_is_trips_event_listener_active";
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUserTripReference;
+    private DatabaseReference mTripsReference;
     private FirebaseUser mCurrentUser;
     private Trip mTrip;
     private TripFactoryFragment mTripFactoryFragment;
-
-    // Use this variable to control whether to call or not the PlacePhotoIntentService because
-    // onChildAdded is called for every item previously present
-    private boolean mIsTripsEventListenerActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +40,8 @@ public class TripFactoryActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mUserTripReference = mFirebaseDatabase.getReference()
-                .child("user-trips")
+        mTripsReference = mFirebaseDatabase.getReference()
+                .child("trips")
                 .child(mCurrentUser.getUid());
 
         if (savedInstanceState == null) {
@@ -66,20 +60,12 @@ public class TripFactoryActivity extends AppCompatActivity
                     .add(R.id.trip_factory_fragment_container, mTripFactoryFragment,
                             TAG_TRIP_FACTORY_FRAGMENT).commit();
         } else {
-            mIsTripsEventListenerActive = savedInstanceState.getBoolean
-                    (SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE);
-
             // Fragment already exists, just get it using its TAG
             mTripFactoryFragment = (TripFactoryFragment) getSupportFragmentManager()
                     .findFragmentByTag(TAG_TRIP_FACTORY_FRAGMENT);
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVE_IS_TRIPS_EVENT_LISTENER_ACTIVE, mIsTripsEventListenerActive);
-    }
 
     @Override
     public void changeActionBarTitle(String newTitle) {
@@ -88,12 +74,10 @@ public class TripFactoryActivity extends AppCompatActivity
 
     @Override
     public void saveTrip(Trip trip, boolean isEditMode) {
-        mIsTripsEventListenerActive = true;
-
         if (isEditMode) {
             // Update existing Trip
             if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                DatabaseReference databaseReference = mUserTripReference.child(trip.getId());
+                DatabaseReference databaseReference = mTripsReference.child(trip.getId());
                 databaseReference.setValue(trip);
                 Toast.makeText(this, getString(R.string.trip_updated_success),
                         Toast.LENGTH_SHORT).show();
@@ -103,7 +87,7 @@ public class TripFactoryActivity extends AppCompatActivity
             }
         } else {
             // Creating Trip
-            DatabaseReference databaseReference = mUserTripReference.push();
+            DatabaseReference databaseReference = mTripsReference.push();
             trip.setId(databaseReference.getKey());
             databaseReference.setValue(trip);
             Toast.makeText(this, getString(R.string.trip_created_success), Toast
@@ -115,10 +99,17 @@ public class TripFactoryActivity extends AppCompatActivity
 
     @Override
     public void deleteTrip(Trip trip) {
-        mIsTripsEventListenerActive = true;
-
         if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-            mUserTripReference.child(trip.getId()).removeValue();
+            // Remove Trip
+            mTripsReference.child(trip.getId()).removeValue();
+
+            // Remove Trip photo attributions
+            DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
+                    .child("attributions")
+                    .child(mCurrentUser.getUid())
+                    .child(trip.getId());
+            attributionsReference.removeValue();
+
             Toast.makeText(this, getString(R.string.trip_deleted_success), Toast
                     .LENGTH_SHORT).show();
         } else {
