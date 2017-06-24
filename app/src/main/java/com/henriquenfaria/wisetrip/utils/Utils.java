@@ -71,7 +71,7 @@ public class Utils {
         File photoFile = new File(directoryFile, fileName);
         try {
             fos = new FileOutputStream(photoFile);
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (IOException e) {
             Timber.e("IOException while saving bitmap to internal storage");
             e.printStackTrace();
