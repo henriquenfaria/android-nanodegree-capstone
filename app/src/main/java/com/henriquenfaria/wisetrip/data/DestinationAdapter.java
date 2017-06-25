@@ -15,6 +15,7 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 
@@ -154,7 +155,7 @@ public class DestinationAdapter extends
 
         public DestinationHolder(View itemView) {
             super(itemView);
-            destinationText = (TextView) itemView.findViewById(R.id.destination_text);
+            destinationText = ButterKnife.findById(itemView, R.id.destination_text);
         }
     }
 
@@ -170,9 +171,9 @@ public class DestinationAdapter extends
 
         public ItemHolder(View itemView) {
             super(itemView);
-            descriptionText = (TextView) itemView.findViewById(R.id.destination_description_text);
-            removeDestinationButton = (ImageView) itemView.findViewById(R.id
-                    .remove_destination_button);
+            descriptionText = ButterKnife.findById(itemView, R.id.destination_description_text);
+            removeDestinationButton = ButterKnife.findById(itemView,
+                    R.id.remove_destination_button);
         }
     }
 }

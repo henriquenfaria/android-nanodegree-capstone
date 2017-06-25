@@ -87,7 +87,6 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     Context.MODE_PRIVATE);
             final File photoFile = new File(directoryFile, tripId);
 
-            // TODO: Must verify if it causes memory leak, since Callback stores strong reference
             Picasso.with(mTripPhoto.getContext())
                     .load(photoFile)
                     .networkPolicy(
@@ -95,7 +94,7 @@ public class TripHolder extends RecyclerView.ViewHolder {
                             NetworkPolicy.NO_STORE,
                             NetworkPolicy.OFFLINE)
                     .placeholder(R.color.tripCardPlaceholderBackground)
-                    .error(R.drawable.trip_card_default)
+                    .error(R.drawable.trip_photo_default)
                     .into(mTripPhoto, new Callback() {
                         @Override
                         public void onSuccess() {

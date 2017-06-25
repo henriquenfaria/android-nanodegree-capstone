@@ -5,15 +5,13 @@ import android.content.Intent;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.activities.TripFactoryActivity;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
-
-import java.util.List;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
@@ -50,8 +48,10 @@ public class TripListSection extends StatelessSection {
         tripHolder.setOnTripItemClickListener(new TripHolder.OnTripItemClickListener() {
             @Override
             public void onTripItemClick(View view) {
-                // TODO: Remove Toast and call Trip main screen
-                Toast.makeText(view.getContext(), mTripList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                Context context = view.getContext();
+                Intent tripDetails = new Intent(context, TripDetailsActivity.class);
+                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, mTripList.get(position));
+                context.startActivity(tripDetails);
             }
         });
 

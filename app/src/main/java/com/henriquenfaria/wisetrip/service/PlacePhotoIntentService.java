@@ -145,26 +145,6 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         attributionsReference.setValue(attribution);
     }
 
-
-    // TODO: Must move this code to another path, like: photo-attribution
-    // Calling it like this is making onChildChanged be executed
-    /*private void addDestinationPhotoAttributionSamePath(Trip trip, CharSequence attribution) {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference userTripReference = firebaseDatabase.getReference()
-                .child("trips")
-                .child(currentUser.getUid())
-                .child(trip.getId());
-
-        DatabaseReference destinationReference = userTripReference
-                .child("destinations")
-                .child("0")
-                .child("attribution");
-
-        destinationReference.setValue(attribution);
-    }*/
-
     private void sendUpdateTripListBroadcast(Trip trip) {
         Intent broadcastIntent = new Intent();
         broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, trip);

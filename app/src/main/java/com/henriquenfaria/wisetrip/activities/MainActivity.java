@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
 
+import butterknife.ButterKnife;
+
 /* Main Activity that lists all user's trips */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,10 +51,10 @@ public class MainActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = ButterKnife.findById(this, R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
@@ -73,12 +75,12 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = ButterKnife.findById(this, R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         /*TODO: Gonna use master-detail pattern?
          Seems this is not useful for users, since they will not be constantly switching trips */
-        if (findViewById(R.id.detail_fragment_container) != null) {
+        if (ButterKnife.findById(this, R.id.detail_fragment_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 }
