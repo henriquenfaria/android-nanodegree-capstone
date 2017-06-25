@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         // Redirect to Sign In screen if user has not been authenticated
         mCurrentUser = mFirebaseAuth.getCurrentUser();
+
         if (mCurrentUser == null) {
             startActivity(new Intent(this, AuthUiActivity.class));
             finish();

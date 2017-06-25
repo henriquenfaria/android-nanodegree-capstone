@@ -3,6 +3,7 @@ package com.henriquenfaria.wisetrip.data;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -11,6 +12,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,8 +46,13 @@ public class TripHolder extends RecyclerView.ViewHolder {
     protected TextView mTripTitle;
     @BindView(R.id.trip_date)
     protected TextView mTripDate;
-    @BindView(R.id.photo_attribution)
-    protected TextView mPhotoAttribution;
+    @BindView(R.id.attribution_container)
+    protected LinearLayout mAttributionContainer;
+    @BindView(R.id.attribution_prefix)
+    protected TextView mAttributionPrefix;
+    @BindView(R.id.attribution_content)
+    protected TextView mAttributionContent;
+
 
     @BindView(R.id.edit_button)
     protected ImageView mEditButton;
@@ -93,7 +100,9 @@ public class TripHolder extends RecyclerView.ViewHolder {
                             NetworkPolicy.NO_CACHE,
                             NetworkPolicy.NO_STORE,
                             NetworkPolicy.OFFLINE)
-                    .placeholder(R.color.tripCardPlaceholderBackground)
+                    .noPlaceholder()
+                    //.noFade()
+                    //.placeholder(R.color.tripCardPlaceholderBackground)
                     .error(R.drawable.trip_photo_default)
                     .into(mTripPhoto, new Callback() {
                         @Override
@@ -126,7 +135,7 @@ public class TripHolder extends RecyclerView.ViewHolder {
     }
 
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
-        if (mPhotoAttribution != null) {
+        if (mAttributionContainer != null) {
             if (shouldDisplay) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -141,22 +150,24 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Timber.d("onDataChange");
-                        if (mPhotoAttribution != null) {
+                        if (mAttributionContainer != null) {
                             Attribution attribution = dataSnapshot.getValue(Attribution.class);
                             if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
                                 Spanned result;
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build
-                                        .VERSION_CODES.N) {
-                                    result = Html.fromHtml(attribution.getText(), Html
-                                            .FROM_HTML_MODE_LEGACY);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    result = Html.fromHtml(attribution.getText(),
+                                            Html.FROM_HTML_MODE_LEGACY);
                                 } else {
                                     result = Html.fromHtml(attribution.getText());
                                 }
 
-                                mPhotoAttribution.setText(result);
-                                mPhotoAttribution.setMovementMethod(
+                                mAttributionContent.setText(result);
+                                mAttributionContent.setMovementMethod(
                                         LinkMovementMethod.getInstance());
-                                mPhotoAttribution.setVisibility(View.VISIBLE);
+                                // mAttributionContainer.setVisibility(View.VISIBLE);
+
+                                mAttributionPrefix.setVisibility(View.VISIBLE);
+                                mAttributionContent.setVisibility(View.VISIBLE);
                             }
                         }
                     }
@@ -168,20 +179,10 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     }
                 });
             } else {
-                mPhotoAttribution.setVisibility(View.GONE);
+                //mAttributionContainer.setVisibility(View.GONE);
+                mAttributionPrefix.setVisibility(View.GONE);
+                mAttributionContent.setVisibility(View.GONE);
             }
         }
-
-
-
-        /*Spanned result;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            result = Html.fromHtml(html);
-        }
-        txtTest.setText(result)
-        txtTest. setMovementMethod(LinkMovementMethod.getInstance());*/
-
     }
 }
