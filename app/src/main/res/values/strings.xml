@@ -40,7 +40,7 @@
     <string name="retry">Retry</string>
     <string name="no_saved_yet">No saved trips</string>
     <string name="could_not_load_trip_details">Could not load Trip details</string>
-    <string name="photo_attribution_prefix">Photo: </string>
+    <string name="photo_attribution_prefix">"Photo: "</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

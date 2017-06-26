@@ -100,9 +100,8 @@ public class TripHolder extends RecyclerView.ViewHolder {
                             NetworkPolicy.NO_CACHE,
                             NetworkPolicy.NO_STORE,
                             NetworkPolicy.OFFLINE)
-                    .noPlaceholder()
                     //.noFade()
-                    //.placeholder(R.color.tripCardPlaceholderBackground)
+                    .placeholder(R.color.tripCardPlaceholderBackground)
                     .error(R.drawable.trip_photo_default)
                     .into(mTripPhoto, new Callback() {
                         @Override
