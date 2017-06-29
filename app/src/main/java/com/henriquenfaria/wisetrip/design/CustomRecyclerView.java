@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.design;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

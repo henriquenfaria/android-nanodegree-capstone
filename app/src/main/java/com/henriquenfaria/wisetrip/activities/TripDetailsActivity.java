@@ -7,6 +7,7 @@ import android.content.ContextWrapper;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -54,11 +55,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static butterknife.ButterKnife.findById;
-
 
 /* Activity to display all related data of a specific Trip */
 public class TripDetailsActivity extends AppCompatActivity {
+
+    private static final String SAVE_LAST_TAB_POSITION_KEY = "save_last_tab_position_key";
+    private static final int TAB_EXPENSES_POSITION = 0;
+    private static final int TAB_BUDGETS_POSITION = 1;
+    private static final int TAB_PLACES_POSITION = 2;
+
+    private int mLastTabPosition;
 
     private Trip mTrip;
 
@@ -68,7 +74,12 @@ public class TripDetailsActivity extends AppCompatActivity {
     protected TextView mAttributionPrefix;
     @BindView(R.id.attribution_content)
     protected TextView mAttributionContent;
-
+    @BindView(R.id.fab_expenses)
+    protected FloatingActionButton mFabExpenses;
+    @BindView(R.id.fab_budgets)
+    protected FloatingActionButton mFabBudgets;
+    @BindView(R.id.fab_places)
+    protected FloatingActionButton mFabPlaces;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +95,10 @@ public class TripDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_details);
         ButterKnife.bind(this);
 
+        if (savedInstanceState != null) {
+            mLastTabPosition = savedInstanceState.getInt(SAVE_LAST_TAB_POSITION_KEY);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
         } else {
@@ -93,18 +108,38 @@ public class TripDetailsActivity extends AppCompatActivity {
         setTripBackdropPhoto(mTrip.getId());
         setupAppBarLayout();
         setupToolbar();
+        setupFabs();
         setupViewPager();
-
     }
 
-
     private void setupToolbar() {
-        Toolbar toolbar = findById(TripDetailsActivity.this, R.id.toolbar);
+        Toolbar toolbar = ButterKnife.findById(TripDetailsActivity.this, R.id.toolbar);
         setSupportActionBar(toolbar);
-        TextView title = ButterKnife.findById(toolbar, R.id.toolbar_title);
+        TextView title = ButterKnife.findById(toolbar, R.id.trip_title);
         title.setText(mTrip.getTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
+    }
+
+    private void setupFabs() {
+        mFabExpenses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(TripDetailsActivity.this, "Expenses", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mFabBudgets.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(TripDetailsActivity.this, "Budgets", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mFabPlaces.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(TripDetailsActivity.this, "Places", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupAppBarLayout() {
@@ -120,7 +155,7 @@ public class TripDetailsActivity extends AppCompatActivity {
                             ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.trip_photo_protection).setTransitionName("");
                             ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo_backdrop).setTransitionName("");
+                                    R.id.trip_photo).setTransitionName("");
                             ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.attribution_container).setTransitionName("");
                             break;
@@ -130,7 +165,7 @@ public class TripDetailsActivity extends AppCompatActivity {
                                     R.id.trip_photo_protection)
                                     .setTransitionName("trip_photo_protection");
                             ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo_backdrop).setTransitionName("trip_photo");
+                                    R.id.trip_photo).setTransitionName("trip_photo");
                             ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.attribution_container)
                                     .setTransitionName("attribution_container");
@@ -141,8 +176,51 @@ public class TripDetailsActivity extends AppCompatActivity {
         });
     }
 
+    private void doShowFabAnimation(int position) {
+        switch (position) {
+            case TAB_EXPENSES_POSITION:
+                mFabExpenses.show();
+                break;
+            case TAB_BUDGETS_POSITION:
+                mFabBudgets.show();
+                break;
+            case TAB_PLACES_POSITION:
+                mFabPlaces.show();
+                break;
+        }
+    }
+
+    private void animateFab(final int position, int lastTabPosition) {
+        switch (lastTabPosition) {
+            case TAB_EXPENSES_POSITION:
+                mFabExpenses.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+                    @Override
+                    public void onHidden(FloatingActionButton fab) {
+                        doShowFabAnimation(position);
+                    }
+                });
+                break;
+            case TAB_BUDGETS_POSITION:
+                mFabBudgets.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+                    @Override
+                    public void onHidden(FloatingActionButton fab) {
+                        doShowFabAnimation(position);
+                    }
+                });
+                break;
+            case TAB_PLACES_POSITION:
+                mFabPlaces.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+                    @Override
+                    public void onHidden(FloatingActionButton fab) {
+                        doShowFabAnimation(position);
+                    }
+                });
+                break;
+        }
+    }
+
     private void setupViewPager() {
-        ViewPager viewPager = findById(TripDetailsActivity.this, R.id.viewpager);
+        ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         //TODO: Temp code
@@ -152,8 +230,32 @@ public class TripDetailsActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = findById(TripDetailsActivity.this, R.id.tablayout);
+        TabLayout tabLayout = ButterKnife.findById(TripDetailsActivity.this, R.id.tablayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                animateFab(tab.getPosition(), mLastTabPosition);
+                mLastTabPosition = tab.getPosition();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SAVE_LAST_TAB_POSITION_KEY, mLastTabPosition);
+        super.onSaveInstanceState(outState);
     }
 
     private void setTripBackdropPhoto(String tripId) {
@@ -162,7 +264,7 @@ public class TripDetailsActivity extends AppCompatActivity {
                 Context.MODE_PRIVATE);
         final File photoFile = new File(directoryFile, tripId);
 
-        ImageView tripPhotoBackdrop = findById(this, R.id.trip_photo_backdrop);
+        ImageView tripPhotoBackdrop = ButterKnife.findById(this, R.id.trip_photo);
         Picasso.with(this)
                 .load(photoFile)
                 .networkPolicy(

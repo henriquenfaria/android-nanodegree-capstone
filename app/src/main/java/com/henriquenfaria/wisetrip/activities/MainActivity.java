@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /* Main Activity that lists all user's trips */
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity
     private Fragment mFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
+
+    @BindView(R.id.fab)
+    protected FloatingActionButton mFab;
 
 
     @Override
@@ -50,18 +54,18 @@ public class MainActivity extends AppCompatActivity
             finish();
             return;
         }
+
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
 
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = ButterKnife.findById(this, R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mFragment instanceof TripListFragment) {
-
                     Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
                     startActivity(intent);
                 }

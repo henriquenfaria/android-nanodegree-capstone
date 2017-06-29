@@ -24,7 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.CustomRecyclerView;
+import com.henriquenfaria.wisetrip.design.CustomRecyclerView;
 import com.henriquenfaria.wisetrip.data.TripListSection;
 import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;

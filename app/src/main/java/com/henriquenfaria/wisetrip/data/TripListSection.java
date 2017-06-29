@@ -3,9 +3,9 @@ package com.henriquenfaria.wisetrip.data;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -57,23 +57,14 @@ public class TripListSection extends StatelessSection {
                 Intent tripDetails = new Intent(context, TripDetailsActivity.class);
                 tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, mTripList.get(position));
 
-                //TODO: Make (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) check?
-                View tripPhoto = ButterKnife.findById(view, R.id.trip_photo);
-                View tripPhotoProtection = ButterKnife.findById(view, R.id.trip_photo_protection);
-                View tripTitle = ButterKnife.findById(view, R.id.trip_title);
-                View attributionContainer = ButterKnife.findById(view, R.id.attribution_container);
-
-                Pair<View, String> p1 = Pair.create(tripPhoto,
-                        ViewCompat.getTransitionName(tripPhoto));
-                Pair<View, String> p2 = Pair.create(tripPhotoProtection,
-                        ViewCompat.getTransitionName(tripPhotoProtection));
-                Pair<View, String> p3 = Pair.create(tripTitle,
-                        ViewCompat.getTransitionName(tripTitle));
-                Pair<View, String> p4 = Pair.create(attributionContainer,
-                        ViewCompat.getTransitionName(attributionContainer));
+                Pair p1 = Pair.create(ButterKnife.findById(view, R.id.trip_photo), "trip_photo");
+                Pair p2 = Pair.create(ButterKnife.findById(view, R.id.trip_photo_protection), "trip_photo_protection");
+                Pair p3 = Pair.create(ButterKnife.findById(view, R.id.trip_title), "trip_title");
+                Pair p4 = Pair.create(ButterKnife.findById(view, R.id.attribution_container), "attribution_container");
                 ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeSceneTransitionAnimation((Activity) context, p1, p2, p3, p4);
-                context.startActivity(tripDetails, options.toBundle());
+
+                ActivityCompat.startActivity(context, tripDetails, options.toBundle());
             }
         });
 

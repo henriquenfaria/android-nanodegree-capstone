@@ -27,7 +27,7 @@
 
 
             <ImageView
-                android:id="@+id/trip_photo_backdrop"
+                android:id="@+id/trip_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/trip_photo_default"
@@ -47,7 +47,6 @@
 
             <LinearLayout
                 android:id="@+id/attribution_container"
-                android:transitionName="attribution_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -59,7 +58,8 @@
                 android:layout_marginLeft="@dimen/trip_card_view_title_additional_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/trip_card_view_title_additional_margin"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:transitionName="attribution_container">
 
                 <TextView
                     android:id="@+id/attribution_prefix"
@@ -94,7 +94,7 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <TextView
-                    android:id="@+id/toolbar_title"
+                    android:id="@+id/trip_title"
                     style="@style/ToolbarTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -111,6 +111,41 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_expenses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@+id/viewpager"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_behavior="com.henriquenfaria.wisetrip.design.ScrollAwareFABBehavior"
+        app:srcCompat="@drawable/ic_fab_expense"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_budgets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:layout_anchor="@+id/viewpager"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_behavior="com.henriquenfaria.wisetrip.design.ScrollAwareFABBehavior"
+        app:srcCompat="@drawable/ic_fab_budget"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_places"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="gone"
+        app:layout_anchor="@+id/viewpager"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_behavior="com.henriquenfaria.wisetrip.design.ScrollAwareFABBehavior"
+        app:srcCompat="@drawable/ic_fab_place"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
