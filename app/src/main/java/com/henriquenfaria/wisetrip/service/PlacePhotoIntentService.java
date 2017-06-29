@@ -49,7 +49,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     // Retrieves the photo of first trip's destination, save it in the internal
                     // storage and update Firebase db with the photo's attributions
                     if (!Utils.isFileExists(getApplicationContext(),
-                            Constants.Global.DESTINATION_PHOTO_DIR, trip.getId())) {
+                            Constants.General.DESTINATION_PHOTO_DIR, trip.getId())) {
                         addDestinationPhoto(trip, true);
                     }
                 }
@@ -68,7 +68,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                     // Deletes from the internal storage the photo of the first trip's destination
                     boolean isDeleted = Utils.deleteFileFromInternalStorage
                             (getApplicationContext(),
-                                    Constants.Global.DESTINATION_PHOTO_DIR, trip.getId(), true);
+                                    Constants.General.DESTINATION_PHOTO_DIR, trip.getId(), true);
                     if (isDeleted) {
                         Timber.d("destination photo deleted");
                     }
@@ -78,7 +78,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                 Constants.Action.ACTION_SIGN_OUT_CLEAN_UP)) {
             // Remove local photos and clear Picasso cache
             Utils.deleteFolderFromInternalStorage(getApplicationContext(),
-                    Constants.Global.DESTINATION_PHOTO_DIR, true);
+                    Constants.General.DESTINATION_PHOTO_DIR, true);
         }
     }
 
@@ -107,11 +107,11 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
                         if (image != null) {
                             Utils.saveBitmapToInternalStorage(getApplicationContext(), image,
-                                    Constants.Global.DESTINATION_PHOTO_DIR, trip.getId());
+                                    Constants.General.DESTINATION_PHOTO_DIR, trip.getId());
 
                             // Invalidate Picasso cache for modified trip photo
                             ContextWrapper cw = new ContextWrapper(getApplicationContext());
-                            File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
+                            File directoryFile = cw.getDir(Constants.General.DESTINATION_PHOTO_DIR,
                                     Context.MODE_PRIVATE);
                             File photoFile = new File(directoryFile, trip.getId());
                             Picasso.with(getApplicationContext()).invalidate(photoFile);

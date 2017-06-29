@@ -119,7 +119,7 @@ public class Trip implements Parcelable, Comparable<Trip> {
     }
 
     public State getState(long currentMillis) {
-        if (currentMillis >= this.startDate && currentMillis <= (this.endDate + Constants.Global.DAY_IN_MILLIS)) {
+        if (currentMillis >= this.startDate && currentMillis <= (this.endDate + Constants.General.DAY_IN_MILLIS)) {
             return State.CURRENT;
         } else if (this.endDate < currentMillis) {
             return State.PAST;

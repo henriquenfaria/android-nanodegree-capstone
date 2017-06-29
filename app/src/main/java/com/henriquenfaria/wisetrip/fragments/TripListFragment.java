@@ -22,10 +22,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.design.CustomRecyclerView;
 import com.henriquenfaria.wisetrip.data.TripListSection;
+import com.henriquenfaria.wisetrip.design.CustomRecyclerView;
 import com.henriquenfaria.wisetrip.models.Destination;
 import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
@@ -50,11 +49,9 @@ public class TripListFragment extends BaseFragment {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mTripsReference;
-    private DatabaseReference mAttributionsReference;
     private FirebaseUser mCurrentUser;
     private SectionedRecyclerViewAdapter mTripAdapter;
     private ChildEventListener mTripsEventListener;
-    private ValueEventListener mValueEventListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
 
     private SortedList<Trip> mUpcomingTrips;
@@ -156,12 +153,6 @@ public class TripListFragment extends BaseFragment {
         mTripsReference = mFirebaseDatabase.getReference()
                 .child("trips")
                 .child(mCurrentUser.getUid());
-
-        mAttributionsReference = mFirebaseDatabase.getReference()
-                .child("attributions")
-                .child(mCurrentUser.getUid());
-
-        // attachDatabaseReadListener();
     }
 
     @Override
@@ -172,8 +163,7 @@ public class TripListFragment extends BaseFragment {
 
         ButterKnife.bind(this, rootView);
 
-        mTripListRecyclerView.setLayoutManager(/*reversedLayoutManager*/new LinearLayoutManager
-                (mFragmentActivity));
+        mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
         mTripListRecyclerView.setHasFixedSize(false);
         mTripListRecyclerView.setEmptyView(mEmptyTripListText);
 
@@ -423,13 +413,10 @@ public class TripListFragment extends BaseFragment {
         switch (state) {
             case CURRENT:
                 return context.getString(R.string.current);
-
             case UPCOMING:
                 return context.getString(R.string.upcoming);
-
             case PAST:
                 return context.getString(R.string.past);
-
             default:
                 Timber.e("Can't find correct Trip title");
                 throw new IllegalArgumentException();

@@ -10,6 +10,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,22 +60,31 @@ import timber.log.Timber;
 /* Activity to display all related data of a specific Trip */
 public class TripDetailsActivity extends AppCompatActivity {
 
-    private static final String SAVE_LAST_TAB_POSITION_KEY = "save_last_tab_position_key";
+    private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
+            "save_is_shared_element_transition";
     private static final int TAB_EXPENSES_POSITION = 0;
     private static final int TAB_BUDGETS_POSITION = 1;
     private static final int TAB_PLACES_POSITION = 2;
+
     @BindView(R.id.attribution_container)
     protected LinearLayout mAttributionContainer;
+    @BindView(R.id.trip_photo)
+    protected ImageView mTripPhoto;
+    @BindView(R.id.trip_photo_protection)
+    protected View mTripPhotoProtection;
     @BindView(R.id.attribution_prefix)
     protected TextView mAttributionPrefix;
+    @BindView(R.id.trip_title)
+    protected TextView mTripTitle;
     @BindView(R.id.attribution_content)
     protected TextView mAttributionContent;
     @BindView(R.id.fab)
     protected FloatingActionButton mFab;
     @BindView(R.id.tablayout)
+
     protected TabLayout mTabLayout;
-   // private int mCurrentTabPosition;
     private Trip mTrip;
+    private boolean mIsSharedElementTransition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +100,10 @@ public class TripDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_details);
         ButterKnife.bind(this);
 
-        /*if (savedInstanceState != null) {
-            mCurrentTabPosition = savedInstanceState.getInt(SAVE_LAST_TAB_POSITION_KEY);
-        }*/
+        if (savedInstanceState != null) {
+            mIsSharedElementTransition = savedInstanceState.getBoolean
+                    (SAVE_IS_SHARED_ELEMENT_TRANSITION);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
@@ -100,11 +111,13 @@ public class TripDetailsActivity extends AppCompatActivity {
             supportPostponeEnterTransition();
         }
 
+
         setTripBackdropPhoto(mTrip.getId());
         setupAppBarLayout();
         setupToolbar();
         setupFab();
         setupViewPager();
+        setTransitionNames();
     }
 
     private void setupToolbar() {
@@ -123,13 +136,16 @@ public class TripDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (mTabLayout.getSelectedTabPosition()) {
                     case TAB_EXPENSES_POSITION:
-                        Toast.makeText(TripDetailsActivity.this, "Expenses", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TripDetailsActivity.this, "Expenses", Toast.LENGTH_SHORT)
+                                .show();
                         break;
                     case TAB_BUDGETS_POSITION:
-                        Toast.makeText(TripDetailsActivity.this, "Budgets", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TripDetailsActivity.this, "Budgets", Toast.LENGTH_SHORT)
+                                .show();
                         break;
                     case TAB_PLACES_POSITION:
-                        Toast.makeText(TripDetailsActivity.this, "Places", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TripDetailsActivity.this, "Places", Toast.LENGTH_SHORT)
+                                .show();
                         break;
                 }
             }
@@ -142,32 +158,31 @@ public class TripDetailsActivity extends AppCompatActivity {
         appbarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    switch (state) {
-                        case COLLAPSED:
-                        case IDLE:
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo).setTransitionName("");
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo_protection).setTransitionName("");
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.attribution_container).setTransitionName("");
-                            break;
-                        case EXPANDED:
-                            // TODO: Do not use hardcoded transition names
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo).setTransitionName("trip_photo");
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo_protection)
-                                    .setTransitionName("trip_photo_protection");
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.attribution_container)
-                                    .setTransitionName("attribution_container");
-                            break;
-                    }
+                switch (state) {
+                    case COLLAPSED:
+                    case IDLE:
+                        mIsSharedElementTransition = false;
+                        break;
+                    case EXPANDED:
+                        mIsSharedElementTransition = true;
+                        break;
                 }
+
             }
         });
+    }
+
+    private void setTransitionNames(/*boolean clearNames*/) {
+        String tripId = mTrip.getId();
+        ViewCompat.setTransitionName(mTripPhoto,
+                Constants.Transition.PREFIX_TRIP_PHOTO + tripId);
+        ViewCompat.setTransitionName(mTripPhotoProtection,
+                Constants.Transition.PREFIX_TRIP_PHOTO_PROTECTION + tripId);
+        ViewCompat.setTransitionName(mAttributionContainer,
+                Constants.Transition.PREFIX_TRIP_ATTRIBUTION + tripId);
+        ViewCompat.setTransitionName(mTripTitle,
+                Constants.Transition.PREFIX_TRIP_TITLE + tripId);
+
     }
 
     private int getFabImageResource() {
@@ -182,7 +197,6 @@ public class TripDetailsActivity extends AppCompatActivity {
                 return R.drawable.ic_fab_plus;
         }
     }
-
 
     private void animateFab() {
         if (!mFab.isShown()) {
@@ -233,13 +247,13 @@ public class TripDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SAVE_LAST_TAB_POSITION_KEY, mTabLayout.getSelectedTabPosition());
+        outState.putBoolean(SAVE_IS_SHARED_ELEMENT_TRANSITION, mIsSharedElementTransition);
         super.onSaveInstanceState(outState);
     }
 
     private void setTripBackdropPhoto(String tripId) {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
+        File directoryFile = cw.getDir(Constants.General.DESTINATION_PHOTO_DIR,
                 Context.MODE_PRIVATE);
         final File photoFile = new File(directoryFile, tripId);
 
@@ -281,8 +295,8 @@ public class TripDetailsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // To animate transition like back button press
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    finishAfterTransition();
+                if (mIsSharedElementTransition) {
+                    supportFinishAfterTransition();
                 } else {
                     finish();
                 }
@@ -290,6 +304,15 @@ public class TripDetailsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mIsSharedElementTransition) {
+            super.onBackPressed();
+        } else {
+            finish();
+        }
     }
 
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
@@ -384,8 +407,8 @@ public class TripDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private static abstract class AppBarStateChangeListener implements AppBarLayout
-            .OnOffsetChangedListener {
+    private static abstract class AppBarStateChangeListener implements
+            AppBarLayout.OnOffsetChangedListener {
 
         private State mCurrentState = State.IDLE;
 

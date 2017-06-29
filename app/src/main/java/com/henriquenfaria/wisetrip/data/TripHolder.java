@@ -4,6 +4,7 @@ package com.henriquenfaria.wisetrip.data;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -42,6 +43,8 @@ public class TripHolder extends RecyclerView.ViewHolder {
     protected CardView mTripCard;
     @BindView(R.id.trip_photo)
     protected ImageView mTripPhoto;
+    @BindView(R.id.trip_photo_protection)
+    protected View mTripPhotoProtection;
     @BindView(R.id.trip_title)
     protected TextView mTripTitle;
     @BindView(R.id.trip_date)
@@ -52,10 +55,10 @@ public class TripHolder extends RecyclerView.ViewHolder {
     protected TextView mAttributionPrefix;
     @BindView(R.id.attribution_content)
     protected TextView mAttributionContent;
-
-
     @BindView(R.id.edit_button)
     protected ImageView mEditButton;
+
+
     private OnTripItemClickListener mOnTripItemClickListener;
     private OnEditTripClickListener mOnEditTripClickListener;
 
@@ -87,10 +90,19 @@ public class TripHolder extends RecyclerView.ViewHolder {
         mTripDate.setText(tripDate);
     }
 
+    public void setTransitionNames(String tripId) {
+        ViewCompat.setTransitionName(mTripPhoto, Constants.Transition.PREFIX_TRIP_PHOTO + tripId);
+        ViewCompat.setTransitionName(mTripPhotoProtection, Constants.Transition
+                .PREFIX_TRIP_PHOTO_PROTECTION + tripId);
+        ViewCompat.setTransitionName(mAttributionContainer,
+                Constants.Transition.PREFIX_TRIP_ATTRIBUTION + tripId);
+        ViewCompat.setTransitionName(mTripTitle, Constants.Transition.PREFIX_TRIP_TITLE + tripId);
+    }
+
     public void setTripPhoto(final String tripId) {
         if (!TextUtils.isEmpty(tripId)) {
             ContextWrapper cw = new ContextWrapper(mTripPhoto.getContext().getApplicationContext());
-            File directoryFile = cw.getDir(Constants.Global.DESTINATION_PHOTO_DIR,
+            File directoryFile = cw.getDir(Constants.General.DESTINATION_PHOTO_DIR,
                     Context.MODE_PRIVATE);
             final File photoFile = new File(directoryFile, tripId);
 

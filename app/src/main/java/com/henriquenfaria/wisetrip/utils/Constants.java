@@ -3,8 +3,8 @@ package com.henriquenfaria.wisetrip.utils;
 
 // Class that holds all app's public constants
 public class Constants {
-    // Global constants
-    public static class Global {
+    // General constants
+    public static class General {
         // Max Trip destinations
         public static final int MAX_DESTINATIONS = 10;
         // Max Trip travelers
@@ -13,6 +13,14 @@ public class Constants {
         public static final String DESTINATION_PHOTO_DIR = "destinations";
         // 24 hours in milliseconds
         public static final long DAY_IN_MILLIS = 86400000L;
+    }
+
+    public static class Transition {
+        // Prefixes for dynamic shared transition elements
+        public static final String PREFIX_TRIP_TITLE = "prefix_trip_title_";
+        public static final String PREFIX_TRIP_PHOTO = "prefix_trip_photo_";
+        public static final String PREFIX_TRIP_PHOTO_PROTECTION = "prefix_trip_photo_protection_";
+        public static final String PREFIX_TRIP_ATTRIBUTION= "prefix_trip_attribution_";
     }
 
     // Intent extras
