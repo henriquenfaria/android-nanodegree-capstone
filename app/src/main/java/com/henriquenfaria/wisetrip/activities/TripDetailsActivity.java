@@ -63,23 +63,18 @@ public class TripDetailsActivity extends AppCompatActivity {
     private static final int TAB_EXPENSES_POSITION = 0;
     private static final int TAB_BUDGETS_POSITION = 1;
     private static final int TAB_PLACES_POSITION = 2;
-
-    private int mLastTabPosition;
-
-    private Trip mTrip;
-
     @BindView(R.id.attribution_container)
     protected LinearLayout mAttributionContainer;
     @BindView(R.id.attribution_prefix)
     protected TextView mAttributionPrefix;
     @BindView(R.id.attribution_content)
     protected TextView mAttributionContent;
-    @BindView(R.id.fab_expenses)
-    protected FloatingActionButton mFabExpenses;
-    @BindView(R.id.fab_budgets)
-    protected FloatingActionButton mFabBudgets;
-    @BindView(R.id.fab_places)
-    protected FloatingActionButton mFabPlaces;
+    @BindView(R.id.fab)
+    protected FloatingActionButton mFab;
+    @BindView(R.id.tablayout)
+    protected TabLayout mTabLayout;
+   // private int mCurrentTabPosition;
+    private Trip mTrip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +90,9 @@ public class TripDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_details);
         ButterKnife.bind(this);
 
-        if (savedInstanceState != null) {
-            mLastTabPosition = savedInstanceState.getInt(SAVE_LAST_TAB_POSITION_KEY);
-        }
+        /*if (savedInstanceState != null) {
+            mCurrentTabPosition = savedInstanceState.getInt(SAVE_LAST_TAB_POSITION_KEY);
+        }*/
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition();
@@ -108,7 +103,7 @@ public class TripDetailsActivity extends AppCompatActivity {
         setTripBackdropPhoto(mTrip.getId());
         setupAppBarLayout();
         setupToolbar();
-        setupFabs();
+        setupFab();
         setupViewPager();
     }
 
@@ -121,23 +116,22 @@ public class TripDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
     }
 
-    private void setupFabs() {
-        mFabExpenses.setOnClickListener(new View.OnClickListener() {
+    private void setupFab() {
+        mFab.setImageResource(getFabImageResource());
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(TripDetailsActivity.this, "Expenses", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mFabBudgets.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(TripDetailsActivity.this, "Budgets", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mFabPlaces.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(TripDetailsActivity.this, "Places", Toast.LENGTH_SHORT).show();
+                switch (mTabLayout.getSelectedTabPosition()) {
+                    case TAB_EXPENSES_POSITION:
+                        Toast.makeText(TripDetailsActivity.this, "Expenses", Toast.LENGTH_SHORT).show();
+                        break;
+                    case TAB_BUDGETS_POSITION:
+                        Toast.makeText(TripDetailsActivity.this, "Budgets", Toast.LENGTH_SHORT).show();
+                        break;
+                    case TAB_PLACES_POSITION:
+                        Toast.makeText(TripDetailsActivity.this, "Places", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         });
     }
@@ -153,19 +147,19 @@ public class TripDetailsActivity extends AppCompatActivity {
                         case COLLAPSED:
                         case IDLE:
                             ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo_protection).setTransitionName("");
-                            ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.trip_photo).setTransitionName("");
+                            ButterKnife.findById(TripDetailsActivity.this,
+                                    R.id.trip_photo_protection).setTransitionName("");
                             ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.attribution_container).setTransitionName("");
                             break;
                         case EXPANDED:
                             // TODO: Do not use hardcoded transition names
                             ButterKnife.findById(TripDetailsActivity.this,
+                                    R.id.trip_photo).setTransitionName("trip_photo");
+                            ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.trip_photo_protection)
                                     .setTransitionName("trip_photo_protection");
-                            ButterKnife.findById(TripDetailsActivity.this,
-                                    R.id.trip_photo).setTransitionName("trip_photo");
                             ButterKnife.findById(TripDetailsActivity.this,
                                     R.id.attribution_container)
                                     .setTransitionName("attribution_container");
@@ -176,48 +170,36 @@ public class TripDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void doShowFabAnimation(int position) {
-        switch (position) {
+    private int getFabImageResource() {
+        switch (mTabLayout.getSelectedTabPosition()) {
             case TAB_EXPENSES_POSITION:
-                mFabExpenses.show();
-                break;
+                return R.drawable.ic_fab_expense;
             case TAB_BUDGETS_POSITION:
-                mFabBudgets.show();
-                break;
+                return R.drawable.ic_fab_budget;
             case TAB_PLACES_POSITION:
-                mFabPlaces.show();
-                break;
+                return R.drawable.ic_fab_place;
+            default:
+                return R.drawable.ic_fab_plus;
         }
     }
 
-    private void animateFab(final int position, int lastTabPosition) {
-        switch (lastTabPosition) {
-            case TAB_EXPENSES_POSITION:
-                mFabExpenses.hide(new FloatingActionButton.OnVisibilityChangedListener() {
-                    @Override
-                    public void onHidden(FloatingActionButton fab) {
-                        doShowFabAnimation(position);
-                    }
-                });
-                break;
-            case TAB_BUDGETS_POSITION:
-                mFabBudgets.hide(new FloatingActionButton.OnVisibilityChangedListener() {
-                    @Override
-                    public void onHidden(FloatingActionButton fab) {
-                        doShowFabAnimation(position);
-                    }
-                });
-                break;
-            case TAB_PLACES_POSITION:
-                mFabPlaces.hide(new FloatingActionButton.OnVisibilityChangedListener() {
-                    @Override
-                    public void onHidden(FloatingActionButton fab) {
-                        doShowFabAnimation(position);
-                    }
-                });
-                break;
+
+    private void animateFab() {
+        if (!mFab.isShown()) {
+            mFab.setImageResource(getFabImageResource());
+            mFab.show();
+        } else {
+            mFab.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+                @Override
+                public void onHidden(FloatingActionButton fab) {
+                    super.onHidden(fab);
+                    mFab.setImageResource(getFabImageResource());
+                    mFab.show();
+                }
+            });
         }
     }
+
 
     private void setupViewPager() {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
@@ -230,12 +212,10 @@ public class TripDetailsActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = ButterKnife.findById(TripDetailsActivity.this, R.id.tablayout);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                animateFab(tab.getPosition(), mLastTabPosition);
-                mLastTabPosition = tab.getPosition();
+                animateFab();
             }
 
             @Override
@@ -248,13 +228,12 @@ public class TripDetailsActivity extends AppCompatActivity {
 
             }
         });
-
-        tabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(SAVE_LAST_TAB_POSITION_KEY, mLastTabPosition);
+        outState.putInt(SAVE_LAST_TAB_POSITION_KEY, mTabLayout.getSelectedTabPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -297,48 +276,6 @@ public class TripDetailsActivity extends AppCompatActivity {
                 });
     }
 
-
-    //TODO: Temp dummy Fragment code
-    public static class TempDummyFragment extends Fragment {
-        int color;
-        TempSimpleRecyclerAdapter adapter;
-
-        public TempDummyFragment() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public TempDummyFragment(int color) {
-            this.color = color;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
-                savedInstanceState) {
-            View view = inflater.inflate(R.layout.temp_dummy_fragment, container, false);
-
-            final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
-            frameLayout.setBackgroundColor(color);
-
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id
-                    .dummyfrag_scrollableview);
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
-                    .getBaseContext());
-            recyclerView.setLayoutManager(linearLayoutManager);
-            recyclerView.setHasFixedSize(true);
-
-            List<String> list = new ArrayList<>();
-            for (int i = 0; i < TempVersionModel.data.length; i++) {
-                list.add(TempVersionModel.data[i]);
-            }
-
-            adapter = new TempSimpleRecyclerAdapter(list);
-            recyclerView.setAdapter(adapter);
-
-            return view;
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -353,40 +290,6 @@ public class TripDetailsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private static abstract class AppBarStateChangeListener implements AppBarLayout
-            .OnOffsetChangedListener {
-
-        public enum State {
-            EXPANDED,
-            COLLAPSED,
-            IDLE
-        }
-
-        private State mCurrentState = State.IDLE;
-
-        @Override
-        public final void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-            if (i == 0) {
-                if (mCurrentState != State.EXPANDED) {
-                    onStateChanged(appBarLayout, State.EXPANDED);
-                }
-                mCurrentState = State.EXPANDED;
-            } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
-                if (mCurrentState != State.COLLAPSED) {
-                    onStateChanged(appBarLayout, State.COLLAPSED);
-                }
-                mCurrentState = State.COLLAPSED;
-            } else {
-                if (mCurrentState != State.IDLE) {
-                    onStateChanged(appBarLayout, State.IDLE);
-                }
-                mCurrentState = State.IDLE;
-            }
-        }
-
-        public abstract void onStateChanged(AppBarLayout appBarLayout, State state);
     }
 
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
@@ -437,6 +340,81 @@ public class TripDetailsActivity extends AppCompatActivity {
                 mAttributionPrefix.setVisibility(View.GONE);
                 mAttributionContent.setVisibility(View.GONE);
             }
+        }
+    }
+
+    //TODO: Temp dummy Fragment code
+    public static class TempDummyFragment extends Fragment {
+        int color;
+        TempSimpleRecyclerAdapter adapter;
+
+        public TempDummyFragment() {
+        }
+
+        @SuppressLint("ValidFragment")
+        public TempDummyFragment(int color) {
+            this.color = color;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+                savedInstanceState) {
+            View view = inflater.inflate(R.layout.temp_dummy_fragment, container, false);
+
+            final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
+            frameLayout.setBackgroundColor(color);
+
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id
+                    .dummyfrag_scrollableview);
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
+                    .getBaseContext());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setHasFixedSize(true);
+
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < TempVersionModel.data.length; i++) {
+                list.add(TempVersionModel.data[i]);
+            }
+
+            adapter = new TempSimpleRecyclerAdapter(list);
+            recyclerView.setAdapter(adapter);
+
+            return view;
+        }
+    }
+
+    private static abstract class AppBarStateChangeListener implements AppBarLayout
+            .OnOffsetChangedListener {
+
+        private State mCurrentState = State.IDLE;
+
+        @Override
+        public final void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+            if (i == 0) {
+                if (mCurrentState != State.EXPANDED) {
+                    onStateChanged(appBarLayout, State.EXPANDED);
+                }
+                mCurrentState = State.EXPANDED;
+            } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
+                if (mCurrentState != State.COLLAPSED) {
+                    onStateChanged(appBarLayout, State.COLLAPSED);
+                }
+                mCurrentState = State.COLLAPSED;
+            } else {
+                if (mCurrentState != State.IDLE) {
+                    onStateChanged(appBarLayout, State.IDLE);
+                }
+                mCurrentState = State.IDLE;
+            }
+        }
+
+        public abstract void onStateChanged(AppBarLayout appBarLayout, State state);
+
+        public enum State {
+            EXPANDED,
+            COLLAPSED,
+            IDLE
         }
     }
 }
