@@ -125,8 +125,10 @@ public class TripDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         TextView title = ButterKnife.findById(toolbar, R.id.trip_title);
         title.setText(mTrip.getTitle());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(null);
+        }
     }
 
     private void setupFab() {
@@ -172,7 +174,7 @@ public class TripDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void setTransitionNames(/*boolean clearNames*/) {
+    private void setTransitionNames() {
         String tripId = mTrip.getId();
         ViewCompat.setTransitionName(mTripPhoto,
                 Constants.Transition.PREFIX_TRIP_PHOTO + tripId);
@@ -234,12 +236,10 @@ public class TripDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
         mTabLayout.setupWithViewPager(viewPager);
@@ -387,8 +387,8 @@ public class TripDetailsActivity extends AppCompatActivity {
             final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
             frameLayout.setBackgroundColor(color);
 
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id
-                    .dummyfrag_scrollableview);
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(
+                    R.id.dummyfrag_scrollableview);
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
                     .getBaseContext());

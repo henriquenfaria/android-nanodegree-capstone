@@ -34,7 +34,9 @@ public class TripFactoryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_factory);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Initialize Firebase instances
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -69,7 +71,9 @@ public class TripFactoryActivity extends AppCompatActivity
 
     @Override
     public void changeActionBarTitle(String newTitle) {
-        getSupportActionBar().setTitle(newTitle);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setTitle(newTitle);
+        }
     }
 
     @Override

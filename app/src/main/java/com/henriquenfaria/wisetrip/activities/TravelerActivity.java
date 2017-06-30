@@ -1,6 +1,5 @@
 package com.henriquenfaria.wisetrip.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -48,14 +47,15 @@ public class TravelerActivity extends AppCompatActivity implements
     private LinearLayoutManager mLayoutManager;
     private HashMap<String, Traveler> mTravelerHashMap;
     private String mSearchViewFilter;
-
-    @SuppressLint("UseSparseArrays")
+    
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveler);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         ButterKnife.bind(this);
 
