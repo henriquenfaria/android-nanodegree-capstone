@@ -58,12 +58,10 @@ public class TripFactoryFragment extends BaseFragment implements
     private static final String TAG_ALERT_DIALOG_FRAGMENT = "tag_alert_dialog_fragment";
     private static final String SAVE_TRIP = "save_trip";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
-    private static final String SAVE_IS_POPULATED = "save_is_populated";
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
             "save_destination_adapter_clicked_position";
     private static final String SAVE_DISPLAY_DESTINATION_FOOTER_ERROR =
             "save_display_destination_footer_error";
-
 
     private static final int PERMISSION_REQUEST_READ_CONTACTS = 1;
 
@@ -85,7 +83,6 @@ public class TripFactoryFragment extends BaseFragment implements
     private OnTripFactoryListener mListener;
     private Trip mTrip;
     private boolean mIsEditMode;
-    private boolean mIsPopulated;
     private DestinationAdapter mDestinationAdapter;
     private int mDestinationAdapterClickedPosition;
     private boolean mIsDisplayDestinationFooterError;
@@ -184,7 +181,6 @@ public class TripFactoryFragment extends BaseFragment implements
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_TRIP, mTrip);
         outState.putBoolean(SAVE_IS_EDIT_MODE, mIsEditMode);
-        outState.putBoolean(SAVE_IS_POPULATED, mIsPopulated);
         outState.putInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION,
                 mDestinationAdapterClickedPosition);
         outState.putBoolean(SAVE_DISPLAY_DESTINATION_FOOTER_ERROR,
@@ -203,7 +199,6 @@ public class TripFactoryFragment extends BaseFragment implements
 
             if (!TextUtils.isEmpty(mTrip.getId())) {
                 mIsEditMode = true;
-                mIsPopulated = false;
             }
         }
 
@@ -261,7 +256,7 @@ public class TripFactoryFragment extends BaseFragment implements
             mListener = (OnTripFactoryListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnTripFactoryListener");
+                    + " must implement OnExpenseFactoryListener");
         }
     }
 
@@ -273,7 +268,6 @@ public class TripFactoryFragment extends BaseFragment implements
         if (savedInstanceState != null) {
             mTrip = savedInstanceState.getParcelable(SAVE_TRIP);
             mIsEditMode = savedInstanceState.getBoolean(SAVE_IS_EDIT_MODE);
-            mIsPopulated = savedInstanceState.getBoolean(SAVE_IS_POPULATED);
             mDestinationAdapterClickedPosition
                     = savedInstanceState.getInt(SAVE_DESTINATION_ADAPTER_CLICKED_POSITION);
             mIsDisplayDestinationFooterError = savedInstanceState.getBoolean
@@ -297,18 +291,22 @@ public class TripFactoryFragment extends BaseFragment implements
         mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
         mDestinationAdapter.notifyDataSetChanged();
 
-        if (mIsEditMode && !mIsPopulated) {
-            populateFields();
-            mIsPopulated = true;
-        }
+        //if (mIsEditMode && !mIsPopulated) {
+            populateFormFields();
+           // mIsPopulated = true;
+        //}
 
         return rootView;
     }
 
-    private void populateFields() {
+    private void populateFormFields() {
         mTripTitleEditText.setText(mTrip.getTitle());
-        mStartDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getStartDate()));
-        mEndDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getEndDate()));
+        if (mTrip.getStartDate() > 0){
+            mStartDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getStartDate()));
+        }
+        if (mTrip.getEndDate() > 0){
+            mEndDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getEndDate()));
+        }
         mTravelerText.setText(Utils.getFormattedTravelersText(mTrip.getTravelers()));
     }
 
@@ -360,14 +358,14 @@ public class TripFactoryFragment extends BaseFragment implements
 
 
     @Override
-    public void onDateSet(int targetViewId, long dateMillis, String dateText) {
+    public void onDateSet(int targetViewId, long dateMillis) {
         if (mStartDateTextView.getId() == targetViewId) {
             mTrip.setStartDate(dateMillis);
-            mStartDateTextView.setText(dateText);
+            mStartDateTextView.setText(Utils.getFormattedTripDateText(dateMillis));
             mStartDateTextView.setError(null);
         } else if (mEndDateTextView.getId() == targetViewId) {
             mTrip.setEndDate(dateMillis);
-            mEndDateTextView.setText(dateText);
+            mEndDateTextView.setText(Utils.getFormattedTripDateText(dateMillis));
             mEndDateTextView.setError(null);
         }
     }
@@ -508,4 +506,5 @@ public class TripFactoryFragment extends BaseFragment implements
 
         void deleteTrip(Trip trip);
     }
+
 }

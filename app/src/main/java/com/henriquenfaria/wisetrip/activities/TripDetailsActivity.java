@@ -4,6 +4,7 @@ package com.henriquenfaria.wisetrip.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -125,7 +126,7 @@ public class TripDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         TextView title = ButterKnife.findById(toolbar, R.id.trip_title);
         title.setText(mTrip.getTitle());
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(null);
         }
@@ -138,16 +139,20 @@ public class TripDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (mTabLayout.getSelectedTabPosition()) {
                     case TAB_EXPENSES_POSITION:
-                        Toast.makeText(TripDetailsActivity.this, "Expenses", Toast.LENGTH_SHORT)
-                                .show();
+                        Intent intent = new Intent(TripDetailsActivity.this,
+                                ExpenseFactoryActivity.class);
+                        intent.putExtra(Constants.Extra.EXTRA_TRIP, mTrip);
+                        startActivity(intent);
                         break;
                     case TAB_BUDGETS_POSITION:
-                        Toast.makeText(TripDetailsActivity.this, "Budgets", Toast.LENGTH_SHORT)
-                                .show();
+                        //TODO: Implement
+                        Toast.makeText(TripDetailsActivity.this, R.string.budgets,
+                                Toast.LENGTH_SHORT).show();
                         break;
                     case TAB_PLACES_POSITION:
-                        Toast.makeText(TripDetailsActivity.this, "Places", Toast.LENGTH_SHORT)
-                                .show();
+                        //TODO: Implement
+                        Toast.makeText(TripDetailsActivity.this, R.string.places,
+                                Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -221,10 +226,15 @@ public class TripDetailsActivity extends AppCompatActivity {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
+        // adapter.addFragment(new ExpenseListFragment(), getString(R.string.expenses));
+
         //TODO: Temp code
-        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), "Expenses");
-        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), "Budgets");
-        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), "Places");
+        adapter.addFragment(new TempDummyFragment(android.R.color.background_light),
+                getString(R.string.expenses));
+        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
+                .string.budgets));
+        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
+                .string.places));
 
         viewPager.setAdapter(adapter);
 

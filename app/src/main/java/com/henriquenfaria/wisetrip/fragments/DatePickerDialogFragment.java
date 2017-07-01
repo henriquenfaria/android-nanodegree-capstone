@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
-import com.henriquenfaria.wisetrip.utils.Utils;
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,8 +73,7 @@ public class DatePickerDialogFragment extends DialogFragment
             calendar.set(Calendar.YEAR, year);
             calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, day);
-            mOnDateSetListener.onDateSet(mTargetViewId, calendar.getTimeInMillis(),
-                    Utils.getFormattedTripDateText(calendar.getTimeInMillis()));
+            mOnDateSetListener.onDateSet(mTargetViewId, calendar.getTimeInMillis());
         }
     }
 
@@ -101,6 +98,6 @@ public class DatePickerDialogFragment extends DialogFragment
     }
 
     public interface OnDateSetListener {
-        void onDateSet(int targetViewId, long dateMillis, String dateText);
+        void onDateSet(int targetViewId, long dateMillis);
     }
 }

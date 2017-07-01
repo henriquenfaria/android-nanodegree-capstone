@@ -55,7 +55,7 @@ public class TripFactoryActivity extends AppCompatActivity
 
             } else {
                 // New trip
-                mTripFactoryFragment = TripFactoryFragment.newInstance(new Trip());
+                mTripFactoryFragment = TripFactoryFragment.newInstance(null);
             }
 
             getSupportFragmentManager().beginTransaction()

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/traveler_item"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:clickable="true"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:paddingBottom="@dimen/traveler_item_vertical_padding"
+              android:paddingEnd="@dimen/activity_horizontal_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingStart="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/traveler_item_vertical_padding">
+
+    <TextView
+        android:id="@+id/expense_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/traveler_name_margin_start"
+        android:layout_marginStart="@dimen/traveler_name_margin_start"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:minLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+</LinearLayout>

@@ -47,6 +47,9 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
+    // Country Picker Android
+    compile 'com.github.mukeshsolanki:country-picker-android:1.1.9'
+
     //Timber
     compile 'com.jakewharton.timber:timber:4.5.1'
 

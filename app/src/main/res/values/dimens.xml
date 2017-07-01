@@ -5,11 +5,12 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="factory_form_item_margin_top">24dp</dimen>
-    <dimen name="factory_form_icon_margin_end">8dp</dimen>
+    <dimen name="factory_form_icon_margin_horizontal">8dp</dimen>
     <dimen name="factory_form_date_separator_margin_horizontal">4dp</dimen>
     <dimen name="factory_form_remove_destination_button_padding">12dp</dimen>
     <dimen name="factory_form_remove_destination_button_margin_end">4dp</dimen>
     <dimen name="factory_form_destination_text_start_margin">16dp</dimen>
+    <dimen name="factory_form_currency_image_size">24dp</dimen>
     <dimen name="traveler_photo_size">40dp</dimen>
     <dimen name="traveler_photo_border_size">2dp</dimen>
     <dimen name="traveler_name_margin_start">16dp</dimen>

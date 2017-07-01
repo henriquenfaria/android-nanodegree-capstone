@@ -47,17 +47,16 @@ public class TravelerActivity extends AppCompatActivity implements
     private LinearLayoutManager mLayoutManager;
     private HashMap<String, Traveler> mTravelerHashMap;
     private String mSearchViewFilter;
-    
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveler);
+        ButterKnife.bind(this);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
             // noinspection unchecked

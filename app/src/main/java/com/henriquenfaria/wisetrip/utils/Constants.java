@@ -13,6 +13,13 @@ public class Constants {
         public static final String DESTINATION_PHOTO_DIR = "destinations";
         // 24 hours in milliseconds
         public static final long DAY_IN_MILLIS = 86400000L;
+
+        // Constants for money amount edit texts
+        public static final int MAX_DIGITS_BEFORE_POINT = 12;
+        public static final int MAX_DECIMAL_DIGITS = 2;
+
+        // Fallback country for currencies
+        public static final String DEFAULT_COUNTRY = "US";
     }
 
     public static class Transition {
@@ -27,6 +34,7 @@ public class Constants {
     public static class Extra {
         public static final String EXTRA_TRIP = "extra_trip";
         public static final String EXTRA_TRAVELER = "extra_traveler";
+        public static final String EXTRA_EXPENSE = "extra_expense";
     }
 
 
@@ -38,4 +46,10 @@ public class Constants {
         public static final String ACTION_SIGN_OUT_CLEAN_UP = "action_sign_out_clean_up";
         public static final String ACTION_UPDATE_TRIP_LIST = "action_update_trip_list";
     }
+
+    // Shared Preferences
+    public static class Preference {
+        public static final String PREFERENCE_DEFAULT_COUNTRY = "preference_default_country";
+    }
+
 }

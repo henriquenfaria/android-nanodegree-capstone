@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -37,11 +36,66 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:freezesText="true"
-                android:hint="@string/hint_what_is_the_trip_name"
+                android:hint="@string/hint_what_is_the_expense_name"
                 android:imeActionLabel="@string/done"
                 android:maxLength="25"
                 android:maxLines="1"
                 android:singleLine="true"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/factory_form_item_margin_top"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/currency_icon"
+                android:layout_width="@dimen/factory_form_currency_image_size"
+                android:layout_height="@dimen/factory_form_currency_image_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
+                android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+                android:src="@drawable/ic_calendar"/>
+
+            <TextView
+                android:id="@+id/currency_text"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableEnd="@drawable/ic_arrow_drop_down"
+                android:drawableRight="@drawable/ic_arrow_drop_down"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:freezesText="true"/>
+
+            <ImageView
+                android:id="@+id/amount_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
+                android:layout_marginLeft="@dimen/factory_form_icon_margin_horizontal"
+                android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+                android:layout_marginStart="@dimen/factory_form_icon_margin_horizontal"
+                android:src="@drawable/ic_amount"/>
+
+            <EditText
+                android:id="@+id/amount_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:freezesText="true"
+                android:gravity="end"
+                android:hint="@string/hint_amount"
+                android:imeActionLabel="@string/done"
+                android:inputType="numberDecimal"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:singleLine="true"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -60,61 +114,7 @@
                 android:src="@drawable/ic_calendar"/>
 
             <TextView
-                android:id="@+id/start_date_text"
-                style="@style/Widget.AppCompat.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:drawableRight="@drawable/ic_arrow_drop_down"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:freezesText="true"
-                android:hint="@string/hint_start_date"/>
-
-            <TextView
-                android:id="@+id/date_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/factory_form_date_separator_margin_horizontal"
-                android:layout_marginLeft="@dimen/factory_form_date_separator_margin_horizontal"
-                android:layout_marginRight="@dimen/factory_form_date_separator_margin_horizontal"
-                android:layout_marginStart="@dimen/factory_form_date_separator_margin_horizontal"
-                android:freezesText="true"
-                android:hint="@string/date_separator"
-                android:textColor="@android:color/black"/>
-
-            <TextView
-                android:id="@+id/end_date_text"
-                style="@style/Widget.AppCompat.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:drawableEnd="@drawable/ic_arrow_drop_down"
-                android:drawableRight="@drawable/ic_arrow_drop_down"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:freezesText="true"
-                android:hint="@string/hint_end_date"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/factory_form_item_margin_top"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/traveler_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
-                android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
-                android:src="@drawable/ic_traveler"/>
-
-            <TextView
-                android:id="@+id/traveler_text"
+                android:id="@+id/date_text"
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -123,14 +123,8 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:freezesText="true"
-                android:hint="@string/hint_who_will_join_you"/>
-        </LinearLayout>
+                android:hint="@string/hint_expense_date"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/destination_recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbarStyle="outsideOverlay"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

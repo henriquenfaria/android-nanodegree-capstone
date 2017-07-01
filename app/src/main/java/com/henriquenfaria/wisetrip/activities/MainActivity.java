@@ -1,5 +1,6 @@
 package com.henriquenfaria.wisetrip.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -22,6 +24,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
+import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Utils;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +64,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setDefaultCurrencyPreferences(this);
 
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -150,5 +157,21 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    private void setDefaultCurrencyPreferences(Context context){
+        Locale defaultLocale = Locale.getDefault();
+        String country = defaultLocale.getCountry();
+        if (TextUtils.isEmpty(Utils.getStringFromSharedPrefs(context,
+                Constants.Preference.PREFERENCE_DEFAULT_COUNTRY))) {
+            if (!TextUtils.isEmpty(country) && country.length() == 2){
+                Utils.saveStringToSharedPrefs(context,
+                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
+            } else {
+                Utils.saveStringToSharedPrefs(context,
+                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY,
+                        Constants.General.DEFAULT_COUNTRY);
+            }
+        }
     }
 }
