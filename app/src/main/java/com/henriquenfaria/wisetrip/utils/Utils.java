@@ -33,12 +33,9 @@ public class Utils {
 
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
 
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(dateFormat.format(startDateCalendar.getTime()));
-        stringBuffer.append(" ~ ");
-        stringBuffer.append(dateFormat.format(endDateCalendar.getTime()));
-
-        return stringBuffer.toString();
+        return dateFormat.format(startDateCalendar.getTime()) +
+                " ~ " +
+                dateFormat.format(endDateCalendar.getTime());
     }
 
     public static String getFormattedTripDateText(long dateMillis) {
@@ -54,16 +51,12 @@ public class Utils {
         startDateCalendar.setTimeInMillis(dateMillis);
 
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
-
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(dateFormat.format(startDateCalendar.getTime()));
-
-        return stringBuffer.toString();
+        return dateFormat.format(startDateCalendar.getTime());
     }
 
 
     public static String getFormattedTravelersText(Map<String, Traveler> travelers) {
-        StringBuffer travelersString = new StringBuffer();
+        StringBuilder travelersString = new StringBuilder();
         int count_for_comma = 0;
         for (Map.Entry entry : travelers.entrySet()) {
             Traveler traveler = (Traveler) entry.getValue();

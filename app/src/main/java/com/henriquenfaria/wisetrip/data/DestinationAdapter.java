@@ -43,7 +43,7 @@ public class DestinationAdapter extends
         switch (viewType) {
             case FOOTER_VIEW_TYPE:
                 View footer = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.destination_footer, parent, false);
+                        .inflate(R.layout.destination_footer_item, parent, false);
                 return new FooterHolder(footer);
             case ITEM_VIEW_TYPE:
                 View destination = LayoutInflater.from(parent.getContext())

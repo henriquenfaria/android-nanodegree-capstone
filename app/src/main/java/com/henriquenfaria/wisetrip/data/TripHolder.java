@@ -70,14 +70,18 @@ public class TripHolder extends RecyclerView.ViewHolder {
         mTripCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnTripItemClickListener.onTripItemClick(v);
+                if (mOnTripItemClickListener != null) {
+                    mOnTripItemClickListener.onTripItemClick(v);
+                }
             }
         });
 
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnEditTripClickListener.onEditTripClick(v);
+                if (mOnEditTripClickListener != null) {
+                    mOnEditTripClickListener.onEditTripClick(v);
+                }
             }
         });
     }

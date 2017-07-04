@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/expense_item_layout"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:clickable="true"
               android:gravity="center_vertical"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:paddingBottom="@dimen/traveler_item_vertical_padding"
-              android:paddingTop="@dimen/traveler_item_vertical_padding">
+              android:paddingTop="@dimen/traveler_item_vertical_padding"
+              android:background="#EEEEEE">
 
     <TextView
-        android:id="@+id/expense_title"
+        android:id="@+id/expense_header_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/traveler_name_margin_start"
@@ -18,5 +18,5 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 </LinearLayout>

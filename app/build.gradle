@@ -62,6 +62,12 @@ dependencies {
     //SectionedRecyclerViewAdapter
     compile 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.0.5'
 
+    // Joda-time
+    compile 'joda-time:joda-time:2.9.9'
+
+    //StickyHeaders
+    compile 'org.zakariya.stickyheaders:stickyheaders:0.7.6'
+
     // CircleImageView for traveler photos
     compile 'de.hdodenhof:circleimageview:2.1.0'
 

@@ -25,8 +25,8 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
 public class TripListSection extends StatelessSection {
 
-    String mTitle;
-    SortedList<Trip> mTripList;
+    private String mTitle;
+    private SortedList<Trip> mTripList;
 
     public TripListSection(String title, SortedList<Trip> tripList) {
         super(R.layout.trip_header_item, R.layout.trip_item);

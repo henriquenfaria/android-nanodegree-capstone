@@ -41,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.TempSimpleRecyclerAdapter;
 import com.henriquenfaria.wisetrip.data.ViewPagerAdapter;
+import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
 import com.henriquenfaria.wisetrip.models.Attribution;
 import com.henriquenfaria.wisetrip.models.TempVersionModel;
 import com.henriquenfaria.wisetrip.models.Trip;
@@ -226,17 +227,17 @@ public class TripDetailsActivity extends AppCompatActivity {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        // adapter.addFragment(new ExpenseListFragment(), getString(R.string.expenses));
-
         //TODO: Temp code
-        adapter.addFragment(new TempDummyFragment(android.R.color.background_light),
-                getString(R.string.expenses));
+        /*adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
+                .string.expenses));*/
+        adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
         adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
                 .string.budgets));
         adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
                 .string.places));
 
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

@@ -26,6 +26,8 @@ import com.mukesh.countrypicker.Country;
 import com.mukesh.countrypicker.CountryPicker;
 import com.mukesh.countrypicker.CountryPickerListener;
 
+import org.joda.time.DateTime;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -79,6 +81,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         public void onClick(final View v) {
             mDatePickerFragment = new DatePickerDialogFragment();
             mDatePickerFragment.setOnDateSetListener(ExpenseFactoryFragment.this);
+            mDatePickerFragment.setCurrentDate(mExpense.getDate());
             mDatePickerFragment.setTargetViewId(v.getId());
             mDatePickerFragment.show(getFragmentManager(), TAG_DATE_PICKER_FRAGMENT);
         }
@@ -133,7 +136,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
 
             if (mExpense == null) {
                 mExpense = new Expense();
-                mExpense.setDate(System.currentTimeMillis());
+                mExpense.setDate(DateTime.now().withTimeAtStartOfDay().getMillis());
                 String country = Utils.getStringFromSharedPrefs(mFragmentActivity,
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY);
                 mExpense.setCountry(country);
@@ -324,7 +327,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     @Override
     public void onDateSet(int targetViewId, long dateMillis) {
         if (mDateTextView.getId() == targetViewId) {
-            mExpense.setDate(dateMillis);
+            mExpense.setDate(new DateTime(dateMillis).withTimeAtStartOfDay().getMillis());
             mDateTextView.setText(Utils.getFormattedExpenseDateText(dateMillis));
             mDateTextView.setError(null);
         }

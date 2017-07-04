@@ -88,7 +88,6 @@ public class ExpenseFactoryActivity extends AppCompatActivity
 
     @Override
     public void saveExpense(Trip trip, Expense expense, boolean isEditMode) {
-
         if (isEditMode) {
             // Update existing Expense
             if (expense != null && !TextUtils.isEmpty(expense.getId())) {

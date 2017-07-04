@@ -8,21 +8,44 @@ import android.view.View;
 // Custom RecyclerView that adds empty view support
 // Solution based on http://akbaribrahim.com/empty-view-for-androids-recyclerview/
 public class CustomRecyclerView extends RecyclerView {
-    private View emptyView;
-    final private AdapterDataObserver observer = new AdapterDataObserver() {
+    private View mEmptyView;
+
+    private AdapterDataObserver mDataObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
-            checkIfEmpty();
+            super.onChanged();
+            updateEmptyView();
+        }
+
+        @Override
+        public void onItemRangeChanged(int positionStart, int itemCount) {
+             super.onItemRangeChanged(positionStart, itemCount);
+            updateEmptyView();
+        }
+
+        @Override
+        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+             super.onItemRangeChanged(positionStart, itemCount, payload);
+            updateEmptyView();
         }
 
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
-            checkIfEmpty();
+             super.onItemRangeInserted(positionStart, itemCount);
+
+            updateEmptyView();
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-            checkIfEmpty();
+             super.onItemRangeRemoved(positionStart, itemCount);
+            updateEmptyView();
+        }
+
+        @Override
+        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+             super.onItemRangeMoved(fromPosition, toPosition, itemCount);
+            updateEmptyView();
         }
     };
 
@@ -38,30 +61,32 @@ public class CustomRecyclerView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
-    void checkIfEmpty() {
-        if (emptyView != null && getAdapter() != null) {
-            final boolean emptyViewVisible = getAdapter().getItemCount() == 0;
-            emptyView.setVisibility(emptyViewVisible ? VISIBLE : GONE);
-            setVisibility(emptyViewVisible ? GONE : VISIBLE);
-        }
+    /**
+     * Designate a view as the empty view. When the backing adapter has no
+     * data this view will be made visible and the recycler view hidden.
+     *
+     */
+    public void setEmptyView(View emptyView) {
+        mEmptyView = emptyView;
     }
 
     @Override
-    public void setAdapter(Adapter adapter) {
-        final Adapter oldAdapter = getAdapter();
-        if (oldAdapter != null) {
-            oldAdapter.unregisterAdapterDataObserver(observer);
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        if (getAdapter() != null) {
+            getAdapter().unregisterAdapterDataObserver(mDataObserver);
+        }
+        if (adapter != null) {
+            adapter.registerAdapterDataObserver(mDataObserver);
         }
         super.setAdapter(adapter);
-        if (adapter != null) {
-            adapter.registerAdapterDataObserver(observer);
-        }
-
-        checkIfEmpty();
+        updateEmptyView();
     }
 
-    public void setEmptyView(View emptyView) {
-        this.emptyView = emptyView;
-        checkIfEmpty();
+    private void updateEmptyView() {
+        if (mEmptyView != null && getAdapter() != null) {
+            boolean showEmptyView = getAdapter().getItemCount() == 0;
+            mEmptyView.setVisibility(showEmptyView ? VISIBLE : GONE);
+            setVisibility(showEmptyView ? GONE : VISIBLE);
+        }
     }
 }

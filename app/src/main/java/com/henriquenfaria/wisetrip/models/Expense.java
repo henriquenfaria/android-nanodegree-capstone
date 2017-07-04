@@ -3,8 +3,12 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
-public class Expense implements Parcelable {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+public class Expense implements Parcelable, Comparable<Expense> {
 
     // Trip id
     private String id;
@@ -90,4 +94,36 @@ public class Expense implements Parcelable {
             return new Expense[size];
         }
     };
+
+    @Override
+    public int compareTo(@NonNull Expense expense) {
+         return this.getDate().compareTo(expense.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+         /* We only need to use id to compare if a Trip is the same. Since id is unique,
+          we can ignore the other properties. It will increase the performance*/
+        return new HashCodeBuilder(17, 31)
+                .append(id)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Expense)) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+         /* We only need to use id to compare if a Expense is the same. Since id is unique,
+          we can ignore the other properties. It will increase the performance*/
+        Expense expense = (Expense) obj;
+        return new EqualsBuilder()
+                .append(id, expense.id)
+                .isEquals();
+    }
 }

@@ -30,6 +30,8 @@ import com.henriquenfaria.wisetrip.models.Trip;
 import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -153,6 +155,8 @@ public class TripListFragment extends BaseFragment {
         mTripsReference = mFirebaseDatabase.getReference()
                 .child("trips")
                 .child(mCurrentUser.getUid());
+
+
     }
 
     @Override
@@ -160,14 +164,7 @@ public class TripListFragment extends BaseFragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_trip_list, container, false);
-
         ButterKnife.bind(this, rootView);
-
-        mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
-        mTripListRecyclerView.setHasFixedSize(false);
-        mTripListRecyclerView.setEmptyView(mEmptyTripListText);
-
-        mTripAdapter = new SectionedRecyclerViewAdapter();
 
         // TODO: If date is properly indexed, use:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
@@ -179,11 +176,15 @@ public class TripListFragment extends BaseFragment {
                  keyRef's location represents a list item in the RecyclerView.
          */
 
+        mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
+        mTripListRecyclerView.setHasFixedSize(false);
+        mTripAdapter = new SectionedRecyclerViewAdapter();
         mTripListRecyclerView.setAdapter(mTripAdapter);
-
-        attachDatabaseReadListener();
-
+        mTripListRecyclerView.setEmptyView(mEmptyTripListText);
         mPlacePhotoReceiver = new PlacePhotoReceiver();
+
+        // TODO: Move to onCreate()?
+        attachDatabaseReadListener();
 
         return rootView;
     }
@@ -194,10 +195,9 @@ public class TripListFragment extends BaseFragment {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildAdded");
-
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                        Trip.State state = trip.getState(System.currentTimeMillis());
+                        Trip.State state = trip.getState(DateTime.now().getMillis());
                         SortedList<Trip> currentList = getTripList(state);
                         currentList.add(trip);
                         int index = currentList.add(trip);
@@ -225,7 +225,7 @@ public class TripListFragment extends BaseFragment {
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                         if (removeTripFromAllLists(trip)) {
-                            Trip.State state = trip.getState(System.currentTimeMillis());
+                            Trip.State state = trip.getState(DateTime.now().getMillis());
                             SortedList<Trip> currentList = getTripList(state);
                             int index = currentList.add(trip);
                             if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
@@ -249,7 +249,7 @@ public class TripListFragment extends BaseFragment {
 
                     Trip trip = dataSnapshot.getValue(Trip.class);
                     if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                        Trip.State state = trip.getState(System.currentTimeMillis());
+                        Trip.State state = trip.getState(DateTime.now().getMillis());
                         SortedList<Trip> currentList = getTripList(state);
                         int index = getIndexOnSortedList(trip, currentList);
                         if (index != SortedList.INVALID_POSITION) {
@@ -365,6 +365,7 @@ public class TripListFragment extends BaseFragment {
         }
     }
 
+    // TODO: Must improve search performance. Use binary search?
     // Can't use SortedList.indexOf method. Because we're only checking Trip's id
     private int getIndexOnSortedList(Trip searchTrip, SortedList<Trip> sortedList) {
         for (int i = 0; i < sortedList.size(); i++) {
