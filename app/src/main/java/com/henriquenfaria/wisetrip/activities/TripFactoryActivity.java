@@ -14,7 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripFactoryFragment;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 public class TripFactoryActivity extends AppCompatActivity
@@ -26,7 +26,7 @@ public class TripFactoryActivity extends AppCompatActivity
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mTripsReference;
     private FirebaseUser mCurrentUser;
-    private Trip mTrip;
+    private TripModel mTrip;
     private TripFactoryFragment mTripFactoryFragment;
 
     @Override
@@ -49,7 +49,7 @@ public class TripFactoryActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             if (intent != null && intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                // Trip already exists
+                // TripModel already exists
                 mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 mTripFactoryFragment = TripFactoryFragment.newInstance(mTrip);
 
@@ -77,9 +77,9 @@ public class TripFactoryActivity extends AppCompatActivity
     }
 
     @Override
-    public void saveTrip(Trip trip, boolean isEditMode) {
+    public void saveTrip(TripModel trip, boolean isEditMode) {
         if (isEditMode) {
-            // Update existing Trip
+            // Update existing TripModel
             if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                 DatabaseReference databaseReference = mTripsReference.child(trip.getId());
                 databaseReference.setValue(trip);
@@ -90,7 +90,7 @@ public class TripFactoryActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
             }
         } else {
-            // Creating Trip
+            // Creating TripModel
             DatabaseReference databaseReference = mTripsReference.push();
             trip.setId(databaseReference.getKey());
             databaseReference.setValue(trip);
@@ -102,12 +102,12 @@ public class TripFactoryActivity extends AppCompatActivity
     }
 
     @Override
-    public void deleteTrip(Trip trip) {
+    public void deleteTrip(TripModel trip) {
         if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-            // Remove Trip
+            // Remove TripModel
             mTripsReference.child(trip.getId()).removeValue();
 
-            // Remove Trip photo attributions
+            // Remove TripModel photo attributions
             DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
                     .child("attributions")
                     .child(mCurrentUser.getUid())

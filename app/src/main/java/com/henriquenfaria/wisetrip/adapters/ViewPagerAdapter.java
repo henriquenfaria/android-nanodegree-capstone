@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

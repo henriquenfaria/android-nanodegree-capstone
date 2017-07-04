@@ -39,12 +39,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.TempSimpleRecyclerAdapter;
-import com.henriquenfaria.wisetrip.data.ViewPagerAdapter;
+import com.henriquenfaria.wisetrip.adapters.TempSimpleRecyclerAdapter;
+import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
 import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
-import com.henriquenfaria.wisetrip.models.Attribution;
+import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.models.TempVersionModel;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -59,7 +59,7 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 
-/* Activity to display all related data of a specific Trip */
+/* Activity to display all related data of a specific TripModel */
 public class TripDetailsActivity extends AppCompatActivity {
 
     private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
@@ -85,7 +85,7 @@ public class TripDetailsActivity extends AppCompatActivity {
     @BindView(R.id.tablayout)
 
     protected TabLayout mTabLayout;
-    private Trip mTrip;
+    private TripModel mTrip;
     private boolean mIsSharedElementTransition;
 
     @Override
@@ -345,7 +345,7 @@ public class TripDetailsActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Timber.d("onDataChange");
                         if (mAttributionContainer != null) {
-                            Attribution attribution = dataSnapshot.getValue(Attribution.class);
+                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel.class);
                             if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
                                 Spanned result;
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.models.Traveler;
+import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.squareup.picasso.Picasso;
 
@@ -46,12 +46,12 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         }
 
         mCursor.moveToPosition(position);
-        final Traveler traveler = new Traveler(mCursor);
+        final TravelerModel traveler = new TravelerModel(mCursor);
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, Traveler> travelerHashMap = null;
+                HashMap<String, TravelerModel> travelerHashMap = null;
                 if (mContext instanceof OnTravelerAdapter) {
                     travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
                 }
@@ -79,7 +79,7 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
             }
         });
 
-        HashMap<String, Traveler> travelerHashMap = null;
+        HashMap<String, TravelerModel> travelerHashMap = null;
         if (mContext instanceof OnTravelerAdapter) {
             travelerHashMap = ((OnTravelerAdapter) mContext).getTravelerHashMap();
         }
@@ -105,12 +105,12 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
         return (mCursor != null) ? mCursor.getCount() : 0;
     }
 
-    public Traveler getItem(int position) {
+    public TravelerModel getItem(int position) {
         if (!mCursor.moveToPosition(position)) {
             throw new IllegalStateException("Invalid item position requested");
         }
 
-        return new Traveler(mCursor);
+        return new TravelerModel(mCursor);
     }
 
     @Override
@@ -131,9 +131,9 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
     }
 
     public interface OnTravelerAdapter {
-        HashMap<String, Traveler> getTravelerHashMap();
+        HashMap<String, TravelerModel> getTravelerHashMap();
 
-        void setTravelerHashMap(HashMap<String, Traveler> travelerHashMap);
+        void setTravelerHashMap(HashMap<String, TravelerModel> travelerHashMap);
     }
 
     public class TravelerHolder extends RecyclerView.ViewHolder {

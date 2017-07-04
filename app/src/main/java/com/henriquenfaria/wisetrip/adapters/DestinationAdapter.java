@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.adapters;
 
 
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.models.Destination;
+import com.henriquenfaria.wisetrip.models.DestinationModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class DestinationAdapter extends
 
     private Context mContext;
     private OnDestinationClickListener mOnDestinationClickListener;
-    private List<Destination> mDestinations;
+    private List<DestinationModel> mDestinations;
     private boolean mIsFooterError;
 
 
     public DestinationAdapter(Context context, OnDestinationClickListener
-            onDestinationClickListener, List<Destination> destinations) {
+            onDestinationClickListener, List<DestinationModel> destinations) {
         mContext = context;
         mOnDestinationClickListener = onDestinationClickListener;
         mDestinations = destinations;
@@ -80,7 +80,7 @@ public class DestinationAdapter extends
 
         } else if (viewHolder instanceof ItemHolder) {
             ItemHolder item = (ItemHolder) viewHolder;
-            Destination destination = mDestinations.get(position);
+            DestinationModel destination = mDestinations.get(position);
             item.descriptionText.setText(String.format(mContext.getResources()
                     .getString(R.string.destination_item_description), position + 1));
 
@@ -133,7 +133,7 @@ public class DestinationAdapter extends
         }
     }
 
-    public void swap(List<Destination> list) {
+    public void swap(List<DestinationModel> list) {
         mDestinations = list;
         notifyDataSetChanged();
     }

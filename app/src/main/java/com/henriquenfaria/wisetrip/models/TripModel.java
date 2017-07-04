@@ -17,27 +17,27 @@ import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Trip implements Parcelable, Comparable<Trip> {
+public class TripModel implements Parcelable, Comparable<TripModel> {
 
-    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
+    public static final Creator<TripModel> CREATOR = new Creator<TripModel>() {
         @Override
-        public Trip createFromParcel(Parcel source) {
-            return new Trip(source);
+        public TripModel createFromParcel(Parcel source) {
+            return new TripModel(source);
         }
 
         @Override
-        public Trip[] newArray(int size) {
-            return new Trip[size];
+        public TripModel[] newArray(int size) {
+            return new TripModel[size];
         }
     };
     private String id;
     private String title;
     private Long startDate;
     private Long endDate;
-    private Map<String, Traveler> travelers;
-    private List<Destination> destinations;
+    private Map<String, TravelerModel> travelers;
+    private List<DestinationModel> destinations;
 
-    public Trip() {
+    public TripModel() {
         // Required for Firebase
         id = "";
         title = "";
@@ -47,7 +47,7 @@ public class Trip implements Parcelable, Comparable<Trip> {
         destinations = new ArrayList<>();
     }
 
-    protected Trip(Parcel in) {
+    protected TripModel(Parcel in) {
         this.id = in.readString();
         this.title = in.readString();
         this.startDate = (Long) in.readValue(Long.class.getClassLoader());
@@ -56,10 +56,10 @@ public class Trip implements Parcelable, Comparable<Trip> {
         this.travelers = new HashMap<>(travelersSize);
         for (int i = 0; i < travelersSize; i++) {
             String key = in.readString();
-            Traveler value = in.readParcelable(Traveler.class.getClassLoader());
+            TravelerModel value = in.readParcelable(TravelerModel.class.getClassLoader());
             this.travelers.put(key, value);
         }
-        this.destinations = in.createTypedArrayList(Destination.CREATOR);
+        this.destinations = in.createTypedArrayList(DestinationModel.CREATOR);
     }
 
     @Exclude
@@ -106,15 +106,15 @@ public class Trip implements Parcelable, Comparable<Trip> {
         this.endDate = endDate;
     }
 
-    public Map<String, Traveler> getTravelers() {
+    public Map<String, TravelerModel> getTravelers() {
         return travelers;
     }
 
-    public void setTravelers(Map<String, Traveler> travelers) {
+    public void setTravelers(Map<String, TravelerModel> travelers) {
         this.travelers = travelers;
     }
 
-    public List<Destination> getDestinations() {
+    public List<DestinationModel> getDestinations() {
         return destinations;
     }
 
@@ -140,7 +140,7 @@ public class Trip implements Parcelable, Comparable<Trip> {
         dest.writeValue(this.startDate);
         dest.writeValue(this.endDate);
         dest.writeInt(this.travelers.size());
-        for (Map.Entry<String, Traveler> entry : this.travelers.entrySet()) {
+        for (Map.Entry<String, TravelerModel> entry : this.travelers.entrySet()) {
             dest.writeString(entry.getKey());
             dest.writeParcelable(entry.getValue(), flags);
         }
@@ -148,13 +148,13 @@ public class Trip implements Parcelable, Comparable<Trip> {
     }
 
     @Override
-    public int compareTo(@NonNull Trip trip) {
+    public int compareTo(@NonNull TripModel trip) {
         return this.getStartDate().compareTo(trip.getStartDate());
     }
 
     @Override
     public int hashCode() {
-         /* We only need to use id to compare if a Trip is the same. Since id is unique,
+         /* We only need to use id to compare if a TripModel is the same. Since id is unique,
           we can ignore the other properties. It will increase the performance*/
         return new HashCodeBuilder(17, 31)
                 .append(id)
@@ -163,7 +163,7 @@ public class Trip implements Parcelable, Comparable<Trip> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Trip)) {
+        if (!(obj instanceof TripModel)) {
             return false;
         }
 
@@ -171,9 +171,9 @@ public class Trip implements Parcelable, Comparable<Trip> {
             return true;
         }
 
-         /* We only need to use id to compare if a Trip is the same. Since id is unique,
+         /* We only need to use id to compare if a TripModel is the same. Since id is unique,
           we can ignore the other properties. It will increase the performance*/
-        Trip trip = (Trip) obj;
+        TripModel trip = (TripModel) obj;
         return new EqualsBuilder()
                 .append(id, trip.id)
                 .isEquals();

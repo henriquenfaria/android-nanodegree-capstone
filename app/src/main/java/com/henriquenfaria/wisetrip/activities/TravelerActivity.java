@@ -19,8 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.TravelerAdapter;
-import com.henriquenfaria.wisetrip.models.Traveler;
+import com.henriquenfaria.wisetrip.adapters.TravelerAdapter;
+import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class TravelerActivity extends AppCompatActivity implements
 
     private TravelerAdapter mTravelerAdapter;
     private LinearLayoutManager mLayoutManager;
-    private HashMap<String, Traveler> mTravelerHashMap;
+    private HashMap<String, TravelerModel> mTravelerHashMap;
     private String mSearchViewFilter;
 
     @Override
@@ -60,7 +60,7 @@ public class TravelerActivity extends AppCompatActivity implements
 
         if (savedInstanceState != null) {
             // noinspection unchecked
-            mTravelerHashMap = (HashMap<String, Traveler>) savedInstanceState
+            mTravelerHashMap = (HashMap<String, TravelerModel>) savedInstanceState
                     .getSerializable(SAVE_TRAVELER_KEY);
         } else {
             mTravelerHashMap = new HashMap<>();
@@ -151,12 +151,12 @@ public class TravelerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public HashMap<String, Traveler> getTravelerHashMap() {
+    public HashMap<String, TravelerModel> getTravelerHashMap() {
         return mTravelerHashMap;
     }
 
     @Override
-    public void setTravelerHashMap(HashMap<String, Traveler> travelerHashMap) {
+    public void setTravelerHashMap(HashMap<String, TravelerModel> travelerHashMap) {
         mTravelerHashMap = travelerHashMap;
         setTitleCount();
     }

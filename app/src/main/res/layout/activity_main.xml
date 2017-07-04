@@ -39,7 +39,7 @@
             android:layout_margin="@dimen/fab_margin"
             app:layout_anchor="@+id/main_fragment_container"
             app:layout_anchorGravity="bottom|right|end"
-            app:layout_behavior="com.henriquenfaria.wisetrip.design.ScrollAwareFABBehavior"
+            app:layout_behavior="com.henriquenfaria.wisetrip.views.ScrollAwareFABBehavior"
             app:srcCompat="@drawable/ic_fab_plus"/>
 
     </android.support.design.widget.CoordinatorLayout>

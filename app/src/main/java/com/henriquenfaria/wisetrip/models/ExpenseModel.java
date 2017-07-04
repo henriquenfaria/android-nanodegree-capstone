@@ -8,16 +8,16 @@ import android.support.annotation.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class Expense implements Parcelable, Comparable<Expense> {
+public class ExpenseModel implements Parcelable, Comparable<ExpenseModel> {
 
-    // Trip id
+    // TripModel id
     private String id;
     private String title;
     private String country;
     private Double amount;
     private Long date;
 
-    public Expense() {
+    public ExpenseModel() {
         // Required for Firebase
     }
 
@@ -75,7 +75,7 @@ public class Expense implements Parcelable, Comparable<Expense> {
         dest.writeValue(this.date);
     }
 
-    protected Expense(Parcel in) {
+    protected ExpenseModel(Parcel in) {
         this.id = in.readString();
         this.title = in.readString();
         this.country = in.readString();
@@ -83,26 +83,26 @@ public class Expense implements Parcelable, Comparable<Expense> {
         this.date = (Long) in.readValue(Long.class.getClassLoader());
     }
 
-    public static final Creator<Expense> CREATOR = new Creator<Expense>() {
+    public static final Creator<ExpenseModel> CREATOR = new Creator<ExpenseModel>() {
         @Override
-        public Expense createFromParcel(Parcel source) {
-            return new Expense(source);
+        public ExpenseModel createFromParcel(Parcel source) {
+            return new ExpenseModel(source);
         }
 
         @Override
-        public Expense[] newArray(int size) {
-            return new Expense[size];
+        public ExpenseModel[] newArray(int size) {
+            return new ExpenseModel[size];
         }
     };
 
     @Override
-    public int compareTo(@NonNull Expense expense) {
+    public int compareTo(@NonNull ExpenseModel expense) {
          return this.getDate().compareTo(expense.getDate());
     }
 
     @Override
     public int hashCode() {
-         /* We only need to use id to compare if a Trip is the same. Since id is unique,
+         /* We only need to use id to compare if a TripModel is the same. Since id is unique,
           we can ignore the other properties. It will increase the performance*/
         return new HashCodeBuilder(17, 31)
                 .append(id)
@@ -111,7 +111,7 @@ public class Expense implements Parcelable, Comparable<Expense> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Expense)) {
+        if (!(obj instanceof ExpenseModel)) {
             return false;
         }
 
@@ -119,9 +119,9 @@ public class Expense implements Parcelable, Comparable<Expense> {
             return true;
         }
 
-         /* We only need to use id to compare if a Expense is the same. Since id is unique,
+         /* We only need to use id to compare if a ExpenseModel is the same. Since id is unique,
           we can ignore the other properties. It will increase the performance*/
-        Expense expense = (Expense) obj;
+        ExpenseModel expense = (ExpenseModel) obj;
         return new EqualsBuilder()
                 .append(id, expense.id)
                 .isEquals();

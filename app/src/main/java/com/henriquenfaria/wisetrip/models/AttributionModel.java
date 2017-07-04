@@ -3,13 +3,13 @@ package com.henriquenfaria.wisetrip.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Attribution implements Parcelable {
+public class AttributionModel implements Parcelable {
 
-    // Trip or Place id
+    // TripModel or PlaceModel id
     private String id;
     private String text;
 
-    public Attribution() {
+    public AttributionModel() {
         // Required for Firebase
     }
 
@@ -41,21 +41,21 @@ public class Attribution implements Parcelable {
         dest.writeString(this.text);
     }
 
-    protected Attribution(Parcel in) {
+    protected AttributionModel(Parcel in) {
         this.id = in.readString();
         this.text = in.readString();
     }
 
-    public static final Parcelable.Creator<Attribution> CREATOR = new Parcelable
-            .Creator<Attribution>() {
+    public static final Parcelable.Creator<AttributionModel> CREATOR = new Parcelable
+            .Creator<AttributionModel>() {
         @Override
-        public Attribution createFromParcel(Parcel source) {
-            return new Attribution(source);
+        public AttributionModel createFromParcel(Parcel source) {
+            return new AttributionModel(source);
         }
 
         @Override
-        public Attribution[] newArray(int size) {
-            return new Attribution[size];
+        public AttributionModel[] newArray(int size) {
+            return new AttributionModel[size];
         }
     };
 }

@@ -32,10 +32,10 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.TravelerActivity;
-import com.henriquenfaria.wisetrip.data.DestinationAdapter;
-import com.henriquenfaria.wisetrip.models.Destination;
-import com.henriquenfaria.wisetrip.models.Traveler;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.adapters.DestinationAdapter;
+import com.henriquenfaria.wisetrip.models.DestinationModel;
+import com.henriquenfaria.wisetrip.models.TravelerModel;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
@@ -81,7 +81,7 @@ public class TripFactoryFragment extends BaseFragment implements
 
     protected RecyclerView mDestinationRecyclerView;
     private OnTripFactoryListener mListener;
-    private Trip mTrip;
+    private TripModel mTrip;
     private boolean mIsEditMode;
     private DestinationAdapter mDestinationAdapter;
     private int mDestinationAdapterClickedPosition;
@@ -166,8 +166,8 @@ public class TripFactoryFragment extends BaseFragment implements
         // Required empty public constructor
     }
 
-    // Create new Fragment instance with Trip info
-    public static TripFactoryFragment newInstance(Trip trip) {
+    // Create new Fragment instance with TripModel info
+    public static TripFactoryFragment newInstance(TripModel trip) {
         TripFactoryFragment fragment = new TripFactoryFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TRIP, trip);
@@ -194,7 +194,7 @@ public class TripFactoryFragment extends BaseFragment implements
             mTrip = getArguments().getParcelable(ARG_TRIP);
 
             if (mTrip == null) {
-                mTrip = new Trip();
+                mTrip = new TripModel();
             }
 
             if (!TextUtils.isEmpty(mTrip.getId())) {
@@ -405,7 +405,7 @@ public class TripFactoryFragment extends BaseFragment implements
             if (resultCode == RESULT_OK) {
                 if (data != null && data.hasExtra(Constants.Extra.EXTRA_TRAVELER)) {
                     // noinspection unchecked
-                    mTrip.setTravelers((HashMap<String, Traveler>) data.getSerializableExtra
+                    mTrip.setTravelers((HashMap<String, TravelerModel>) data.getSerializableExtra
                             (Constants.Extra.EXTRA_TRAVELER));
 
                     mTravelerText.setText(Utils.getFormattedTravelersText(mTrip.getTravelers()));
@@ -417,7 +417,7 @@ public class TripFactoryFragment extends BaseFragment implements
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 if (place != null) {
                     //TODO: Must save and use place.getAttributions()
-                    Destination destination = new Destination(place);
+                    DestinationModel destination = new DestinationModel(place);
                     mTrip.getDestinations().set(mDestinationAdapterClickedPosition, destination);
                     mIsDisplayDestinationFooterError = false;
                     mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
@@ -436,7 +436,7 @@ public class TripFactoryFragment extends BaseFragment implements
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 if (place != null) {
-                    Destination destination = new Destination(place);
+                    DestinationModel destination = new DestinationModel(place);
                     mTrip.getDestinations().add(destination);
                     mIsDisplayDestinationFooterError = false;
                     mDestinationAdapter.setFooterError(mIsDisplayDestinationFooterError);
@@ -502,9 +502,9 @@ public class TripFactoryFragment extends BaseFragment implements
     public interface OnTripFactoryListener {
         void changeActionBarTitle(String newTitle);
 
-        void saveTrip(Trip trip, boolean isEditMode);
+        void saveTrip(TripModel trip, boolean isEditMode);
 
-        void deleteTrip(Trip trip);
+        void deleteTrip(TripModel trip);
     }
 
 }

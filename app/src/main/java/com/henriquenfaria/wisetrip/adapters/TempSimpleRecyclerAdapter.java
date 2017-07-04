@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;

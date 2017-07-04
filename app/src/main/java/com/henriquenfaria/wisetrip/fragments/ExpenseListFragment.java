@@ -17,9 +17,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.ExpenseAdapter;
-import com.henriquenfaria.wisetrip.models.Expense;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.adapters.ExpenseAdapter;
+import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.models.TripModel;
 
 import org.zakariya.stickyheaders.StickyHeaderLayoutManager;
 
@@ -44,10 +44,10 @@ public class ExpenseListFragment extends BaseFragment {
     private FirebaseUser mCurrentUser;
     private ExpenseAdapter mExpenseAdapter;
     private ChildEventListener mExpensesEventListener;
-    private Trip mTrip;
+    private TripModel mTrip;
 
-    // Create new Fragment instance with Trip info
-    public static ExpenseListFragment newInstance(Trip trip) {
+    // Create new Fragment instance with TripModel info
+    public static ExpenseListFragment newInstance(TripModel trip) {
         ExpenseListFragment fragment = new ExpenseListFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TRIP, trip);
@@ -123,7 +123,7 @@ public class ExpenseListFragment extends BaseFragment {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildAdded");
 
-                    Expense expense = dataSnapshot.getValue(Expense.class);
+                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
                     if (expense != null && !TextUtils.isEmpty(expense.getId())) {
                         //mExpenseAdapter.addExpense(expense);
                     }

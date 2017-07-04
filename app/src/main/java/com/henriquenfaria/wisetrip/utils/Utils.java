@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 
-import com.henriquenfaria.wisetrip.models.Traveler;
+import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -55,11 +55,11 @@ public class Utils {
     }
 
 
-    public static String getFormattedTravelersText(Map<String, Traveler> travelers) {
+    public static String getFormattedTravelersText(Map<String, TravelerModel> travelers) {
         StringBuilder travelersString = new StringBuilder();
         int count_for_comma = 0;
         for (Map.Entry entry : travelers.entrySet()) {
-            Traveler traveler = (Traveler) entry.getValue();
+            TravelerModel traveler = (TravelerModel) entry.getValue();
             travelersString.append(traveler.getName());
             if (++count_for_comma < travelers.size()) {
                 travelersString.append(", ");

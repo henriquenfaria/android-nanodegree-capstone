@@ -5,9 +5,9 @@ package com.henriquenfaria.wisetrip.utils;
 public class Constants {
     // General constants
     public static class General {
-        // Max Trip destinations
+        // Max TripModel destinations
         public static final int MAX_DESTINATIONS = 10;
-        // Max Trip travelers
+        // Max TripModel travelers
         public static final int MAX_TRAVELERS = 10;
         // Internal Storage directory for destination photos
         public static final String DESTINATION_PHOTO_DIR = "destinations";

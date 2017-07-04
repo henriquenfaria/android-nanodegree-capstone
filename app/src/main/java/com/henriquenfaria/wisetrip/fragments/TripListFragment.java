@@ -23,11 +23,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.data.TripListSection;
-import com.henriquenfaria.wisetrip.design.CustomRecyclerView;
-import com.henriquenfaria.wisetrip.models.Destination;
-import com.henriquenfaria.wisetrip.models.Trip;
-import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
+import com.henriquenfaria.wisetrip.adapters.TripListSection;
+import com.henriquenfaria.wisetrip.models.TripModel;
+import com.henriquenfaria.wisetrip.views.CustomRecyclerView;
+import com.henriquenfaria.wisetrip.models.DestinationModel;
+import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 import org.joda.time.DateTime;
@@ -56,11 +56,11 @@ public class TripListFragment extends BaseFragment {
     private ChildEventListener mTripsEventListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
 
-    private SortedList<Trip> mUpcomingTrips;
-    private SortedList<Trip> mCurrentTrips;
-    private SortedList<Trip> mPastTrips;
+    private SortedList<TripModel> mUpcomingTrips;
+    private SortedList<TripModel> mCurrentTrips;
+    private SortedList<TripModel> mPastTrips;
 
-    private SortedList.Callback<Trip> mAscSortedListCallback = new SortedList.Callback<Trip>() {
+    private SortedList.Callback<TripModel> mAscSortedListCallback = new SortedList.Callback<TripModel>() {
 
         @Override
         public void onInserted(int position, int count) {
@@ -83,24 +83,24 @@ public class TripListFragment extends BaseFragment {
         }
 
         @Override
-        public int compare(Trip trip1, Trip trip2) {
+        public int compare(TripModel trip1, TripModel trip2) {
             return trip1.compareTo(trip2);
         }
 
         @Override
-        public boolean areContentsTheSame(Trip oldTrip, Trip newTrip) {
+        public boolean areContentsTheSame(TripModel oldTrip, TripModel newTrip) {
             //Asc order
             return oldTrip.equals(newTrip);
         }
 
         @Override
-        public boolean areItemsTheSame(Trip trip1, Trip trip2) {
+        public boolean areItemsTheSame(TripModel trip1, TripModel trip2) {
             return trip1.hashCode() == trip2.hashCode();
         }
     };
 
 
-    private SortedList.Callback<Trip> mDescSortedListCallback = new SortedList.Callback<Trip>() {
+    private SortedList.Callback<TripModel> mDescSortedListCallback = new SortedList.Callback<TripModel>() {
 
         @Override
         public void onInserted(int position, int count) {
@@ -123,18 +123,18 @@ public class TripListFragment extends BaseFragment {
         }
 
         @Override
-        public int compare(Trip trip1, Trip trip2) {
+        public int compare(TripModel trip1, TripModel trip2) {
             // Desc order
             return trip2.compareTo(trip1);
         }
 
         @Override
-        public boolean areContentsTheSame(Trip oldTrip, Trip newTrip) {
+        public boolean areContentsTheSame(TripModel oldTrip, TripModel newTrip) {
             return oldTrip.equals(newTrip);
         }
 
         @Override
-        public boolean areItemsTheSame(Trip trip1, Trip trip2) {
+        public boolean areItemsTheSame(TripModel trip1, TripModel trip2) {
             return trip1.hashCode() == trip2.hashCode();
         }
     };
@@ -144,9 +144,9 @@ public class TripListFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUpcomingTrips = new SortedList<>(Trip.class, mAscSortedListCallback);
-        mCurrentTrips = new SortedList<>(Trip.class, mAscSortedListCallback);
-        mPastTrips = new SortedList<>(Trip.class, mDescSortedListCallback);
+        mUpcomingTrips = new SortedList<>(TripModel.class, mAscSortedListCallback);
+        mCurrentTrips = new SortedList<>(TripModel.class, mAscSortedListCallback);
+        mPastTrips = new SortedList<>(TripModel.class, mDescSortedListCallback);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -195,10 +195,10 @@ public class TripListFragment extends BaseFragment {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildAdded");
-                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    TripModel trip = dataSnapshot.getValue(TripModel.class);
                     if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                        Trip.State state = trip.getState(DateTime.now().getMillis());
-                        SortedList<Trip> currentList = getTripList(state);
+                        TripModel.State state = trip.getState(DateTime.now().getMillis());
+                        SortedList<TripModel> currentList = getTripList(state);
                         currentList.add(trip);
                         int index = currentList.add(trip);
                         if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
@@ -210,7 +210,7 @@ public class TripListFragment extends BaseFragment {
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_ADD_PHOTO);
-                        List<Destination> destinations = trip.getDestinations();
+                        List<DestinationModel> destinations = trip.getDestinations();
                         if (destinations.size() > 0) {
                             placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
                             mFragmentActivity.startService(placePhotoIntentService);
@@ -222,11 +222,11 @@ public class TripListFragment extends BaseFragment {
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildChanged");
 
-                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    TripModel trip = dataSnapshot.getValue(TripModel.class);
                     if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                         if (removeTripFromAllLists(trip)) {
-                            Trip.State state = trip.getState(DateTime.now().getMillis());
-                            SortedList<Trip> currentList = getTripList(state);
+                            TripModel.State state = trip.getState(DateTime.now().getMillis());
+                            SortedList<TripModel> currentList = getTripList(state);
                             int index = currentList.add(trip);
                             if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
                                 mTripAdapter.notifyItemInsertedInSection(state.name(), index);
@@ -247,10 +247,10 @@ public class TripListFragment extends BaseFragment {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Timber.d("onChildRemoved");
 
-                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    TripModel trip = dataSnapshot.getValue(TripModel.class);
                     if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                        Trip.State state = trip.getState(DateTime.now().getMillis());
-                        SortedList<Trip> currentList = getTripList(state);
+                        TripModel.State state = trip.getState(DateTime.now().getMillis());
+                        SortedList<TripModel> currentList = getTripList(state);
                         int index = getIndexOnSortedList(trip, currentList);
                         if (index != SortedList.INVALID_POSITION) {
                             if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
@@ -325,10 +325,10 @@ public class TripListFragment extends BaseFragment {
         }
     }
 
-    // Search inside all lists for a Trip and remove it, returns true on a successful removal
-    private boolean removeTripFromAllLists(Trip trip) {
-        for (Trip.State state : Trip.State.values()) {
-            SortedList<Trip> currentList = getTripList(state);
+    // Search inside all lists for a TripModel and remove it, returns true on a successful removal
+    private boolean removeTripFromAllLists(TripModel trip) {
+        for (TripModel.State state : TripModel.State.values()) {
+            SortedList<TripModel> currentList = getTripList(state);
             int index = getIndexOnSortedList(trip, currentList);
             if (index != SortedList.INVALID_POSITION) {
                 if (mTripAdapter.getSection(state.name()) instanceof TripListSection) {
@@ -353,8 +353,8 @@ public class TripListFragment extends BaseFragment {
     private void recreateSections() {
         if (mTripAdapter != null) {
             mTripAdapter.removeAllSections();
-            for (Trip.State state : Trip.State.values()) {
-                SortedList<Trip> currentList = getTripList(state);
+            for (TripModel.State state : TripModel.State.values()) {
+                SortedList<TripModel> currentList = getTripList(state);
                 if (currentList.size() > 0) {
                     mTripAdapter.addSection(state.name(), new TripListSection
                             (getSectionTitle(mFragmentActivity, state), currentList));
@@ -366,8 +366,8 @@ public class TripListFragment extends BaseFragment {
     }
 
     // TODO: Must improve search performance. Use binary search?
-    // Can't use SortedList.indexOf method. Because we're only checking Trip's id
-    private int getIndexOnSortedList(Trip searchTrip, SortedList<Trip> sortedList) {
+    // Can't use SortedList.indexOf method. Because we're only checking TripModel's id
+    private int getIndexOnSortedList(TripModel searchTrip, SortedList<TripModel> sortedList) {
         for (int i = 0; i < sortedList.size(); i++) {
             if (sortedList.get(i).equals(searchTrip)) {
                 return i;
@@ -376,7 +376,7 @@ public class TripListFragment extends BaseFragment {
         return SortedList.INVALID_POSITION;
     }
 
-    private SortedList<Trip> getTripList(Trip.State state) {
+    private SortedList<TripModel> getTripList(TripModel.State state) {
         switch (state) {
             case CURRENT:
                 return mCurrentTrips;
@@ -388,16 +388,16 @@ public class TripListFragment extends BaseFragment {
                 return mPastTrips;
 
             default:
-                Timber.e("Can't find correct Trip list");
+                Timber.e("Can't find correct TripModel list");
                 throw new IllegalArgumentException();
         }
     }
 
-    // Search for a Trip inside all sections lists and update it to make it display latest info
-    private void updateTripListItem(Trip trip) {
+    // Search for a TripModel inside all sections lists and update it to make it display latest info
+    private void updateTripListItem(TripModel trip) {
         if (mTripAdapter != null) {
-            for (Trip.State state : Trip.State.values()) {
-                SortedList<Trip> currentList = getTripList(state);
+            for (TripModel.State state : TripModel.State.values()) {
+                SortedList<TripModel> currentList = getTripList(state);
                 if (currentList.size() > 0) {
                     int index = getIndexOnSortedList(trip, currentList);
                     if (index != SortedList.INVALID_POSITION) {
@@ -410,7 +410,7 @@ public class TripListFragment extends BaseFragment {
         }
     }
 
-    private String getSectionTitle(Context context, Trip.State state) {
+    private String getSectionTitle(Context context, TripModel.State state) {
         switch (state) {
             case CURRENT:
                 return context.getString(R.string.current);
@@ -419,7 +419,7 @@ public class TripListFragment extends BaseFragment {
             case PAST:
                 return context.getString(R.string.past);
             default:
-                Timber.e("Can't find correct Trip title");
+                Timber.e("Can't find correct TripModel title");
                 throw new IllegalArgumentException();
         }
     }
@@ -429,7 +429,7 @@ public class TripListFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_UPDATE_TRIP_LIST)) {
                 if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                    Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                    TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                     updateTripListItem(trip);
                 }
             }

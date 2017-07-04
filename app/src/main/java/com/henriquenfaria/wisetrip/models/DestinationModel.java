@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import com.google.android.gms.location.places.Place;
 
-public class Destination implements Parcelable {
+public class DestinationModel implements Parcelable {
 
     private String id;
     private String name;
@@ -14,11 +14,11 @@ public class Destination implements Parcelable {
     private double longitude;
     private String attribution;
 
-    public Destination() {
+    public DestinationModel() {
         // Required for Firebase
     }
 
-    public Destination(Place place) {
+    public DestinationModel(Place place) {
         id = place.getId();
         name = String.valueOf(place.getName());
         if (place.getLatLng() != null) {
@@ -86,7 +86,7 @@ public class Destination implements Parcelable {
         dest.writeString(this.attribution);
     }
 
-    protected Destination(Parcel in) {
+    protected DestinationModel(Parcel in) {
         this.id = in.readString();
         this.name = in.readString();
         this.latitude = in.readDouble();
@@ -94,15 +94,15 @@ public class Destination implements Parcelable {
         this.attribution = in.readString();
     }
 
-    public static final Creator<Destination> CREATOR = new Creator<Destination>() {
+    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
         @Override
-        public Destination createFromParcel(Parcel source) {
-            return new Destination(source);
+        public DestinationModel createFromParcel(Parcel source) {
+            return new DestinationModel(source);
         }
 
         @Override
-        public Destination[] newArray(int size) {
-            return new Destination[size];
+        public DestinationModel[] newArray(int size) {
+            return new DestinationModel[size];
         }
     };
 }

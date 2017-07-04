@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
 
-public class Traveler implements Parcelable {
+public class TravelerModel implements Parcelable {
 
     private String contactId;
     private String name;
@@ -17,11 +17,11 @@ public class Traveler implements Parcelable {
     @Exclude
     private Uri photoUri;
 
-    public Traveler() {
+    public TravelerModel() {
         // Required for Firebase
     }
 
-    public Traveler(Cursor cursor) {
+    public TravelerModel(Cursor cursor) {
         if (cursor != null) {
             name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
             String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts
@@ -75,21 +75,21 @@ public class Traveler implements Parcelable {
         dest.writeParcelable(this.photoUri, flags);
     }
 
-    protected Traveler(Parcel in) {
+    protected TravelerModel(Parcel in) {
         this.contactId = in.readString();
         this.name = in.readString();
         this.photoUri = in.readParcelable(Uri.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<Traveler> CREATOR = new Parcelable.Creator<Traveler>() {
+    public static final Parcelable.Creator<TravelerModel> CREATOR = new Parcelable.Creator<TravelerModel>() {
         @Override
-        public Traveler createFromParcel(Parcel source) {
-            return new Traveler(source);
+        public TravelerModel createFromParcel(Parcel source) {
+            return new TravelerModel(source);
         }
 
         @Override
-        public Traveler[] newArray(int size) {
-            return new Traveler[size];
+        public TravelerModel[] newArray(int size) {
+            return new TravelerModel[size];
         }
     };
 }

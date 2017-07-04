@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +16,9 @@ import android.view.View;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.activities.TripFactoryActivity;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.holders.HeaderHolder;
+import com.henriquenfaria.wisetrip.holders.TripHolder;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
@@ -26,9 +28,9 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 public class TripListSection extends StatelessSection {
 
     private String mTitle;
-    private SortedList<Trip> mTripList;
+    private SortedList<TripModel> mTripList;
 
-    public TripListSection(String title, SortedList<Trip> tripList) {
+    public TripListSection(String title, SortedList<TripModel> tripList) {
         super(R.layout.trip_header_item, R.layout.trip_item);
         mTitle = title;
         mTripList = tripList;

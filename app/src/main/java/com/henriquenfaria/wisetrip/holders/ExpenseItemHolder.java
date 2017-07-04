@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.holders;
 
 import android.view.View;
 import android.widget.LinearLayout;

@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.service;
+package com.henriquenfaria.wisetrip.services;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -21,8 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.henriquenfaria.wisetrip.models.Attribution;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.models.AttributionModel;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -44,7 +44,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
     protected void onHandleIntent(@Nullable Intent intent) {
         if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_ADD_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     // Retrieves the photo of first trip's destination, save it in the internal
                     // storage and update Firebase db with the photo's attributions
@@ -56,14 +56,14 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
             }
         } else if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_CHANGE_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     addDestinationPhoto(trip, true);
                 }
             }
         } else if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_REMOVE_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                Trip trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     // Deletes from the internal storage the photo of the first trip's destination
                     boolean isDeleted = Utils.deleteFileFromInternalStorage
@@ -82,7 +82,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         }
     }
 
-    private void addDestinationPhoto(Trip trip, boolean updateTripList) {
+    private void addDestinationPhoto(TripModel trip, boolean updateTripList) {
         Timber.d("addDestinationPhoto()");
         GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -130,7 +130,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         }
     }
 
-    private void addDestinationPhotoAttribution(Trip trip, CharSequence attributionText) {
+    private void addDestinationPhotoAttribution(TripModel trip, CharSequence attributionText) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -139,13 +139,13 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                 .child(currentUser.getUid())
                 .child(trip.getId());
 
-        Attribution attribution = new Attribution();
+        AttributionModel attribution = new AttributionModel();
         attribution.setId(attributionsReference.getKey());
         attribution.setText(attributionText != null ? attributionText.toString() : "");
         attributionsReference.setValue(attribution);
     }
 
-    private void sendUpdateTripListBroadcast(Trip trip) {
+    private void sendUpdateTripListBroadcast(TripModel trip) {
         Intent broadcastIntent = new Intent();
         broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, trip);
         broadcastIntent.setAction(Constants.Action.ACTION_UPDATE_TRIP_LIST);

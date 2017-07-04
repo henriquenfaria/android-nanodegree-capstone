@@ -14,8 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.ExpenseFactoryFragment;
-import com.henriquenfaria.wisetrip.models.Expense;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 public class ExpenseFactoryActivity extends AppCompatActivity
@@ -27,8 +27,8 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mExpensesReference;
     private FirebaseUser mCurrentUser;
-    private Trip mTrip;
-    private Expense mExpense;
+    private TripModel mTrip;
+    private ExpenseModel mExpense;
     private ExpenseFactoryFragment mExpenseFactoryFragment;
 
     @Override
@@ -59,7 +59,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
             mTrip =  intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
 
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                // Expense already exists
+                // ExpenseModel already exists
                 mExpense = intent.getParcelableExtra(Constants.Extra.EXTRA_EXPENSE);
                 mExpenseFactoryFragment = ExpenseFactoryFragment.newInstance(mTrip, mExpense);
 
@@ -87,9 +87,9 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     }
 
     @Override
-    public void saveExpense(Trip trip, Expense expense, boolean isEditMode) {
+    public void saveExpense(TripModel trip, ExpenseModel expense, boolean isEditMode) {
         if (isEditMode) {
-            // Update existing Expense
+            // Update existing ExpenseModel
             if (expense != null && !TextUtils.isEmpty(expense.getId())) {
                 DatabaseReference databaseReference = mExpensesReference.child(trip.getId())
                         .child(expense.getId());
@@ -101,7 +101,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
             }
         } else {
-            // Creating Expense
+            // Creating ExpenseModel
             DatabaseReference databaseReference = mExpensesReference.child(trip.getId()).push();
             expense.setId(databaseReference.getKey());
             databaseReference.setValue(expense);
@@ -113,9 +113,9 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     }
 
     @Override
-    public void deleteExpense(Trip trip, Expense expense) {
+    public void deleteExpense(TripModel trip, ExpenseModel expense) {
         if (expense != null && !TextUtils.isEmpty(expense.getId())) {
-            // Remove Expense
+            // Remove ExpenseModel
             mExpensesReference.child(trip.getId()).child(expense.getId()).removeValue();
             Toast.makeText(this, getString(R.string.expense_deleted_success), Toast.LENGTH_SHORT)
                     .show();

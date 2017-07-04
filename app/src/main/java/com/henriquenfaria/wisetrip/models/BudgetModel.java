@@ -1,5 +1,5 @@
 package com.henriquenfaria.wisetrip.models;
 
 
-public class Place {
+public class BudgetModel {
 }

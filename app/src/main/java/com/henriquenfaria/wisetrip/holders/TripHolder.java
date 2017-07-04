@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.data;
+package com.henriquenfaria.wisetrip.holders;
 
 
 import android.content.Context;
@@ -24,7 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.models.Attribution;
+import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -166,7 +166,7 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Timber.d("onDataChange");
                         if (mAttributionContainer != null) {
-                            Attribution attribution = dataSnapshot.getValue(Attribution.class);
+                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel.class);
                             if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
                                 Spanned result;
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

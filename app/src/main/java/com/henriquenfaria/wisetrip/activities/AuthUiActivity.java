@@ -17,7 +17,7 @@ import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.service.PlacePhotoIntentService;
+import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.util.Arrays;
@@ -48,7 +48,7 @@ public class AuthUiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth);
         ButterKnife.bind(this);
 
-        // Redirect to Trip List screen if user has been authenticated
+        // Redirect to TripModel List screen if user has been authenticated
         FirebaseAuth auth = mFirebaseAuth;
         if (auth.getCurrentUser() != null) {
             mLogoImageView.setVisibility(View.GONE);

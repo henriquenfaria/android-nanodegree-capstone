@@ -18,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.models.Expense;
-import com.henriquenfaria.wisetrip.models.Trip;
+import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 import com.mukesh.countrypicker.Country;
@@ -58,8 +58,8 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     @BindView(R.id.currency_icon)
     protected ImageView mCurrencyIcon;
 
-    private Trip mTrip;
-    private Expense mExpense;
+    private TripModel mTrip;
+    private ExpenseModel mExpense;
     private boolean mIsEditMode;
     private CountryPicker mCountryPicker;
     private DatePickerDialogFragment mDatePickerFragment;
@@ -108,8 +108,8 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         // Required empty public constructor
     }
 
-    // Create new Fragment instance with Trip info
-    public static ExpenseFactoryFragment newInstance(Trip trip,  Expense expense) {
+    // Create new Fragment instance with TripModel info
+    public static ExpenseFactoryFragment newInstance(TripModel trip, ExpenseModel expense) {
         ExpenseFactoryFragment fragment = new ExpenseFactoryFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TRIP,  trip);
@@ -135,7 +135,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
             mExpense = getArguments().getParcelable(ARG_EXPENSE);
 
             if (mExpense == null) {
-                mExpense = new Expense();
+                mExpense = new ExpenseModel();
                 mExpense.setDate(DateTime.now().withTimeAtStartOfDay().getMillis());
                 String country = Utils.getStringFromSharedPrefs(mFragmentActivity,
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY);
@@ -359,9 +359,9 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     public interface OnExpenseFactoryListener {
         void changeActionBarTitle(String newTitle);
 
-        void saveExpense(Trip trip, Expense expense, boolean isEditMode);
+        void saveExpense(TripModel trip, ExpenseModel expense, boolean isEditMode);
 
-        void deleteExpense(Trip trip, Expense expense);
+        void deleteExpense(TripModel trip, ExpenseModel expense);
     }
 
 }
