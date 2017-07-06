@@ -279,7 +279,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         country.loadFlagByCode(mFragmentActivity);
         mCurrencyIcon.setImageResource(country.getFlag());
         mCurrencyTextView.setText(Utils.getCurrencySymbol(mExpense.getCountry()));
-
+        mAmountEditText.setText(String.valueOf(mExpense.getAmount()));
     }
 
     private boolean isValidFormFields() {
