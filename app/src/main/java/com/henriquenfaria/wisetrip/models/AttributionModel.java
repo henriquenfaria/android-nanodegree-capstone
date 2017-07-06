@@ -3,7 +3,9 @@ package com.henriquenfaria.wisetrip.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class AttributionModel implements Parcelable {
+import java.io.Serializable;
+
+public class AttributionModel implements Parcelable, Serializable {
 
     // TripModel or PlaceModel id
     private String id;

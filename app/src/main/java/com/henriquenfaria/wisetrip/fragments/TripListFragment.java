@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.util.SortedList;
@@ -212,7 +213,7 @@ public class TripListFragment extends BaseFragment {
                         placePhotoIntentService.setAction(Constants.Action.ACTION_ADD_PHOTO);
                         List<DestinationModel> destinations = trip.getDestinations();
                         if (destinations.size() > 0) {
-                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
                             mFragmentActivity.startService(placePhotoIntentService);
                         }
                     }
@@ -238,7 +239,7 @@ public class TripListFragment extends BaseFragment {
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_CHANGE_PHOTO);
-                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
                         mFragmentActivity.startService(placePhotoIntentService);
                     }
                 }
@@ -270,7 +271,7 @@ public class TripListFragment extends BaseFragment {
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_REMOVE_PHOTO);
-                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
                         mFragmentActivity.startService(placePhotoIntentService);
                     }
                 }

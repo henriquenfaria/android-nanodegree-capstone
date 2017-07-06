@@ -65,8 +65,9 @@ dependencies {
     // Joda-time
     compile 'joda-time:joda-time:2.9.9'
 
-    //StickyHeaders
-    compile 'org.zakariya.stickyheaders:stickyheaders:0.7.6'
+    //FlexibleAdapter
+    compile 'eu.davidea:flexible-adapter:5.0.0-rc2'
+    compile 'eu.davidea:flexible-adapter-databinding:1.0.0-b1@aar'
 
     // CircleImageView for traveler photos
     compile 'de.hdodenhof:circleimageview:2.1.0'

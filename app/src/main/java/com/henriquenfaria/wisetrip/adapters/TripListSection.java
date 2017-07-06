@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -61,7 +62,7 @@ public class TripListSection extends StatelessSection {
             public void onTripItemClick(View view) {
                 Context context = view.getContext();
                 Intent tripDetails = new Intent(context, TripDetailsActivity.class);
-                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, mTripList.get(position));
+                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTripList.get(position));
                 ActivityCompat.startActivity(context, tripDetails, createTransitionOptions(view));
             }
         });
@@ -71,7 +72,7 @@ public class TripListSection extends StatelessSection {
             public void onEditTripClick(View view) {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
-                intent.putExtra(Constants.Extra.EXTRA_TRIP, mTripList.get(position));
+                intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTripList.get(position));
                 context.startActivity(intent);
             }
         });

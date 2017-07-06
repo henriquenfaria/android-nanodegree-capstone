@@ -11,13 +11,14 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class TripModel implements Parcelable, Comparable<TripModel> {
+public class TripModel implements Parcelable, Serializable, Comparable<TripModel> {
 
     public static final Creator<TripModel> CREATOR = new Creator<TripModel>() {
         @Override

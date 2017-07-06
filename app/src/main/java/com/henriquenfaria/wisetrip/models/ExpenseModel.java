@@ -3,12 +3,10 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.io.Serializable;
 
-public class ExpenseModel implements Parcelable, Comparable<ExpenseModel> {
+public class ExpenseModel implements Parcelable, Serializable {
 
     // TripModel id
     private String id;
@@ -95,35 +93,18 @@ public class ExpenseModel implements Parcelable, Comparable<ExpenseModel> {
         }
     };
 
-    @Override
-    public int compareTo(@NonNull ExpenseModel expense) {
-         return this.getDate().compareTo(expense.getDate());
-    }
 
     @Override
     public int hashCode() {
-         /* We only need to use id to compare if a TripModel is the same. Since id is unique,
-          we can ignore the other properties. It will increase the performance*/
-        return new HashCodeBuilder(17, 31)
-                .append(id)
-                .toHashCode();
+        return id.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ExpenseModel)) {
-            return false;
+        if (obj instanceof ExpenseModel) {
+            ExpenseModel inItem = (ExpenseModel) obj;
+            return id.equals(inItem.getId());
         }
-
-        if (obj == this) {
-            return true;
-        }
-
-         /* We only need to use id to compare if a ExpenseModel is the same. Since id is unique,
-          we can ignore the other properties. It will increase the performance*/
-        ExpenseModel expense = (ExpenseModel) obj;
-        return new EqualsBuilder()
-                .append(id, expense.id)
-                .isEquals();
+        return false;
     }
 }

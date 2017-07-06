@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -147,7 +148,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
     private void sendUpdateTripListBroadcast(TripModel trip) {
         Intent broadcastIntent = new Intent();
-        broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, trip);
+        broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
         broadcastIntent.setAction(Constants.Action.ACTION_UPDATE_TRIP_LIST);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }

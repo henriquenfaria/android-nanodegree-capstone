@@ -7,6 +7,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -42,7 +43,9 @@ import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.TempSimpleRecyclerAdapter;
 import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
 import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
+import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
+import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TempVersionModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -60,7 +63,7 @@ import timber.log.Timber;
 
 
 /* Activity to display all related data of a specific TripModel */
-public class TripDetailsActivity extends AppCompatActivity {
+public class TripDetailsActivity extends AppCompatActivity implements OnExpenseInteractionListener{
 
     private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
             "save_is_shared_element_transition";
@@ -140,10 +143,7 @@ public class TripDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (mTabLayout.getSelectedTabPosition()) {
                     case TAB_EXPENSES_POSITION:
-                        Intent intent = new Intent(TripDetailsActivity.this,
-                                ExpenseFactoryActivity.class);
-                        intent.putExtra(Constants.Extra.EXTRA_TRIP, mTrip);
-                        startActivity(intent);
+                        startExpenseFactory(null);
                         break;
                     case TAB_BUDGETS_POSITION:
                         //TODO: Implement
@@ -327,8 +327,6 @@ public class TripDetailsActivity extends AppCompatActivity {
     }
 
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
-
-
         if (mAttributionContainer != null) {
             if (shouldDisplay) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -375,6 +373,21 @@ public class TripDetailsActivity extends AppCompatActivity {
                 mAttributionContent.setVisibility(View.GONE);
             }
         }
+    }
+
+    public void startExpenseFactory(ExpenseModel expense){
+        Intent intent = new Intent(TripDetailsActivity.this,
+                ExpenseFactoryActivity.class);
+        intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTrip);
+        if (expense != null){
+            intent.putExtra(Constants.Extra.EXTRA_EXPENSE, (Parcelable) expense);
+        }
+        startActivity(intent);
+    }
+
+    @Override
+    public void onExpenseClicked(ExpenseModel expense) {
+        startExpenseFactory(expense);
     }
 
     //TODO: Temp dummy Fragment code

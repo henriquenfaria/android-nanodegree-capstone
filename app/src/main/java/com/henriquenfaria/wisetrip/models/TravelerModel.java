@@ -9,7 +9,9 @@ import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
 
-public class TravelerModel implements Parcelable {
+import java.io.Serializable;
+
+public class TravelerModel implements Parcelable, Serializable {
 
     private String contactId;
     private String name;

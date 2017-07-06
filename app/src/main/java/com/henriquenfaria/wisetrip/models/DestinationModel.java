@@ -6,7 +6,9 @@ import android.os.Parcelable;
 
 import com.google.android.gms.location.places.Place;
 
-public class DestinationModel implements Parcelable {
+import java.io.Serializable;
+
+public class DestinationModel implements Parcelable, Serializable {
 
     private String id;
     private String name;
