@@ -18,8 +18,9 @@ public class Constants {
         public static final int MAX_DIGITS_BEFORE_POINT = 12;
         public static final int MAX_DECIMAL_DIGITS = 2;
 
-        // Fallback country for currencies
+        // Fallback currency
         public static final String DEFAULT_COUNTRY = "US";
+        public static final String DEFAULT_CURRENCY = "USD";
     }
 
     public static class Transition {
@@ -50,6 +51,7 @@ public class Constants {
     // Shared Preferences
     public static class Preference {
         public static final String PREFERENCE_DEFAULT_COUNTRY = "preference_default_country";
+        public static final String PREFERENCE_DEFAULT_CURRENCY = "preference_default_currency";
     }
 
 }

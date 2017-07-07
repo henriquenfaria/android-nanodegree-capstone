@@ -1,12 +1,15 @@
 package com.henriquenfaria.wisetrip.flexibles;
 
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.utils.Constants;
 
+import java.text.DecimalFormat;
+import java.util.Currency;
 import java.util.List;
 
 import butterknife.BindView;
@@ -16,6 +19,7 @@ import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
+import timber.log.Timber;
 
 public class ExpenseItem extends AbstractSectionableItem<ExpenseItem.ItemViewHolder, ExpenseHeader>
         implements IFilterable, IHolder<ExpenseModel> {
@@ -66,15 +70,32 @@ public class ExpenseItem extends AbstractSectionableItem<ExpenseItem.ItemViewHol
     public void bindViewHolder(final FlexibleAdapter adapter, ItemViewHolder holder,
                                int position, List payloads) {
         holder.mTitle.setText(mExpense.getTitle());
+
+        Currency currency;
+        try {
+            currency = Currency.getInstance(mExpense.getCurrency());
+        } catch (IllegalArgumentException| NullPointerException e) {
+            Timber.e("Exception while getting Currency instance");
+            e.printStackTrace();
+            currency = Currency.getInstance(Constants.General.DEFAULT_CURRENCY);
+        }
+
+        DecimalFormat decimalFormat = new DecimalFormat("¤ ###,###,###.00");
+        decimalFormat.setCurrency(currency);
+        String formattedAmount = decimalFormat.format(mExpense.getAmount());
+        holder.mAmount.setText(formattedAmount);
     }
 
     static class ItemViewHolder extends FlexibleViewHolder {
 
+        @BindView(R.id.expense_item_layout)
+        public RelativeLayout mLayout;
+
         @BindView(R.id.expense_title)
         public TextView mTitle;
 
-        @BindView(R.id.expense_item_layout)
-        public LinearLayout mLayout;
+        @BindView(R.id.expense_amount)
+        public TextView mAmount;
 
 
         public ItemViewHolder(View view, FlexibleAdapter adapter) {

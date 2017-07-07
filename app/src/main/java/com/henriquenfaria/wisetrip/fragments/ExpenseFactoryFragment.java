@@ -28,6 +28,8 @@ import com.mukesh.countrypicker.CountryPickerListener;
 
 import org.joda.time.DateTime;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -139,7 +141,10 @@ public class ExpenseFactoryFragment extends BaseFragment implements
                 mExpense.setDate(DateTime.now().withTimeAtStartOfDay().getMillis());
                 String country = Utils.getStringFromSharedPrefs(mFragmentActivity,
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY);
+                String currency = Utils.getStringFromSharedPrefs(mFragmentActivity,
+                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY);
                 mExpense.setCountry(country);
+                mExpense.setCurrency(currency);
             }
 
             if (!TextUtils.isEmpty(mExpense.getId())) {
@@ -278,8 +283,11 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         country.setCode(mExpense.getCountry());
         country.loadFlagByCode(mFragmentActivity);
         mCurrencyIcon.setImageResource(country.getFlag());
-        mCurrencyTextView.setText(Utils.getCurrencySymbol(mExpense.getCountry()));
-        mAmountEditText.setText(String.valueOf(mExpense.getAmount()));
+        mCurrencyTextView.setText(mExpense.getCurrency());
+        if (mExpense.getAmount() != null) {
+            // Hardcoding value to use only points
+            mAmountEditText.setText(String.format(Locale.US, "%.2f", mExpense.getAmount()));
+        }
     }
 
     private boolean isValidFormFields() {
@@ -339,17 +347,20 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     }
 
     @Override
-    public void onSelectCountry(String name, String code, String dialCode, int flagDrawableResID) {
-        if (mCountryPicker != null && !TextUtils.isEmpty(code)) {
-            String currency = Utils.getCurrencySymbol(code);
+    public void onSelectCountry(String name, String country, String dialCode, int flagDrawableResID) {
+        if (mCountryPicker != null && !TextUtils.isEmpty(country)) {
+            String currency = Utils.getCurrencySymbol(country);
             if (!TextUtils.isEmpty(currency)) {
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, code);
-                mExpense.setCountry(code);
+                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
+                Utils.saveStringToSharedPrefs(mFragmentActivity,
+                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency);
+                mExpense.setCountry(country);
+                mExpense.setCurrency(currency);
                 if (flagDrawableResID > 0) {
                     mCurrencyIcon.setImageResource(flagDrawableResID);
                 }
-                mCurrencyTextView.setText(Utils.getCurrencySymbol(code));
+                mCurrencyTextView.setText(currency);
             }
 
             mCountryPicker.dismiss();

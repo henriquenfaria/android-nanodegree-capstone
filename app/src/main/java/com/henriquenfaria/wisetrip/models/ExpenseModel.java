@@ -12,6 +12,7 @@ public class ExpenseModel implements Parcelable, Serializable {
     private String id;
     private String title;
     private String country;
+    private String currency;
     private Double amount;
     private Long date;
 
@@ -43,6 +44,14 @@ public class ExpenseModel implements Parcelable, Serializable {
         this.country = country;
     }
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
     public Double getAmount() {
         return amount;
     }
@@ -59,6 +68,21 @@ public class ExpenseModel implements Parcelable, Serializable {
         this.date = date;
     }
 
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ExpenseModel) {
+            ExpenseModel inItem = (ExpenseModel) obj;
+            return id.equals(inItem.getId());
+        }
+        return false;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -69,6 +93,7 @@ public class ExpenseModel implements Parcelable, Serializable {
         dest.writeString(this.id);
         dest.writeString(this.title);
         dest.writeString(this.country);
+        dest.writeString(this.currency);
         dest.writeValue(this.amount);
         dest.writeValue(this.date);
     }
@@ -77,6 +102,7 @@ public class ExpenseModel implements Parcelable, Serializable {
         this.id = in.readString();
         this.title = in.readString();
         this.country = in.readString();
+        this.currency = in.readString();
         this.amount = (Double) in.readValue(Double.class.getClassLoader());
         this.date = (Long) in.readValue(Long.class.getClassLoader());
     }
@@ -92,19 +118,4 @@ public class ExpenseModel implements Parcelable, Serializable {
             return new ExpenseModel[size];
         }
     };
-
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ExpenseModel) {
-            ExpenseModel inItem = (ExpenseModel) obj;
-            return id.equals(inItem.getId());
-        }
-        return false;
-    }
 }

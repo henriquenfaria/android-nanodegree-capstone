@@ -16,6 +16,7 @@
     <dimen name="traveler_name_margin_start">16dp</dimen>
     <dimen name="traveler_item_vertical_padding">8dp</dimen>
     <dimen name="traveler_search_view_bottom_margin">10dp</dimen>
+    <dimen name="expense_horizontal_margin">16dp</dimen>
     <dimen name="trip_card_view_corner_radius">2dp</dimen>
     <dimen name="trip_card_view_elevation">2dp</dimen>
     <dimen name="trip_card_view_inner_margin">6dp</dimen>

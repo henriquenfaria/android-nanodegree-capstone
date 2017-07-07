@@ -18,5 +18,5 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 </LinearLayout>
