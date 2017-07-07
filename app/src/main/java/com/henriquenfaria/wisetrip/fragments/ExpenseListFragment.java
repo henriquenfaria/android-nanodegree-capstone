@@ -189,28 +189,21 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
                     Timber.d("onChildAdded");
 
                     ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())) {
-                        ExpenseHeader headerHolder = getHeaderForExpense(expense);
-
-                        // Add new section
-                        if (headerHolder == null) {
-                            ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-                            DateTime dateTime = new DateTime(expense.getDate());
-                            String formattedDateTime = dateTime.toString(DateTimeFormat
-                                    .mediumDate());
-                            headerModel.setTitle(formattedDateTime);
-                            headerModel.setId(expense.getDate());
-                            headerHolder = new ExpenseHeader(headerModel);
-                        }
-                        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-                        mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new
-                                ExpenseItemComparator());
+                    if (expense != null && !TextUtils.isEmpty(expense.getId())
+                            && mExpenseAdapter != null) {
+                        addExpense(expense);
                     }
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildChanged");
+
+                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
+                    if (expense != null && !TextUtils.isEmpty(expense.getId())
+                            && mExpenseAdapter != null) {
+                        changeExpense(expense);
+                    }
                 }
 
                 @Override
@@ -218,24 +211,9 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
                     Timber.d("onChildRemoved");
 
                     ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())) {
-                        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-                        headerModel.setId(expense.getDate());
-                        ExpenseHeader headerHolder = new ExpenseHeader(headerModel);
-                        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-
-                        int position = mExpenseAdapter.getGlobalPositionOf(itemHolder);
-                        if (position >= 0) {
-                            IHeader header = mExpenseAdapter.getSectionHeader(position);
-                            mExpenseAdapter.removeItem(position);
-
-                            // Remove empty section
-                            if (header != null && mExpenseAdapter.getSectionItems(header).size()
-                                    == 0) {
-                                mExpenseAdapter.removeItem(mExpenseAdapter.getGlobalPositionOf
-                                        (header));
-                            }
-                        }
+                    if (expense != null && !TextUtils.isEmpty(expense.getId())
+                            && mExpenseAdapter != null) {
+                        removeExpense(expense);
                     }
                 }
 
@@ -254,6 +232,76 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
             };
 
             mExpensesReference.addChildEventListener(mExpensesEventListener);
+        }
+    }
+
+
+    private void addExpense(ExpenseModel expense) {
+        ExpenseHeader headerHolder = getHeaderForExpense(expense);
+
+        // Add new section
+        if (headerHolder == null) {
+            ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+            DateTime dateTime = new DateTime(expense.getDate());
+            String formattedDateTime = dateTime.toString(DateTimeFormat
+                    .mediumDate());
+            headerModel.setTitle(formattedDateTime);
+            headerModel.setId(expense.getDate());
+            headerHolder = new ExpenseHeader(headerModel);
+        }
+        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
+        mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new
+                ExpenseItemComparator());
+
+    }
+
+    private void changeExpense(ExpenseModel expense) {
+        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+        DateTime dateTime = new DateTime(expense.getDate());
+        String formattedDateTime = dateTime.toString(DateTimeFormat.mediumDate());
+        headerModel.setTitle(formattedDateTime);
+        headerModel.setId(expense.getDate());
+        ExpenseHeader expenseHeader = new ExpenseHeader(headerModel);
+        ExpenseItem expenseItem = new ExpenseItem(expense, expenseHeader);
+
+        ExpenseItem retrievedItem = (ExpenseItem) mExpenseAdapter
+                .getItem(mExpenseAdapter.getGlobalPositionOf(expenseItem));
+        if (retrievedItem != null) {
+            if (retrievedItem.getModel().getDate().equals(expense.getDate())) {
+                // No section change, just update the expense
+                mExpenseAdapter.updateItem(expenseItem);
+            } else {
+                // Move it to a new Section
+                ExpenseHeader destinationHeader = getHeaderForExpense(expense);
+                removeExpense(expense);
+                if (destinationHeader != null) {
+                    expenseHeader = destinationHeader;
+                    expenseItem = new ExpenseItem(expense, expenseHeader);
+                }
+                mExpenseAdapter.addItemToSection(expenseItem, expenseHeader,
+                        new ExpenseItemComparator());
+            }
+        } else {
+            mExpenseAdapter.updateItem(expenseItem);
+        }
+    }
+
+    private void removeExpense(ExpenseModel expense) {
+        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+        headerModel.setId(expense.getDate());
+        ExpenseHeader headerHolder = new ExpenseHeader(headerModel);
+        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
+        int position = mExpenseAdapter.getGlobalPositionOf(itemHolder);
+        if (position >= 0) {
+            IHeader header = mExpenseAdapter.getSectionHeader(position);
+            mExpenseAdapter.removeItem(position);
+
+            // Remove empty section
+            if (header != null && mExpenseAdapter.getSectionItems(header).size()
+                    == 0) {
+                mExpenseAdapter.removeItem(
+                        mExpenseAdapter.getGlobalPositionOf(header));
+            }
         }
     }
 
@@ -282,6 +330,11 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
             } else if (v1 instanceof ExpenseItem && v2 instanceof ExpenseItem) {
                 result = ((ExpenseItem) v2).getHeader().getModel().getId().compareTo((
                         (ExpenseItem) v1).getHeader().getModel().getId());
+
+                // TODO: Add a modified timestamp for the expense and use it in the comparison
+                // Current logic below it not ok for updated objects,
+                // since they are put in the middle of section
+                // Update timestamp only on add or on update where the expense date was changed
                 if (result == 0) {
                     result = ((ExpenseItem) v2).getModel().getId().compareTo(((ExpenseItem) v1)
                             .getModel().getId());
