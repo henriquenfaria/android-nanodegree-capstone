@@ -63,7 +63,7 @@ import timber.log.Timber;
 
 
 /* Activity to display all related data of a specific TripModel */
-public class TripDetailsActivity extends AppCompatActivity implements OnExpenseInteractionListener{
+public class TripDetailsActivity extends AppCompatActivity implements OnExpenseInteractionListener {
 
     private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
             "save_is_shared_element_transition";
@@ -91,9 +91,21 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
     private TripModel mTrip;
     private boolean mIsSharedElementTransition;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRootReference;
+    private FirebaseUser mCurrentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase instances
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRootReference = mFirebaseDatabase.getReference();
+
 
         mTrip = getIntent().getParcelableExtra(Constants.Extra.EXTRA_TRIP);
         if (mTrip == null) {
@@ -343,7 +355,8 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Timber.d("onDataChange");
                         if (mAttributionContainer != null) {
-                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel.class);
+                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel
+                                    .class);
                             if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
                                 Spanned result;
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -375,14 +388,57 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
         }
     }
 
-    public void startExpenseFactory(ExpenseModel expense){
+    public void startExpenseFactory(ExpenseModel expense) {
         Intent intent = new Intent(TripDetailsActivity.this,
                 ExpenseFactoryActivity.class);
-        intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTrip);
-        if (expense != null){
+        intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
+        if (expense != null) {
             intent.putExtra(Constants.Extra.EXTRA_EXPENSE, (Parcelable) expense);
         }
-        startActivity(intent);
+        startActivityForResult(intent, Constants.Request.REQUEST_EXPENSE_FACTORY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case Constants.Request.REQUEST_EXPENSE_FACTORY:
+                handleRequestExpenseFactory(resultCode, data);
+                break;
+        }
+    }
+
+    private void handleRequestExpenseFactory(int resultCode, Intent data){
+        ExpenseModel expense = null;
+
+        if (data != null) {
+            expense = data.getParcelableExtra(Constants.Extra.EXTRA_EXPENSE);
+        }
+
+        if (resultCode == Constants.Result.RESULT_EXPENSE_ADDED && expense != null) {
+            DatabaseReference expenseReference
+                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
+            DatabaseReference databaseReference = expenseReference.child(mTrip.getId()).push();
+            expense.setId(databaseReference.getKey());
+            databaseReference.setValue(expense);
+
+        } else if (resultCode == Constants.Result.RESULT_EXPENSE_CHANGED
+                && expense != null && !TextUtils.isEmpty(expense.getId())) {
+            DatabaseReference expenseReference
+                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
+            DatabaseReference databaseReference = expenseReference.child(mTrip.getId())
+                    .child(expense.getId());
+            databaseReference.setValue(expense);
+
+        } else if (resultCode == Constants.Result.RESULT_EXPENSE_REMOVED
+                && expense != null && !TextUtils.isEmpty(expense.getId())) {
+            DatabaseReference expenseReference
+                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
+            expenseReference.child(mTrip.getId()).child(expense.getId()).removeValue();
+
+        } else if (resultCode == Constants.Result.RESULT_EXPENSE_ERROR) {
+            Toast.makeText(this, getString(R.string.expense_updated_error), Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
     @Override

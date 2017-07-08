@@ -38,6 +38,24 @@ public class Constants {
         public static final String EXTRA_EXPENSE = "extra_expense";
     }
 
+    // Activity requests
+    public static class Request {
+        public static final int REQUEST_EXPENSE_FACTORY = 10;
+        public static final int REQUEST_TRIP_FACTORY = 20;
+    }
+
+    // Activity results
+    public static class Result {
+        public static final int RESULT_EXPENSE_ADDED = 10;
+        public static final int RESULT_EXPENSE_REMOVED= 11;
+        public static final int RESULT_EXPENSE_CHANGED = 12;
+        public static final int RESULT_EXPENSE_ERROR = 13;
+
+        public static final int RESULT_TRIP_ADDED = 20;
+        public static final int RESULT_TRIP_REMOVED= 21;
+        public static final int RESULT_TRIP_CHANGED = 22;
+        public static final int RESULT_TRIP_ERROR = 23;
+    }
 
     // Intent actions
     public static class Action {

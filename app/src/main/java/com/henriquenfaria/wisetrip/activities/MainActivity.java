@@ -22,8 +22,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity
     private Fragment mFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mTripsReference;
 
     @BindView(R.id.fab)
     protected FloatingActionButton mFab;
@@ -54,6 +59,10 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         // Redirect to Sign In screen if user has not been authenticated
         mCurrentUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mTripsReference = mFirebaseDatabase.getReference()
+                .child("trips")
+                .child(mCurrentUser.getUid());
 
         if (mCurrentUser == null) {
             startActivity(new Intent(this, AuthUiActivity.class));
@@ -73,8 +82,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (mFragment instanceof TripListFragment) {
-                    Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
-                    startActivity(intent);
+                    startTripFactory();
                 }
             }
         });
@@ -108,6 +116,48 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setCheckedItem(R.id.nav_your_trips);
     }
+
+    private void startTripFactory() {
+        Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
+        startActivityForResult(intent, Constants.Request.REQUEST_TRIP_FACTORY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.Request.REQUEST_TRIP_FACTORY) {
+            TripModel trip = null;
+            if (data != null) {
+                trip = data.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+            }
+
+            if (resultCode == Constants.Result.RESULT_TRIP_ADDED && trip != null) {
+                DatabaseReference databaseReference = mTripsReference.push();
+                trip.setId(databaseReference.getKey());
+                databaseReference.setValue(trip);
+
+            } else if (resultCode == Constants.Result.RESULT_TRIP_CHANGED
+                    && trip != null && !TextUtils.isEmpty(trip.getId())) {
+                DatabaseReference databaseReference = mTripsReference.child(trip.getId());
+                databaseReference.setValue(trip);
+
+            } else if (resultCode == Constants.Result.RESULT_TRIP_REMOVED
+                    && trip != null && !TextUtils.isEmpty(trip.getId())) {
+                mTripsReference.child(trip.getId()).removeValue();
+
+                // Remove TripModel photo attributions
+                DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
+                        .child("attributions")
+                        .child(mCurrentUser.getUid())
+                        .child(trip.getId());
+                attributionsReference.removeValue();
+
+            } else if (resultCode == Constants.Result.RESULT_TRIP_ERROR) {
+                Toast.makeText(this, getString(R.string.trip_updated_error),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -159,12 +209,12 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    private void setDefaultCurrencyPreferences(Context context){
+    private void setDefaultCurrencyPreferences(Context context) {
         Locale defaultLocale = Locale.getDefault();
         String country = defaultLocale.getCountry();
         if (TextUtils.isEmpty(Utils.getStringFromSharedPrefs(context,
                 Constants.Preference.PREFERENCE_DEFAULT_COUNTRY))) {
-            if (!TextUtils.isEmpty(country) && country.length() == 2){
+            if (!TextUtils.isEmpty(country) && country.length() == 2) {
                 Utils.saveStringToSharedPrefs(context,
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
                 Utils.saveStringToSharedPrefs(context,

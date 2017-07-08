@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.activities.MainActivity;
 import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.activities.TripFactoryActivity;
 import com.henriquenfaria.wisetrip.holders.HeaderHolder;
@@ -70,10 +71,10 @@ public class TripListSection extends StatelessSection {
         tripHolder.setOnEditTripClickListener(new TripHolder.OnEditTripClickListener() {
             @Override
             public void onEditTripClick(View view) {
-                Context context = view.getContext();
+                MainActivity context = (MainActivity) view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
                 intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTripList.get(position));
-                context.startActivity(intent);
+                context.startActivityForResult(intent, Constants.Request.REQUEST_TRIP_FACTORY);
             }
         });
     }

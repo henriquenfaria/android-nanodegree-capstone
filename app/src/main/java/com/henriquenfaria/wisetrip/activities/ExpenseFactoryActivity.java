@@ -3,15 +3,11 @@ package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.ExpenseFactoryFragment;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
@@ -22,11 +18,6 @@ public class ExpenseFactoryActivity extends AppCompatActivity
         implements ExpenseFactoryFragment.OnExpenseFactoryListener {
 
     private static final String TAG_EXPENSE_FACTORY_FRAGMENT = "tag_expense_factory_fragment";
-
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mExpensesReference;
-    private FirebaseUser mCurrentUser;
     private TripModel mTrip;
     private ExpenseModel mExpense;
     private ExpenseFactoryFragment mExpenseFactoryFragment;
@@ -39,14 +30,6 @@ public class ExpenseFactoryActivity extends AppCompatActivity
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        // Initialize Firebase instances
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mExpensesReference = mFirebaseDatabase.getReference()
-                .child("expenses")
-                .child(mCurrentUser.getUid());
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
@@ -88,25 +71,13 @@ public class ExpenseFactoryActivity extends AppCompatActivity
 
     @Override
     public void saveExpense(TripModel trip, ExpenseModel expense, boolean isEditMode) {
-        if (isEditMode) {
-            // Update existing ExpenseModel
-            if (expense != null && !TextUtils.isEmpty(expense.getId())) {
-                DatabaseReference databaseReference = mExpensesReference.child(trip.getId())
-                        .child(expense.getId());
-                databaseReference.setValue(expense);
-                Toast.makeText(this, getString(R.string.expense_updated_success),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, getString(R.string.expense_updated_error),
-                        Toast.LENGTH_SHORT).show();
-            }
+        if (expense != null) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(Constants.Extra.EXTRA_EXPENSE, (Parcelable) expense);
+            setResult(isEditMode ? Constants.Result.RESULT_EXPENSE_CHANGED
+                    : Constants.Result.RESULT_EXPENSE_ADDED, resultIntent);
         } else {
-            // Creating ExpenseModel
-            DatabaseReference databaseReference = mExpensesReference.child(trip.getId()).push();
-            expense.setId(databaseReference.getKey());
-            databaseReference.setValue(expense);
-            Toast.makeText(this, getString(R.string.expense_created_success), Toast.LENGTH_SHORT)
-                    .show();
+            setResult(Constants.Result.RESULT_EXPENSE_ERROR);
         }
 
         finish();
@@ -114,14 +85,12 @@ public class ExpenseFactoryActivity extends AppCompatActivity
 
     @Override
     public void deleteExpense(TripModel trip, ExpenseModel expense) {
-        if (expense != null && !TextUtils.isEmpty(expense.getId())) {
-            // Remove ExpenseModel
-            mExpensesReference.child(trip.getId()).child(expense.getId()).removeValue();
-            Toast.makeText(this, getString(R.string.expense_deleted_success), Toast.LENGTH_SHORT)
-                    .show();
+        if (expense != null) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(Constants.Extra.EXTRA_EXPENSE, (Parcelable) expense);
+            setResult(Constants.Result.RESULT_EXPENSE_REMOVED, resultIntent);
         } else {
-            Toast.makeText(this, getString(R.string.expense_deleted_error), Toast.LENGTH_SHORT)
-                    .show();
+            setResult(Constants.Result.RESULT_EXPENSE_ERROR);
         }
 
         finish();
