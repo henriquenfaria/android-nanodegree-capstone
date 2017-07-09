@@ -59,6 +59,8 @@
     <string name="budgets">Budgets</string>
     <string name="places">Places</string>
     <string name="no_items">No items</string>
+    <string name="search_traveler_title">Search traveler</string>
+    <string name="search_traveler_hint">Search traveler…</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

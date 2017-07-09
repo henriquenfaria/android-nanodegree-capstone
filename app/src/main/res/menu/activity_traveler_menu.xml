@@ -3,6 +3,16 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="@drawable/ic_menu_item_search"
+        android:orderInCategory="0"
+        android:title="@string/search_traveler_title"
+        app:queryHint="@string/search_traveler_title"
+        android:imeOptions="actionNone"
+        app:showAsAction="collapseActionView|ifRoom"/>
+
+    <item
         android:id="@+id/action_save"
         android:icon="@drawable/ic_menu_done"
         android:orderInCategory="10"

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,9 +38,6 @@ public class TravelerActivity extends AppCompatActivity implements
     private static final int ID_TASK_CONTACTS = 1;
     private static final String SAVE_TRAVELER_KEY = "save_traveler_key";
 
-    @BindView(R.id.traveler_search_view)
-    protected SearchView mTravelerSearchView;
-
     @BindView(R.id.traveler_recycler_view)
     protected RecyclerView mTravelerRecyclerView;
 
@@ -66,7 +64,6 @@ public class TravelerActivity extends AppCompatActivity implements
             mTravelerHashMap = new HashMap<>();
         }
 
-        mTravelerSearchView.setOnQueryTextListener(this);
         mTravelerAdapter = new TravelerAdapter(null);
         mTravelerRecyclerView.setHasFixedSize(true);
         mTravelerRecyclerView.setAdapter(mTravelerAdapter);
@@ -86,8 +83,14 @@ public class TravelerActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_traveler_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint(getString(R.string.search_traveler_hint));
+        searchView.setOnQueryTextListener(this);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
