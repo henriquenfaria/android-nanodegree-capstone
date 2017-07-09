@@ -53,9 +53,6 @@ dependencies {
     //Timber
     compile 'com.jakewharton.timber:timber:4.5.1'
 
-    //Apache Commons Lang
-    compile 'org.apache.commons:commons-lang3:3.6'
-
     // Picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
 

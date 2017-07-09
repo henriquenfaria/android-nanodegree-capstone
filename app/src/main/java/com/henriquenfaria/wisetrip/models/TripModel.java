@@ -8,9 +8,6 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,7 +117,8 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
     }
 
     public State getState(long currentMillis) {
-        if (currentMillis >= this.startDate && currentMillis <= (this.endDate + Constants.General.DAY_IN_MILLIS)) {
+        if (currentMillis >= this.startDate && currentMillis <= (this.endDate + Constants.General
+                .DAY_IN_MILLIS)) {
             return State.CURRENT;
         } else if (this.endDate < currentMillis) {
             return State.PAST;
@@ -157,27 +155,19 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
     public int hashCode() {
          /* We only need to use id to compare if a TripModel is the same. Since id is unique,
           we can ignore the other properties. It will increase the performance*/
-        return new HashCodeBuilder(17, 31)
-                .append(id)
-                .toHashCode();
+        return id.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TripModel)) {
-            return false;
-        }
+        if (obj instanceof TripModel){
+               /* We only need to use id to compare if a TripModel is the same. Since id is unique,
+            we can ignore the other properties. It will increase the performance*/
+            TripModel trip = (TripModel) obj;
+            return id.equals(trip.getId());
 
-        if (obj == this) {
-            return true;
         }
-
-         /* We only need to use id to compare if a TripModel is the same. Since id is unique,
-          we can ignore the other properties. It will increase the performance*/
-        TripModel trip = (TripModel) obj;
-        return new EqualsBuilder()
-                .append(id, trip.id)
-                .isEquals();
+        return false;
     }
 
     public enum State {

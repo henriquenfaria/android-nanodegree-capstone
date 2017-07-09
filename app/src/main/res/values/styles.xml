@@ -22,4 +22,8 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="ExpenseText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">@dimen/expense_text_size</item>
+    </style>
 </resources>

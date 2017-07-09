@@ -5,8 +5,8 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
-                android:paddingBottom="@dimen/traveler_item_vertical_padding"
-                android:paddingTop="@dimen/traveler_item_vertical_padding">
+                android:paddingBottom="@dimen/expense_layout_vertical_padding"
+                android:paddingTop="@dimen/expense_layout_vertical_padding">
 
     <TextView
         android:id="@+id/expense_title"
@@ -18,12 +18,12 @@
         android:layout_marginLeft="@dimen/expense_horizontal_margin"
         android:layout_marginRight="@dimen/expense_horizontal_margin"
         android:layout_marginStart="@dimen/expense_horizontal_margin"
-        android:ellipsize="end"
         android:layout_toLeftOf="@+id/expense_amount"
         android:layout_toStartOf="@+id/expense_amount"
+        android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        android:textAppearance="@style/ExpenseText"/>
 
     <TextView
         android:id="@id/expense_amount"
@@ -37,5 +37,5 @@
         android:layout_marginStart="@dimen/expense_horizontal_margin"
         android:maxLines="1"
         android:minLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        android:textAppearance="@style/ExpenseText"/>
 </RelativeLayout>
