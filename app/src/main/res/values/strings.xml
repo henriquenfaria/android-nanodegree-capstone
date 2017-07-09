@@ -61,6 +61,8 @@
     <string name="no_items">No items</string>
     <string name="search_traveler_title">Search traveler</string>
     <string name="search_traveler_hint">Search traveler…</string>
+    <string name="contacts_permission_title">Contacts permission</string>
+    <string name="contacts_permission_message">Contacts permission is needed to find travelers in your contacts list.</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

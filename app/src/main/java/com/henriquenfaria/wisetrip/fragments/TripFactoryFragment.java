@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -50,12 +51,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class TripFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
-        AlertDialogFragment.OnAlertListener,
         DestinationAdapter.OnDestinationClickListener {
 
     private static final String ARG_TRIP = "arg_trip";
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
-    private static final String TAG_ALERT_DIALOG_FRAGMENT = "tag_alert_dialog_fragment";
+    private static final String TAG_DELETE_ALERT_DIALOG = "tag_delete_alert_dialog";
+    private static final String TAG_PERMISSION_ALERT_DIALOG = "tag_permission_alert_dialog";
     private static final String SAVE_TRIP = "save_trip";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
@@ -123,27 +124,39 @@ public class TripFactoryFragment extends BaseFragment implements
                                 .this.getActivity(),
                         Manifest.permission.READ_CONTACTS)) {
 
-                    // TODO: Create dialog explaining the permission
-                    Toast.makeText(getActivity(), "Permission denied 2", Toast.LENGTH_SHORT).show();
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
+                    showPermissionExplanationDialog(R.string.contacts_permission_title,
+                            R.string.contacts_permission_message);
 
                 } else {
                     // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(TripFactoryFragment.this.getActivity(),
-                            new String[]{Manifest.permission.READ_CONTACTS},
+                    requestPermission(new String[]{Manifest.permission.READ_CONTACTS},
                             PERMISSION_REQUEST_READ_CONTACTS);
-
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
                 }
             } else {
                 startTravelerActivityForResult();
             }
         }
     };
+
+
+    private AlertDialogFragment.OnAlertListener mDeleteAlertListener = new AlertDialogFragment
+            .OnAlertListener() {
+        @Override
+        public void positiveAlertButtonClicked() {
+            deleteTrip();
+        }
+    };
+
+    private AlertDialogFragment.OnAlertListener mPermissionAlertListener = new
+            AlertDialogFragment.OnAlertListener() {
+
+        @Override
+        public void positiveAlertButtonClicked() {
+            requestPermission(new String[]{Manifest.permission.READ_CONTACTS},
+                    PERMISSION_REQUEST_READ_CONTACTS);
+        }
+    };
+
 
     private TextWatcher mTripTitleTextWatcher = new TextWatcher() {
         @Override
@@ -175,6 +188,9 @@ public class TripFactoryFragment extends BaseFragment implements
         return fragment;
     }
 
+    private void requestPermission(String[] permission, int requestCode) {
+        TripFactoryFragment.this.requestPermissions(permission, requestCode);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -208,10 +224,16 @@ public class TripFactoryFragment extends BaseFragment implements
             datePickerFragment.setOnDateSetListener(this);
         }
 
-        AlertDialogFragment alertDialogFragment = (AlertDialogFragment)
-                getFragmentManager().findFragmentByTag(TAG_ALERT_DIALOG_FRAGMENT);
-        if (alertDialogFragment != null) {
-            alertDialogFragment.setOnAlertListener(this);
+        AlertDialogFragment deleteAlertDialogFragment = (AlertDialogFragment)
+                getFragmentManager().findFragmentByTag(TAG_DELETE_ALERT_DIALOG);
+        if (deleteAlertDialogFragment != null) {
+            deleteAlertDialogFragment.setOnAlertListener(mDeleteAlertListener);
+        }
+
+        AlertDialogFragment permissionAlertDialogFragment = (AlertDialogFragment)
+                getFragmentManager().findFragmentByTag(TAG_PERMISSION_ALERT_DIALOG);
+        if (permissionAlertDialogFragment != null) {
+            permissionAlertDialogFragment.setOnAlertListener(mPermissionAlertListener);
         }
 
         setHasOptionsMenu(true);
@@ -243,7 +265,8 @@ public class TripFactoryFragment extends BaseFragment implements
             saveTrip();
             return true;
         } else if (id == R.id.action_delete) {
-            createDeleteTripConfirmationDialog();
+            createDeleteTripConfirmationDialog(R.string.title_delete_trip, R.string
+                    .message_delete_trip);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -292,8 +315,8 @@ public class TripFactoryFragment extends BaseFragment implements
         mDestinationAdapter.notifyDataSetChanged();
 
         //if (mIsEditMode && !mIsPopulated) {
-            populateFormFields();
-           // mIsPopulated = true;
+        populateFormFields();
+        // mIsPopulated = true;
         //}
 
         return rootView;
@@ -301,10 +324,10 @@ public class TripFactoryFragment extends BaseFragment implements
 
     private void populateFormFields() {
         mTripTitleEditText.setText(mTrip.getTitle());
-        if (mTrip.getStartDate() > 0){
+        if (mTrip.getStartDate() > 0) {
             mStartDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getStartDate()));
         }
-        if (mTrip.getEndDate() > 0){
+        if (mTrip.getEndDate() > 0) {
             mEndDateTextView.setText(Utils.getFormattedTripDateText(mTrip.getEndDate()));
         }
         mTravelerText.setText(Utils.getFormattedTravelersText(mTrip.getTravelers()));
@@ -337,7 +360,6 @@ public class TripFactoryFragment extends BaseFragment implements
         return isValid;
     }
 
-
     private void saveTrip() {
         if (isValidFormFields()) {
             mListener.saveTrip(mTrip, mIsEditMode);
@@ -348,14 +370,21 @@ public class TripFactoryFragment extends BaseFragment implements
         mListener.deleteTrip(mTrip);
     }
 
-    private void createDeleteTripConfirmationDialog() {
+    private void createDeleteTripConfirmationDialog(int title, int message) {
         AlertDialogFragment alertDialogFragment = new AlertDialogFragment();
-        alertDialogFragment.setTitle(R.string.title_delete_trip);
-        alertDialogFragment.setMessage(R.string.message_delete_trip);
-        alertDialogFragment.setOnAlertListener(this);
-        alertDialogFragment.show(getFragmentManager(), TAG_ALERT_DIALOG_FRAGMENT);
+        alertDialogFragment.setTitle(title);
+        alertDialogFragment.setMessage(message);
+        alertDialogFragment.setOnAlertListener(mDeleteAlertListener);
+        alertDialogFragment.show(getFragmentManager(), TAG_DELETE_ALERT_DIALOG);
     }
 
+    private void showPermissionExplanationDialog(int title, int message) {
+        AlertDialogFragment alertDialogFragment = new AlertDialogFragment();
+        alertDialogFragment.setTitle(title);
+        alertDialogFragment.setMessage(message);
+        alertDialogFragment.setOnAlertListener(mPermissionAlertListener);
+        alertDialogFragment.show(getFragmentManager(), TAG_PERMISSION_ALERT_DIALOG);
+    }
 
     @Override
     public void onDateSet(int targetViewId, long dateMillis) {
@@ -370,31 +399,24 @@ public class TripFactoryFragment extends BaseFragment implements
         }
     }
 
+
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[],
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_READ_CONTACTS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
                     startTravelerActivityForResult();
 
                 } else {
-                    // TODO: Fix text
-                    Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_SHORT).show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // Permission denied, do nothing
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -494,11 +516,6 @@ public class TripFactoryFragment extends BaseFragment implements
         }
     }
 
-    @Override
-    public void positiveAlertButtonClicked() {
-        deleteTrip();
-    }
-
     public interface OnTripFactoryListener {
         void changeActionBarTitle(String newTitle);
 
@@ -506,5 +523,4 @@ public class TripFactoryFragment extends BaseFragment implements
 
         void deleteTrip(TripModel trip);
     }
-
 }
