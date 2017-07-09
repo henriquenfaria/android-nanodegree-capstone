@@ -56,19 +56,20 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        // Redirect to Sign In screen if user has not been authenticated
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mTripsReference = mFirebaseDatabase.getReference()
-                .child("trips")
-                .child(mCurrentUser.getUid());
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
 
+        // Redirect to Sign In screen if user has not been authenticated
         if (mCurrentUser == null) {
             startActivity(new Intent(this, AuthUiActivity.class));
             finish();
             return;
         }
+
+        mTripsReference = mFirebaseDatabase.getReference()
+                .child("trips")
+                .child(mCurrentUser.getUid());
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
