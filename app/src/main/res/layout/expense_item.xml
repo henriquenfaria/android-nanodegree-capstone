@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/expense_item_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:paddingBottom="@dimen/expense_layout_vertical_padding"
-                android:paddingTop="@dimen/expense_layout_vertical_padding">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/expense_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:paddingBottom="@dimen/expense_layout_vertical_padding"
+    android:paddingTop="@dimen/expense_layout_vertical_padding">
 
     <TextView
         android:id="@+id/expense_title"

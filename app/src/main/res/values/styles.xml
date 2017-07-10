@@ -25,5 +25,6 @@
 
     <style name="ExpenseText" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textSize">@dimen/expense_text_size</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 </resources>

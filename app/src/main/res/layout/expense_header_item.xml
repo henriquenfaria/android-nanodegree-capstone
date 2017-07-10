@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="#EEEEEE"
-              android:clickable="true"
-              android:gravity="center_vertical"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/expense_layout_vertical_padding"
-              android:paddingTop="@dimen/expense_layout_vertical_padding">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#EEEEEE"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/expense_layout_vertical_padding"
+    android:paddingTop="@dimen/expense_layout_vertical_padding">
 
     <TextView
         android:id="@+id/expense_header_title"
