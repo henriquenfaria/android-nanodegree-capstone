@@ -15,24 +15,15 @@ import java.util.List;
 
 
 //TODO: Temporary code to test TabLayout
-public class TempSimpleRecyclerAdapter extends RecyclerView.Adapter<TempSimpleRecyclerAdapter.VersionViewHolder> {
-    List<String> versionModels;
-    Boolean isHomeList = false;
-
+public class TempSimpleRecyclerAdapter extends RecyclerView.Adapter<TempSimpleRecyclerAdapter
+        .VersionViewHolder> {
     public static List<String> homeActivitiesList = new ArrayList<>();
     public static List<String> homeActivitiesSubList = new ArrayList<>();
+    List<String> versionModels;
+    Boolean isHomeList = false;
     Context context;
     OnItemClickListener clickListener;
 
-
-    public void setHomeActivitiesList(Context context) {
-        String[] listArray = context.getResources().getStringArray(R.array.home_activities);
-        String[] subTitleArray = context.getResources().getStringArray(R.array.home_activities_subtitle);
-        for (int i = 0; i < listArray.length; ++i) {
-            homeActivitiesList.add(listArray[i]);
-            homeActivitiesSubList.add(subTitleArray[i]);
-        }
-    }
 
     public TempSimpleRecyclerAdapter(Context context) {
         isHomeList = true;
@@ -40,16 +31,26 @@ public class TempSimpleRecyclerAdapter extends RecyclerView.Adapter<TempSimpleRe
         setHomeActivitiesList(context);
     }
 
-
     public TempSimpleRecyclerAdapter(List<String> versionModels) {
         isHomeList = false;
         this.versionModels = versionModels;
 
     }
 
+    public void setHomeActivitiesList(Context context) {
+        String[] listArray = context.getResources().getStringArray(R.array.home_activities);
+        String[] subTitleArray = context.getResources().getStringArray(R.array
+                .home_activities_subtitle);
+        for (int i = 0; i < listArray.length; ++i) {
+            homeActivitiesList.add(listArray[i]);
+            homeActivitiesSubList.add(subTitleArray[i]);
+        }
+    }
+
     @Override
     public VersionViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.temp_recyclerlist_item, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout
+                .temp_recyclerlist_item, viewGroup, false);
         return new VersionViewHolder(view);
     }
 
@@ -71,6 +72,13 @@ public class TempSimpleRecyclerAdapter extends RecyclerView.Adapter<TempSimpleRe
             return versionModels == null ? 0 : versionModels.size();
     }
 
+    public void SetOnItemClickListener(final OnItemClickListener itemClickListener) {
+        this.clickListener = itemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+    }
 
     class VersionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CardView cardItemLayout;
@@ -96,14 +104,6 @@ public class TempSimpleRecyclerAdapter extends RecyclerView.Adapter<TempSimpleRe
         public void onClick(View v) {
             clickListener.onItemClick(v, getPosition());
         }
-    }
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-    }
-
-    public void SetOnItemClickListener(final OnItemClickListener itemClickListener) {
-        this.clickListener = itemClickListener;
     }
 
 }

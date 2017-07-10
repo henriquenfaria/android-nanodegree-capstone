@@ -160,7 +160,7 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof TripModel){
+        if (obj instanceof TripModel) {
                /* We only need to use id to compare if a TripModel is the same. Since id is unique,
             we can ignore the other properties. It will increase the performance*/
             TripModel trip = (TripModel) obj;

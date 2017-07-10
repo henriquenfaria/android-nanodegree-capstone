@@ -19,32 +19,32 @@ public class CustomRecyclerView extends RecyclerView {
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount) {
-             super.onItemRangeChanged(positionStart, itemCount);
+            super.onItemRangeChanged(positionStart, itemCount);
             updateEmptyView();
         }
 
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-             super.onItemRangeChanged(positionStart, itemCount, payload);
+            super.onItemRangeChanged(positionStart, itemCount, payload);
             updateEmptyView();
         }
 
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
-             super.onItemRangeInserted(positionStart, itemCount);
+            super.onItemRangeInserted(positionStart, itemCount);
 
             updateEmptyView();
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-             super.onItemRangeRemoved(positionStart, itemCount);
+            super.onItemRangeRemoved(positionStart, itemCount);
             updateEmptyView();
         }
 
         @Override
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-             super.onItemRangeMoved(fromPosition, toPosition, itemCount);
+            super.onItemRangeMoved(fromPosition, toPosition, itemCount);
             updateEmptyView();
         }
     };
@@ -64,7 +64,6 @@ public class CustomRecyclerView extends RecyclerView {
     /**
      * Designate a view as the empty view. When the backing adapter has no
      * data this view will be made visible and the recycler view hidden.
-     *
      */
     public void setEmptyView(View emptyView) {
         mEmptyView = emptyView;

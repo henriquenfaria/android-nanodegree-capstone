@@ -400,14 +400,14 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case Constants.Request.REQUEST_EXPENSE_FACTORY:
                 handleRequestExpenseFactory(resultCode, data);
                 break;
         }
     }
 
-    private void handleRequestExpenseFactory(int resultCode, Intent data){
+    private void handleRequestExpenseFactory(int resultCode, Intent data) {
         ExpenseModel expense = null;
 
         if (data != null) {

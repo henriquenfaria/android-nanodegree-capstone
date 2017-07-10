@@ -25,11 +25,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.TripListSection;
-import com.henriquenfaria.wisetrip.models.TripModel;
-import com.henriquenfaria.wisetrip.views.CustomRecyclerView;
 import com.henriquenfaria.wisetrip.models.DestinationModel;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.views.CustomRecyclerView;
 
 import org.joda.time.DateTime;
 
@@ -61,7 +61,8 @@ public class TripListFragment extends BaseFragment {
     private SortedList<TripModel> mCurrentTrips;
     private SortedList<TripModel> mPastTrips;
 
-    private SortedList.Callback<TripModel> mAscSortedListCallback = new SortedList.Callback<TripModel>() {
+    private SortedList.Callback<TripModel> mAscSortedListCallback = new SortedList
+            .Callback<TripModel>() {
 
         @Override
         public void onInserted(int position, int count) {
@@ -101,7 +102,8 @@ public class TripListFragment extends BaseFragment {
     };
 
 
-    private SortedList.Callback<TripModel> mDescSortedListCallback = new SortedList.Callback<TripModel>() {
+    private SortedList.Callback<TripModel> mDescSortedListCallback = new SortedList
+            .Callback<TripModel>() {
 
         @Override
         public void onInserted(int position, int count) {
@@ -213,7 +215,8 @@ public class TripListFragment extends BaseFragment {
                         placePhotoIntentService.setAction(Constants.Action.ACTION_ADD_PHOTO);
                         List<DestinationModel> destinations = trip.getDestinations();
                         if (destinations.size() > 0) {
-                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
+                            placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP,
+                                    (Parcelable) trip);
                             mFragmentActivity.startService(placePhotoIntentService);
                         }
                     }
@@ -239,7 +242,8 @@ public class TripListFragment extends BaseFragment {
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_CHANGE_PHOTO);
-                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
+                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)
+                                trip);
                         mFragmentActivity.startService(placePhotoIntentService);
                     }
                 }
@@ -271,7 +275,8 @@ public class TripListFragment extends BaseFragment {
                         Intent placePhotoIntentService = new Intent(mFragmentActivity,
                                 PlacePhotoIntentService.class);
                         placePhotoIntentService.setAction(Constants.Action.ACTION_REMOVE_PHOTO);
-                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
+                        placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)
+                                trip);
                         mFragmentActivity.startService(placePhotoIntentService);
                     }
                 }

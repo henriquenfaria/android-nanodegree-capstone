@@ -8,10 +8,27 @@ import java.io.Serializable;
 
 public class ExpenseHeaderModel implements Serializable, Parcelable {
 
+    public static final Parcelable.Creator<ExpenseHeaderModel> CREATOR = new Parcelable
+            .Creator<ExpenseHeaderModel>() {
+        @Override
+        public ExpenseHeaderModel createFromParcel(Parcel source) {
+            return new ExpenseHeaderModel(source);
+        }
+
+        @Override
+        public ExpenseHeaderModel[] newArray(int size) {
+            return new ExpenseHeaderModel[size];
+        }
+    };
     private Long id;
     private String title;
 
     public ExpenseHeaderModel() {
+    }
+
+    protected ExpenseHeaderModel(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.title = in.readString();
     }
 
     @Override
@@ -60,21 +77,4 @@ public class ExpenseHeaderModel implements Serializable, Parcelable {
         dest.writeValue(this.id);
         dest.writeString(this.title);
     }
-
-    protected ExpenseHeaderModel(Parcel in) {
-        this.id = (Long) in.readValue(Long.class.getClassLoader());
-        this.title = in.readString();
-    }
-
-    public static final Parcelable.Creator<ExpenseHeaderModel> CREATOR = new Parcelable.Creator<ExpenseHeaderModel>() {
-        @Override
-        public ExpenseHeaderModel createFromParcel(Parcel source) {
-            return new ExpenseHeaderModel(source);
-        }
-
-        @Override
-        public ExpenseHeaderModel[] newArray(int size) {
-            return new ExpenseHeaderModel[size];
-        }
-    };
 }

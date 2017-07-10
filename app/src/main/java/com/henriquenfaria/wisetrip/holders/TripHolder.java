@@ -141,14 +141,6 @@ public class TripHolder extends RecyclerView.ViewHolder {
         mOnEditTripClickListener = clickListener;
     }
 
-    public interface OnTripItemClickListener {
-        void onTripItemClick(View view);
-    }
-
-    public interface OnEditTripClickListener {
-        void onEditTripClick(View view);
-    }
-
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
         if (mAttributionContainer != null) {
             if (shouldDisplay) {
@@ -166,7 +158,8 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Timber.d("onDataChange");
                         if (mAttributionContainer != null) {
-                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel.class);
+                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel
+                                    .class);
                             if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
                                 Spanned result;
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -199,5 +192,13 @@ public class TripHolder extends RecyclerView.ViewHolder {
                 mAttributionContent.setVisibility(View.GONE);
             }
         }
+    }
+
+    public interface OnTripItemClickListener {
+        void onTripItemClick(View view);
+    }
+
+    public interface OnEditTripClickListener {
+        void onEditTripClick(View view);
     }
 }

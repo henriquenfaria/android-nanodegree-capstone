@@ -113,7 +113,7 @@ public class AuthUiActivity extends AppCompatActivity {
             return;
         } else if (resultCode == ResultCodes.CANCELED) {
             if (response != null) {
-                switch (response.getErrorCode()){
+                switch (response.getErrorCode()) {
                     case ErrorCodes.NO_NETWORK:
                         mLogoImageView.setVisibility(View.VISIBLE);
                         displayErrorSnackBar(R.string.no_internet_connection);
@@ -124,7 +124,8 @@ public class AuthUiActivity extends AppCompatActivity {
                         displayErrorSnackBar(R.string.unknown_error);
                         return;
                     default:
-                        Toast.makeText(AuthUiActivity.this, R.string.unknown_error, Toast.LENGTH_SHORT)
+                        Toast.makeText(AuthUiActivity.this, R.string.unknown_error, Toast
+                                .LENGTH_SHORT)
                                 .show();
                         break;
                 }

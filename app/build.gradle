@@ -11,7 +11,7 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [google_geo_api_manifest_key:google_geo_api_manifest_key]
+        manifestPlaceholders = [google_geo_api_manifest_key: google_geo_api_manifest_key]
     }
     buildTypes {
         release {

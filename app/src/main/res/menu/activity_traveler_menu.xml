@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/action_search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_menu_item_search"
+        android:imeOptions="actionNone"
         android:orderInCategory="0"
         android:title="@string/search_traveler_title"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         app:queryHint="@string/search_traveler_title"
-        android:imeOptions="actionNone"
         app:showAsAction="collapseActionView|ifRoom"/>
 
     <item

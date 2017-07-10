@@ -10,6 +10,17 @@ import java.io.Serializable;
 
 public class DestinationModel implements Parcelable, Serializable {
 
+    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
+        @Override
+        public DestinationModel createFromParcel(Parcel source) {
+            return new DestinationModel(source);
+        }
+
+        @Override
+        public DestinationModel[] newArray(int size) {
+            return new DestinationModel[size];
+        }
+    };
     private String id;
     private String name;
     private double latitude;
@@ -32,6 +43,14 @@ public class DestinationModel implements Parcelable, Serializable {
             longitude = -1;
         }
         attribution = "";
+    }
+
+    protected DestinationModel(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+        this.attribution = in.readString();
     }
 
     public String getId() {
@@ -87,24 +106,4 @@ public class DestinationModel implements Parcelable, Serializable {
         dest.writeDouble(this.longitude);
         dest.writeString(this.attribution);
     }
-
-    protected DestinationModel(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.latitude = in.readDouble();
-        this.longitude = in.readDouble();
-        this.attribution = in.readString();
-    }
-
-    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
-        @Override
-        public DestinationModel createFromParcel(Parcel source) {
-            return new DestinationModel(source);
-        }
-
-        @Override
-        public DestinationModel[] newArray(int size) {
-            return new DestinationModel[size];
-        }
-    };
 }

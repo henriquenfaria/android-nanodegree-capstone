@@ -7,12 +7,29 @@ import java.io.Serializable;
 
 public class AttributionModel implements Parcelable, Serializable {
 
+    public static final Parcelable.Creator<AttributionModel> CREATOR = new Parcelable
+            .Creator<AttributionModel>() {
+        @Override
+        public AttributionModel createFromParcel(Parcel source) {
+            return new AttributionModel(source);
+        }
+
+        @Override
+        public AttributionModel[] newArray(int size) {
+            return new AttributionModel[size];
+        }
+    };
     // TripModel or PlaceModel id
     private String id;
     private String text;
 
     public AttributionModel() {
         // Required for Firebase
+    }
+
+    protected AttributionModel(Parcel in) {
+        this.id = in.readString();
+        this.text = in.readString();
     }
 
     public String getId() {
@@ -31,7 +48,6 @@ public class AttributionModel implements Parcelable, Serializable {
         this.text = text;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -42,22 +58,4 @@ public class AttributionModel implements Parcelable, Serializable {
         dest.writeString(this.id);
         dest.writeString(this.text);
     }
-
-    protected AttributionModel(Parcel in) {
-        this.id = in.readString();
-        this.text = in.readString();
-    }
-
-    public static final Parcelable.Creator<AttributionModel> CREATOR = new Parcelable
-            .Creator<AttributionModel>() {
-        @Override
-        public AttributionModel createFromParcel(Parcel source) {
-            return new AttributionModel(source);
-        }
-
-        @Override
-        public AttributionModel[] newArray(int size) {
-            return new AttributionModel[size];
-        }
-    };
 }

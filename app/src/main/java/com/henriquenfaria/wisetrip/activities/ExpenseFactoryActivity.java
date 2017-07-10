@@ -27,7 +27,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_factory);
 
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -39,7 +39,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
                 return;
             }
 
-            mTrip =  intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+            mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
 
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 // ExpenseModel already exists
@@ -64,7 +64,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
 
     @Override
     public void changeActionBarTitle(String newTitle) {
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(newTitle);
         }
     }

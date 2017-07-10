@@ -111,7 +111,22 @@ public class TripFactoryFragment extends BaseFragment implements
             datePickerFragment.show(getFragmentManager(), TAG_DATE_PICKER_FRAGMENT);
         }
     };
+    private AlertDialogFragment.OnAlertListener mDeleteAlertListener = new AlertDialogFragment
+            .OnAlertListener() {
+        @Override
+        public void positiveAlertButtonClicked() {
+            deleteTrip();
+        }
+    };
+    private AlertDialogFragment.OnAlertListener mPermissionAlertListener = new
+            AlertDialogFragment.OnAlertListener() {
 
+                @Override
+                public void positiveAlertButtonClicked() {
+                    requestPermission(new String[]{Manifest.permission.READ_CONTACTS},
+                            PERMISSION_REQUEST_READ_CONTACTS);
+                }
+            };
     private View.OnClickListener mOnTravelerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
@@ -137,27 +152,6 @@ public class TripFactoryFragment extends BaseFragment implements
             }
         }
     };
-
-
-    private AlertDialogFragment.OnAlertListener mDeleteAlertListener = new AlertDialogFragment
-            .OnAlertListener() {
-        @Override
-        public void positiveAlertButtonClicked() {
-            deleteTrip();
-        }
-    };
-
-    private AlertDialogFragment.OnAlertListener mPermissionAlertListener = new
-            AlertDialogFragment.OnAlertListener() {
-
-        @Override
-        public void positiveAlertButtonClicked() {
-            requestPermission(new String[]{Manifest.permission.READ_CONTACTS},
-                    PERMISSION_REQUEST_READ_CONTACTS);
-        }
-    };
-
-
     private TextWatcher mTripTitleTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -398,7 +392,6 @@ public class TripFactoryFragment extends BaseFragment implements
             mEndDateTextView.setError(null);
         }
     }
-
 
 
     @Override

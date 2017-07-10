@@ -114,7 +114,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     public static ExpenseFactoryFragment newInstance(TripModel trip, ExpenseModel expense) {
         ExpenseFactoryFragment fragment = new ExpenseFactoryFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_TRIP,  trip);
+        args.putParcelable(ARG_TRIP, trip);
         args.putParcelable(ARG_EXPENSE, expense);
         fragment.setArguments(args);
         return fragment;
@@ -244,7 +244,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
             public void afterTextChanged(Editable arg0) {
                 String str = mAmountEditText.getText().toString();
 
-                if (TextUtils.isEmpty(str)){
+                if (TextUtils.isEmpty(str)) {
                     mExpense.setAmount(0d);
                     return;
                 }
@@ -347,7 +347,8 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     }
 
     @Override
-    public void onSelectCountry(String name, String country, String dialCode, int flagDrawableResID) {
+    public void onSelectCountry(String name, String country, String dialCode, int
+            flagDrawableResID) {
         if (mCountryPicker != null && !TextUtils.isEmpty(country)) {
             String currency = Utils.getCurrencySymbol(country);
             if (!TextUtils.isEmpty(currency)) {

@@ -8,6 +8,17 @@ import java.io.Serializable;
 
 public class ExpenseModel implements Parcelable, Serializable {
 
+    public static final Creator<ExpenseModel> CREATOR = new Creator<ExpenseModel>() {
+        @Override
+        public ExpenseModel createFromParcel(Parcel source) {
+            return new ExpenseModel(source);
+        }
+
+        @Override
+        public ExpenseModel[] newArray(int size) {
+            return new ExpenseModel[size];
+        }
+    };
     // TripModel id
     private String id;
     private String title;
@@ -18,6 +29,15 @@ public class ExpenseModel implements Parcelable, Serializable {
 
     public ExpenseModel() {
         // Required for Firebase
+    }
+
+    protected ExpenseModel(Parcel in) {
+        this.id = in.readString();
+        this.title = in.readString();
+        this.country = in.readString();
+        this.currency = in.readString();
+        this.amount = (Double) in.readValue(Double.class.getClassLoader());
+        this.date = (Long) in.readValue(Long.class.getClassLoader());
     }
 
     public String getId() {
@@ -68,7 +88,6 @@ public class ExpenseModel implements Parcelable, Serializable {
         this.date = date;
     }
 
-
     @Override
     public int hashCode() {
         return id.hashCode();
@@ -97,25 +116,4 @@ public class ExpenseModel implements Parcelable, Serializable {
         dest.writeValue(this.amount);
         dest.writeValue(this.date);
     }
-
-    protected ExpenseModel(Parcel in) {
-        this.id = in.readString();
-        this.title = in.readString();
-        this.country = in.readString();
-        this.currency = in.readString();
-        this.amount = (Double) in.readValue(Double.class.getClassLoader());
-        this.date = (Long) in.readValue(Long.class.getClassLoader());
-    }
-
-    public static final Creator<ExpenseModel> CREATOR = new Creator<ExpenseModel>() {
-        @Override
-        public ExpenseModel createFromParcel(Parcel source) {
-            return new ExpenseModel(source);
-        }
-
-        @Override
-        public ExpenseModel[] newArray(int size) {
-            return new ExpenseModel[size];
-        }
-    };
 }

@@ -28,7 +28,7 @@ public class Constants {
         public static final String PREFIX_TRIP_TITLE = "prefix_trip_title_";
         public static final String PREFIX_TRIP_PHOTO = "prefix_trip_photo_";
         public static final String PREFIX_TRIP_PHOTO_PROTECTION = "prefix_trip_photo_protection_";
-        public static final String PREFIX_TRIP_ATTRIBUTION= "prefix_trip_attribution_";
+        public static final String PREFIX_TRIP_ATTRIBUTION = "prefix_trip_attribution_";
     }
 
     // Intent extras
@@ -47,12 +47,12 @@ public class Constants {
     // Activity results
     public static class Result {
         public static final int RESULT_EXPENSE_ADDED = 10;
-        public static final int RESULT_EXPENSE_REMOVED= 11;
+        public static final int RESULT_EXPENSE_REMOVED = 11;
         public static final int RESULT_EXPENSE_CHANGED = 12;
         public static final int RESULT_EXPENSE_ERROR = 13;
 
         public static final int RESULT_TRIP_ADDED = 20;
-        public static final int RESULT_TRIP_REMOVED= 21;
+        public static final int RESULT_TRIP_REMOVED = 21;
         public static final int RESULT_TRIP_CHANGED = 22;
         public static final int RESULT_TRIP_ERROR = 23;
     }

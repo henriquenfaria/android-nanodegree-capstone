@@ -63,7 +63,8 @@ public class TripListSection extends StatelessSection {
             public void onTripItemClick(View view) {
                 Context context = view.getContext();
                 Intent tripDetails = new Intent(context, TripDetailsActivity.class);
-                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTripList.get(position));
+                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList.get
+                        (position));
                 ActivityCompat.startActivity(context, tripDetails, createTransitionOptions(view));
             }
         });
@@ -73,7 +74,7 @@ public class TripListSection extends StatelessSection {
             public void onEditTripClick(View view) {
                 MainActivity context = (MainActivity) view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
-                intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)mTripList.get(position));
+                intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList.get(position));
                 context.startActivityForResult(intent, Constants.Request.REQUEST_TRIP_FACTORY);
             }
         });

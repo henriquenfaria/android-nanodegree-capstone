@@ -40,17 +40,14 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG_MAIN_FRAGMENT = "tag_main_fragment";
-
+    @BindView(R.id.fab)
+    protected FloatingActionButton mFab;
     private boolean mIsTwoPane;
     private Fragment mFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mTripsReference;
-
-    @BindView(R.id.fab)
-    protected FloatingActionButton mFab;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -13,9 +13,20 @@ import java.io.Serializable;
 
 public class TravelerModel implements Parcelable, Serializable {
 
+    public static final Parcelable.Creator<TravelerModel> CREATOR = new Parcelable
+            .Creator<TravelerModel>() {
+        @Override
+        public TravelerModel createFromParcel(Parcel source) {
+            return new TravelerModel(source);
+        }
+
+        @Override
+        public TravelerModel[] newArray(int size) {
+            return new TravelerModel[size];
+        }
+    };
     private String contactId;
     private String name;
-
     @Exclude
     private Uri photoUri;
 
@@ -38,6 +49,12 @@ public class TravelerModel implements Parcelable, Serializable {
         }
     }
 
+    protected TravelerModel(Parcel in) {
+        this.contactId = in.readString();
+        this.name = in.readString();
+        this.photoUri = in.readParcelable(Uri.class.getClassLoader());
+    }
+
     public String getContactId() {
         return this.contactId;
     }
@@ -45,7 +62,6 @@ public class TravelerModel implements Parcelable, Serializable {
     public void setContactId(String contactId) {
         this.contactId = contactId;
     }
-
 
     public String getName() {
         return this.name;
@@ -76,22 +92,4 @@ public class TravelerModel implements Parcelable, Serializable {
         dest.writeString(this.name);
         dest.writeParcelable(this.photoUri, flags);
     }
-
-    protected TravelerModel(Parcel in) {
-        this.contactId = in.readString();
-        this.name = in.readString();
-        this.photoUri = in.readParcelable(Uri.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<TravelerModel> CREATOR = new Parcelable.Creator<TravelerModel>() {
-        @Override
-        public TravelerModel createFromParcel(Parcel source) {
-            return new TravelerModel(source);
-        }
-
-        @Override
-        public TravelerModel[] newArray(int size) {
-            return new TravelerModel[size];
-        }
-    };
 }

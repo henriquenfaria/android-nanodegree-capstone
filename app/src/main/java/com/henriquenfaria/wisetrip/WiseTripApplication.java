@@ -1,7 +1,9 @@
 package com.henriquenfaria.wisetrip;
 
 import android.app.Application;
+
 import com.google.firebase.database.FirebaseDatabase;
+
 import timber.log.Timber;
 
 public class WiseTripApplication extends Application {

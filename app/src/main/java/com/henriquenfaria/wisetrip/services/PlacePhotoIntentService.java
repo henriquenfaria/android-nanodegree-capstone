@@ -148,7 +148,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
     private void sendUpdateTripListBroadcast(TripModel trip) {
         Intent broadcastIntent = new Intent();
-        broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)trip);
+        broadcastIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
         broadcastIntent.setAction(Constants.Action.ACTION_UPDATE_TRIP_LIST);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }

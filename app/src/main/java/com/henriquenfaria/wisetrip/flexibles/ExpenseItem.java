@@ -74,7 +74,7 @@ public class ExpenseItem extends AbstractSectionableItem<ExpenseItem.ItemViewHol
         Currency currency;
         try {
             currency = Currency.getInstance(mExpense.getCurrency());
-        } catch (IllegalArgumentException| NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             Timber.e("Exception while getting Currency instance");
             e.printStackTrace();
             currency = Currency.getInstance(Constants.General.DEFAULT_CURRENCY);
