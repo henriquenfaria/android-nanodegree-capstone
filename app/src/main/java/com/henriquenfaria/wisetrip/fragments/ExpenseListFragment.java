@@ -3,6 +3,7 @@ package com.henriquenfaria.wisetrip.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.flexibles.ExpenseHeader;
 import com.henriquenfaria.wisetrip.flexibles.ExpenseItem;
@@ -56,9 +58,9 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
     private Query mExpensesReference;
     private FirebaseUser mCurrentUser;
     private FlexibleAdapter<IFlexible> mExpenseAdapter;
+    private ValueEventListener mValueEventListener;
     private ChildEventListener mExpensesEventListener;
     private TripModel mTrip;
-
     private OnExpenseInteractionListener mListener;
 
     // Create new Fragment instance with TripModel info
@@ -118,6 +120,7 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
 
         mExpenseListRecyclerView.setLayoutManager(
                 new SmoothScrollLinearLayoutManager(mFragmentActivity));
+        mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mExpenseListRecyclerView.setAdapter(mExpenseAdapter);
 
 
@@ -181,6 +184,8 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
         return null;
     }
 
+    // TODO: Move attach/detach to onResume and on onPause.
+    // Preserve listener instances (Serializable) to avoid getting items again on orientation change
     private void attachDatabaseReadListener() {
         if (mExpensesEventListener == null) {
             mExpensesEventListener = new ChildEventListener() {
@@ -230,8 +235,32 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
                 }
 
             };
-
             mExpensesReference.addChildEventListener(mExpensesEventListener);
+        }
+
+        // To disable weird animations until all data is retrieved
+        // MUST be added after mExpensesEventListener
+        if (mValueEventListener == null) {
+            mExpenseListRecyclerView.setVisibility(View.GONE);
+            mExpenseListRecyclerView.setItemAnimator(null);
+
+            mValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Timber.d("onDataChange");
+
+                    mExpenseListRecyclerView.setVisibility(View.VISIBLE);
+                    mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Timber.d("onCancelled");
+                    mExpenseListRecyclerView.setVisibility(View.VISIBLE);
+                    mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                }
+            };
+            mExpensesReference.addListenerForSingleValueEvent(mValueEventListener);
         }
     }
 
@@ -250,10 +279,10 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
             headerHolder = new ExpenseHeader(headerModel);
         }
         ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new
-                ExpenseItemComparator());
+        mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new ExpenseItemComparator());
 
     }
+
 
     private void changeExpense(ExpenseModel expense) {
         ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
