@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#EEEEEE"
     android:clickable="true"
+    android:elevation="@dimen/expense_header_elevation"
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:paddingBottom="@dimen/expense_layout_vertical_padding"

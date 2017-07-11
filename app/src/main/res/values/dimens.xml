@@ -17,6 +17,7 @@
     <dimen name="traveler_item_vertical_padding">8dp</dimen>
     <dimen name="expense_horizontal_margin">16dp</dimen>
     <dimen name="expense_layout_vertical_padding">14dp</dimen>
+    <dimen name="expense_header_elevation">2dp</dimen>
     <dimen name="trip_card_view_corner_radius">2dp</dimen>
     <dimen name="trip_card_view_elevation">2dp</dimen>
     <dimen name="trip_card_view_inner_margin">6dp</dimen>
