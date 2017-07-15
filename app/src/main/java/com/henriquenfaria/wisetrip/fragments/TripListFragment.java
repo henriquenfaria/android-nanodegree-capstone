@@ -29,7 +29,7 @@ import com.henriquenfaria.wisetrip.models.DestinationModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
-import com.henriquenfaria.wisetrip.views.CustomRecyclerView;
+import com.henriquenfaria.wisetrip.views.SizeAwareRecyclerView;
 
 import org.joda.time.DateTime;
 
@@ -44,7 +44,7 @@ public class TripListFragment extends BaseFragment {
 
 
     @BindView(R.id.trip_list_recycler_view)
-    protected CustomRecyclerView mTripListRecyclerView;
+    protected SizeAwareRecyclerView mTripListRecyclerView;
 
     @BindView(R.id.empty_trip_list_text)
     protected TextView mEmptyTripListText;

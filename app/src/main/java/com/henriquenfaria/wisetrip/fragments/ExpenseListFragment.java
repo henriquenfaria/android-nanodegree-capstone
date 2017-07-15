@@ -41,8 +41,9 @@ import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
 import timber.log.Timber;
 
-public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
-        .OnItemClickListener {
+public class ExpenseListFragment extends BaseFragment implements
+        FlexibleAdapter.OnItemClickListener,
+        FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
 
     // TODO: Issue regarding empty layout for Recycler... Maybe caused by StickyHeaders lib
@@ -351,6 +352,14 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
         detachDatabaseReadListener();
     }
 
+    @Override
+    public void onUpdateEmptyView(int size) {
+        if (size > 0) {
+            mEmptyExpenseListText.setVisibility(View.GONE);
+        } else {
+            mEmptyExpenseListText.setVisibility(View.VISIBLE);
+        }
+    }
 
     private class ExpenseItemComparator implements Comparator<IFlexible> {
 

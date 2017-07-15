@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.henriquenfaria.wisetrip.views.CustomRecyclerView
+    <com.henriquenfaria.wisetrip.views.SizeAwareRecyclerView
 
         android:id="@+id/trip_list_recycler_view"
         android:layout_width="match_parent"

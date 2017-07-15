@@ -243,7 +243,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
     private void setupViewPager() {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        
+
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
         adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
                 .string.budgets));

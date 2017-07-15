@@ -7,7 +7,7 @@ import android.view.View;
 
 // Custom RecyclerView that adds empty view support
 // Solution based on http://akbaribrahim.com/empty-view-for-androids-recyclerview/
-public class CustomRecyclerView extends RecyclerView {
+public class SizeAwareRecyclerView extends RecyclerView {
     private View mEmptyView;
 
     private AdapterDataObserver mDataObserver = new AdapterDataObserver() {
@@ -49,15 +49,15 @@ public class CustomRecyclerView extends RecyclerView {
         }
     };
 
-    public CustomRecyclerView(Context context) {
+    public SizeAwareRecyclerView(Context context) {
         super(context);
     }
 
-    public CustomRecyclerView(Context context, AttributeSet attrs) {
+    public SizeAwareRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public SizeAwareRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

@@ -41,7 +41,7 @@
     <string name="past">Past</string>
     <string name="retry">Retry</string>
     <string name="no_saved_trips">No saved trips :(</string>
-    <string name="no_saved_expenses">No saved expenses :(</string>
+    <string name="no_saved_expenses">No saved expenses</string>
     <string name="could_not_load_trip_details">Could not load Trip details</string>
     <string name="photo_attribution_prefix">"Photo: "</string>
     <string name="expenses">Expenses</string>
