@@ -22,6 +22,7 @@ import com.henriquenfaria.wisetrip.holders.HeaderHolder;
 import com.henriquenfaria.wisetrip.holders.TripHolder;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Features;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
 import butterknife.ButterKnife;
@@ -63,9 +64,14 @@ public class TripListSection extends StatelessSection {
             public void onTripItemClick(View view) {
                 Context context = view.getContext();
                 Intent tripDetails = new Intent(context, TripDetailsActivity.class);
-                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList.get
-                        (position));
-                ActivityCompat.startActivity(context, tripDetails, createTransitionOptions(view));
+                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList
+                        .get(position));
+                if (Features.TRIP_LIST_SHARED_ELEMENT_TRANSITION_ENABLED) {
+                    ActivityCompat.startActivity(context, tripDetails, createTransitionOptions(view));
+                } else {
+                    context.startActivity(tripDetails);
+                }
+
             }
         });
 

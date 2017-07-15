@@ -49,6 +49,7 @@ import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TempVersionModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Features;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -175,21 +176,25 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
     private void setupAppBarLayout() {
         AppBarLayout appbarLayout = ButterKnife.findById(TripDetailsActivity.this, R.id
                 .appbarlayout);
-        appbarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
-            @Override
-            public void onStateChanged(AppBarLayout appBarLayout, State state) {
-                switch (state) {
-                    case COLLAPSED:
-                    case IDLE:
-                        mIsSharedElementTransition = false;
-                        break;
-                    case EXPANDED:
-                        mIsSharedElementTransition = true;
-                        break;
-                }
 
-            }
-        });
+        if (Features.TRIP_LIST_SHARED_ELEMENT_TRANSITION_ENABLED) {
+            appbarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
+                @Override
+                public void onStateChanged(AppBarLayout appBarLayout, State state) {
+                    switch (state) {
+                        case COLLAPSED:
+                        case IDLE:
+                            mIsSharedElementTransition = false;
+                            break;
+                        case EXPANDED:
+                            mIsSharedElementTransition = true;
+                            break;
+                    }
+
+                }
+            });
+        }
+
     }
 
     private void setTransitionNames() {
@@ -238,10 +243,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
     private void setupViewPager() {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-
-        //TODO: Temp code
-        /*adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
-                .string.expenses));*/
+        
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
         adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
                 .string.budgets));
