@@ -59,9 +59,9 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
     private FirebaseUser mCurrentUser;
     private FlexibleAdapter<IFlexible> mExpenseAdapter;
     private ValueEventListener mValueEventListener;
-    private ChildEventListener mExpensesEventListener;
+    private ChildEventListener mChildEventListener;
     private TripModel mTrip;
-    private OnExpenseInteractionListener mListener;
+    private OnExpenseInteractionListener mOnExpenseInteractionListener;
 
     // Create new Fragment instance with TripModel info
     public static ExpenseListFragment newInstance(TripModel trip) {
@@ -139,7 +139,7 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
         super.onAttach(context);
 
         if (context instanceof OnExpenseInteractionListener) {
-            mListener = (OnExpenseInteractionListener) context;
+            mOnExpenseInteractionListener = (OnExpenseInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnExpenseInteractionListener");
@@ -149,7 +149,7 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mOnExpenseInteractionListener = null;
     }
 
     @Override
@@ -158,8 +158,8 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
         if (flexibleItem instanceof ExpenseItem) {
             ExpenseItem expenseItem = (ExpenseItem) flexibleItem;
             ExpenseModel expense = expenseItem.getModel();
-            if (mListener != null) {
-                mListener.onExpenseClicked(expense);
+            if (mOnExpenseInteractionListener != null) {
+                mOnExpenseInteractionListener.onExpenseClicked(expense);
             }
             return false;
         }
@@ -187,8 +187,8 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
     // TODO: Move attach/detach to onResume and on onPause.
     // Preserve listener instances (Serializable) to avoid getting items again on orientation change
     private void attachDatabaseReadListener() {
-        if (mExpensesEventListener == null) {
-            mExpensesEventListener = new ChildEventListener() {
+        if (mChildEventListener == null) {
+            mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildAdded");
@@ -235,11 +235,11 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
                 }
 
             };
-            mExpensesReference.addChildEventListener(mExpensesEventListener);
+            mExpensesReference.addChildEventListener(mChildEventListener);
         }
 
         // To disable weird animations until all data is retrieved
-        // MUST be added after mExpensesEventListener
+        // MUST be added after mChildEventListener
         if (mValueEventListener == null) {
             mExpenseListRecyclerView.setVisibility(View.GONE);
             mExpenseListRecyclerView.setItemAnimator(null);
@@ -335,9 +335,13 @@ public class ExpenseListFragment extends BaseFragment implements FlexibleAdapter
     }
 
     private void detachDatabaseReadListener() {
-        if (mExpensesEventListener != null) {
-            mExpensesReference.removeEventListener(mExpensesEventListener);
-            mExpensesEventListener = null;
+        if (mChildEventListener != null) {
+            mExpensesReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+        if (mValueEventListener != null) {
+            mExpensesReference.removeEventListener(mValueEventListener);
+            mValueEventListener = null;
         }
     }
 
