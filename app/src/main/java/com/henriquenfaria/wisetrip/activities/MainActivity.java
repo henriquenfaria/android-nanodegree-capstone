@@ -141,19 +141,45 @@ public class MainActivity extends AppCompatActivity
             } else if (resultCode == Constants.Result.RESULT_TRIP_REMOVED
                     && trip != null && !TextUtils.isEmpty(trip.getId())) {
                 mTripsReference.child(trip.getId()).removeValue();
-
-                // Remove TripModel photo attributions
-                DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
-                        .child("attributions")
-                        .child(mCurrentUser.getUid())
-                        .child(trip.getId());
-                attributionsReference.removeValue();
+                removeOtherTripData(trip);
 
             } else if (resultCode == Constants.Result.RESULT_TRIP_ERROR) {
                 Toast.makeText(this, getString(R.string.trip_updated_error),
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    // Remove trip attributions, expenses, budgets and places
+    private void removeOtherTripData(TripModel trip){
+        // Remove Trip attributions
+        DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
+                .child("attributions")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        attributionsReference.removeValue();
+
+        // Remove Trip expenses
+        DatabaseReference expensesReference = mFirebaseDatabase.getReference()
+                .child("expenses")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        expensesReference.removeValue();
+
+        // Remove Trip budgets
+        DatabaseReference budgetsReference = mFirebaseDatabase.getReference()
+                .child("budgets")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        budgetsReference.removeValue();
+
+        // Remove Trip places
+        //TODO: Uncomment this after places implementation
+        /* DatabaseReference placesReference = mFirebaseDatabase.getReference()
+                .child("attributions")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        placesReference.removeValue();*/
     }
 
 
