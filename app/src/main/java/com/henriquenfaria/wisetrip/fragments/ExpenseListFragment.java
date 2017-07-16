@@ -3,13 +3,15 @@ package com.henriquenfaria.wisetrip.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,11 +48,14 @@ public class ExpenseListFragment extends BaseFragment implements
         FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
 
+    @BindView(R.id.expense_list_layout)
+    protected FrameLayout mExpenseListLayout;
+
     @BindView(R.id.expense_list_recycler_view)
     protected RecyclerView mExpenseListRecyclerView;
 
-    @BindView(R.id.empty_expense_list_text)
-    protected TextView mEmptyExpenseListText;
+    @BindView(R.id.empty_view)
+    protected RelativeLayout mEmptyListView;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -238,23 +243,19 @@ public class ExpenseListFragment extends BaseFragment implements
         // To disable weird animations until all data is retrieved
         // MUST be added after mChildEventListener
         if (mValueEventListener == null) {
-            mExpenseListRecyclerView.setVisibility(View.GONE);
-            mExpenseListRecyclerView.setItemAnimator(null);
-
             mValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Timber.d("onDataChange");
 
-                    mExpenseListRecyclerView.setVisibility(View.VISIBLE);
-                    mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    mExpenseListLayout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Timber.d("onCancelled");
-                    mExpenseListRecyclerView.setVisibility(View.VISIBLE);
-                    mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                    mExpenseListLayout.setVisibility(View.VISIBLE);
                 }
             };
             mExpensesReference.addListenerForSingleValueEvent(mValueEventListener);
@@ -351,9 +352,9 @@ public class ExpenseListFragment extends BaseFragment implements
     @Override
     public void onUpdateEmptyView(int size) {
         if (size > 0) {
-            mEmptyExpenseListText.setVisibility(View.GONE);
+            ViewCompat.animate(mEmptyListView).alpha(0);
         } else {
-            mEmptyExpenseListText.setVisibility(View.VISIBLE);
+            ViewCompat.animate(mEmptyListView).alpha(1);
         }
     }
 

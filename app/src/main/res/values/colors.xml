@@ -5,4 +5,5 @@
     <color name="colorAccent">#00C853</color>
     <color name="tripCardPlaceholderBackground">#E0E0E0</color>
     <color name="tripCardBackgroundProtection">#30000000</color>
+    <color name="tripDetailBackgroundProtection">#80000000</color>
 </resources>

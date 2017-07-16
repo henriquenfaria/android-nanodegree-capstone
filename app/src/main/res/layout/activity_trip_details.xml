@@ -40,7 +40,7 @@
                 android:id="@+id/trip_photo_protection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/tripCardBackgroundProtection"
+                android:background="@drawable/background_gradient"
                 android:fitsSystemWindows="true"
                 android:transitionName="trip_photo_protection"
                 app:layout_collapseMode="parallax"/>

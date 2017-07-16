@@ -53,7 +53,6 @@
     <string name="expenses">Expenses</string>
     <string name="budgets">Budgets</string>
     <string name="places">Places</string>
-    <string name="no_items">No items</string>
     <string name="search_traveler_title">Search traveler</string>
     <string name="search_traveler_hint">Search traveler…</string>
     <string name="contacts_permission_title">Contacts permission</string>

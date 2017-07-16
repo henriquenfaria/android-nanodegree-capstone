@@ -5,8 +5,10 @@
     android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/budget_list_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/budget_list_recycler_view"
@@ -15,18 +17,9 @@
             android:scrollbarStyle="outsideInset"
             android:scrollbars="vertical"/>
 
+        <include layout="@layout/empty_list_view"/>
+
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/empty_budget_list_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_saved_budgets"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:visibility="gone"/>
-
-    <include layout="@layout/empty_list_view"/>
 
     <include layout="@layout/fast_scroller"/>
 

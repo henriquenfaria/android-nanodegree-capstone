@@ -23,11 +23,10 @@
         android:id="@+id/empty_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.4"
         android:freezesText="true"
         android:gravity="center_horizontal"
-        android:text="@string/no_items"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="@string/no_saved_expenses"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="?android:textColorSecondary"/>
 
 </RelativeLayout>

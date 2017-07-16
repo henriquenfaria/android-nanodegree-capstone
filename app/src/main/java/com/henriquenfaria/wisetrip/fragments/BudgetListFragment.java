@@ -3,13 +3,15 @@ package com.henriquenfaria.wisetrip.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,12 +40,15 @@ public class BudgetListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
-    
+
+    @BindView(R.id.budget_list_layout)
+    protected FrameLayout mBudgetListLayout;
+
     @BindView(R.id.budget_list_recycler_view)
     protected RecyclerView mBudgetListRecyclerView;
 
-    @BindView(R.id.empty_budget_list_text)
-    protected TextView mEmptyBudgetListText;
+    @BindView(R.id.empty_view)
+    protected RelativeLayout mEmptyListView;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -230,23 +235,19 @@ public class BudgetListFragment extends BaseFragment implements
         // To disable weird animations until all data is retrieved
         // MUST be added after mChildEventListener
         if (mValueEventListener == null) {
-            mBudgetListRecyclerView.setVisibility(View.GONE);
-            mBudgetListRecyclerView.setItemAnimator(null);
-
             mValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Timber.d("onDataChange");
 
-                    mBudgetListRecyclerView.setVisibility(View.VISIBLE);
-                    mBudgetListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    mBudgetListLayout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Timber.d("onCancelled");
-                    mBudgetListRecyclerView.setVisibility(View.VISIBLE);
-                    mBudgetListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                    mBudgetListLayout.setVisibility(View.VISIBLE);
                 }
             };
             mBudgetReference.addListenerForSingleValueEvent(mValueEventListener);
@@ -346,9 +347,9 @@ public class BudgetListFragment extends BaseFragment implements
     @Override
     public void onUpdateEmptyView(int size) {
         if (size > 0) {
-            mEmptyBudgetListText.setVisibility(View.GONE);
+            ViewCompat.animate(mEmptyListView).alpha(0);
         } else {
-            mEmptyBudgetListText.setVisibility(View.VISIBLE);
+            ViewCompat.animate(mEmptyListView).alpha(1);
         }
     }
 
