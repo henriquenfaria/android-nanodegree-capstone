@@ -11,11 +11,13 @@
     <string name="sign_out">Sign Out</string>
     <string name="create_new_trip">Create new Trip</string>
     <string name="create_new_expense">Create new Expense</string>
+    <string name="create_new_budget">Create new Budget</string>
     <string name="select_country">Select Country</string>
     <string name="hint_start_date">Start Date *</string>
     <string name="hint_expense_date">Expense Date *</string>
     <string name="hint_end_date">End Date *</string>
     <string name="hint_amount">Amount *</string>
+    <string name="hint_budget_amount">Budget Amount *</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="hint_who_will_join_you">Who will join you?</string>
@@ -23,6 +25,7 @@
     <string name="hint_where_are_you_going">Where are you going?</string>
     <string name="hint_what_is_the_trip_name">What\'s the trip\'s name? *</string>
     <string name="hint_what_is_the_expense_name">What\'s the expense\'s name? *</string>
+    <string name="hint_what_is_the_budget_name">What\'s the budget\'s name? *</string>
     <string name="destination_item_description">Destination %d</string>
     <string name="destination_footer_description">Add new destination</string>
     <string name="google_play_services_error">Google Play Services error</string>
@@ -30,7 +33,9 @@
     <string name="mandatory_field">Mandatory field</string>
     <string name="trip_updated_error">Error while updating Trip</string>
     <string name="expense_updated_error">Error while updating the expense</string>
-    <string name="expense_loading_expense">Error loading expense</string>
+    <string name="budget_updated_error">Error while updating the budget</string>
+    <string name="expense_loading_error">Error loading expense</string>
+    <string name="budget_loading_error">Error loading budget</string>
     <string name="done">Done</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -42,6 +47,7 @@
     <string name="retry">Retry</string>
     <string name="no_saved_trips">No saved trips :(</string>
     <string name="no_saved_expenses">No saved expenses</string>
+    <string name="no_saved_budgets">No saved budgets</string>
     <string name="could_not_load_trip_details">Could not load Trip details</string>
     <string name="photo_attribution_prefix">"Photo: "</string>
     <string name="expenses">Expenses</string>

@@ -34,7 +34,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             if (intent == null || !intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
-                Toast.makeText(this, R.string.expense_loading_expense, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.expense_loading_error, Toast.LENGTH_LONG).show();
                 finish();
                 return;
             }

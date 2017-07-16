@@ -81,7 +81,7 @@ public class TripFactoryFragment extends BaseFragment implements
     @BindView(R.id.destination_recyclerview)
 
     protected RecyclerView mDestinationRecyclerView;
-    private OnTripFactoryListener mListener;
+    private OnTripFactoryListener mOnTripFactoryListener;
     private TripModel mTrip;
     private boolean mIsEditMode;
     private DestinationAdapter mDestinationAdapter;
@@ -270,7 +270,7 @@ public class TripFactoryFragment extends BaseFragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mListener = (OnTripFactoryListener) context;
+            mOnTripFactoryListener = (OnTripFactoryListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnExpenseFactoryListener");
@@ -293,7 +293,7 @@ public class TripFactoryFragment extends BaseFragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
         ButterKnife.bind(this, rootView);
-        mListener.changeActionBarTitle(getString(R.string.create_new_trip));
+        mOnTripFactoryListener.changeActionBarTitle(getString(R.string.create_new_trip));
 
         mTripTitleEditText.addTextChangedListener(mTripTitleTextWatcher);
         mStartDateTextView.setOnClickListener(mOnDateClickListener);
@@ -356,12 +356,12 @@ public class TripFactoryFragment extends BaseFragment implements
 
     private void saveTrip() {
         if (isValidFormFields()) {
-            mListener.saveTrip(mTrip, mIsEditMode);
+            mOnTripFactoryListener.saveTrip(mTrip, mIsEditMode);
         }
     }
 
     private void deleteTrip() {
-        mListener.deleteTrip(mTrip);
+        mOnTripFactoryListener.deleteTrip(mTrip);
     }
 
     private void createDeleteTripConfirmationDialog(int title, int message) {

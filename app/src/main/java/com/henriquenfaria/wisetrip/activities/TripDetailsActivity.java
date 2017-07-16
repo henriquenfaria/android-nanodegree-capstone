@@ -34,9 +34,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
+import com.henriquenfaria.wisetrip.fragments.BudgetListFragment;
 import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
+import com.henriquenfaria.wisetrip.listeners.OnBudgetInteractionListener;
 import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
+import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -53,7 +56,9 @@ import timber.log.Timber;
 
 
 /* Activity to display all related data of a specific TripModel */
-public class TripDetailsActivity extends AppCompatActivity implements OnExpenseInteractionListener {
+public class TripDetailsActivity extends AppCompatActivity implements
+        OnExpenseInteractionListener,
+        OnBudgetInteractionListener {
 
     private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
             "save_is_shared_element_transition";
@@ -148,9 +153,7 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
                         startExpenseFactory(null);
                         break;
                     case TAB_BUDGETS_POSITION:
-                        //TODO: Implement
-                        Toast.makeText(TripDetailsActivity.this, R.string.budgets,
-                                Toast.LENGTH_SHORT).show();
+                        startBudgetFactory(null);
                         break;
                     case TAB_PLACES_POSITION:
                         //TODO: Implement
@@ -234,9 +237,9 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
+        adapter.addFragment(BudgetListFragment.newInstance(mTrip), getString(R.string.budgets));
 
-        //TODO: Temporary
-        adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
+        //TODO: Temporary, must set Places fragment
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
 
         viewPager.setAdapter(adapter);
@@ -389,41 +392,50 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
         startActivityForResult(intent, Constants.Request.REQUEST_EXPENSE_FACTORY);
     }
 
+    public void startBudgetFactory(BudgetModel budget) {
+        Intent intent = new Intent(TripDetailsActivity.this,
+                BudgetFactoryActivity.class);
+        intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
+        if (budget != null) {
+            intent.putExtra(Constants.Extra.EXTRA_BUDGET, (Parcelable) budget);
+        }
+        startActivityForResult(intent, Constants.Request.REQUEST_BUDGET_FACTORY);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case Constants.Request.REQUEST_EXPENSE_FACTORY:
                 handleRequestExpenseFactory(resultCode, data);
                 break;
+            case Constants.Request.REQUEST_BUDGET_FACTORY:
+                handleRequestBudgetFactory(resultCode, data);
+                break;
         }
     }
 
     private void handleRequestExpenseFactory(int resultCode, Intent data) {
         ExpenseModel expense = null;
+        DatabaseReference expenseReference
+                = mRootReference.child("expenses").child(mCurrentUser.getUid());
 
         if (data != null) {
             expense = data.getParcelableExtra(Constants.Extra.EXTRA_EXPENSE);
         }
 
         if (resultCode == Constants.Result.RESULT_EXPENSE_ADDED && expense != null) {
-            DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
             DatabaseReference databaseReference = expenseReference.child(mTrip.getId()).push();
             expense.setId(databaseReference.getKey());
             databaseReference.setValue(expense);
 
         } else if (resultCode == Constants.Result.RESULT_EXPENSE_CHANGED
                 && expense != null && !TextUtils.isEmpty(expense.getId())) {
-            DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
             DatabaseReference databaseReference = expenseReference.child(mTrip.getId())
                     .child(expense.getId());
             databaseReference.setValue(expense);
 
         } else if (resultCode == Constants.Result.RESULT_EXPENSE_REMOVED
                 && expense != null && !TextUtils.isEmpty(expense.getId())) {
-            DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
             expenseReference.child(mTrip.getId()).child(expense.getId()).removeValue();
 
         } else if (resultCode == Constants.Result.RESULT_EXPENSE_ERROR) {
@@ -432,9 +444,43 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
         }
     }
 
+    private void handleRequestBudgetFactory(int resultCode, Intent data) {
+        BudgetModel budget = null;
+        DatabaseReference budgetReference
+                = mRootReference.child("budgets").child(mCurrentUser.getUid());
+
+        if (data != null) {
+            budget = data.getParcelableExtra(Constants.Extra.EXTRA_BUDGET);
+        }
+
+        if (resultCode == Constants.Result.RESULT_BUDGET_ADDED && budget != null) {
+            DatabaseReference databaseReference = budgetReference.child(mTrip.getId()).push();
+            budget.setId(databaseReference.getKey());
+            databaseReference.setValue(budget);
+        } else if (resultCode == Constants.Result.RESULT_BUDGET_CHANGED
+                && budget != null && !TextUtils.isEmpty(budget.getId())) {
+            DatabaseReference databaseReference = budgetReference.child(mTrip.getId())
+                    .child(budget.getId());
+            databaseReference.setValue(budget);
+
+        } else if (resultCode == Constants.Result.RESULT_BUDGET_REMOVED
+                && budget != null && !TextUtils.isEmpty(budget.getId())) {
+            budgetReference.child(mTrip.getId()).child(budget.getId()).removeValue();
+
+        } else if (resultCode == Constants.Result.RESULT_BUDGET_ERROR) {
+            Toast.makeText(this, getString(R.string.budget_updated_error), Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
     @Override
     public void onExpenseClicked(ExpenseModel expense) {
         startExpenseFactory(expense);
+    }
+
+    @Override
+    public void onBudgetClicked(BudgetModel budget) {
+        startBudgetFactory(budget);
     }
 
     private static abstract class AppBarStateChangeListener implements

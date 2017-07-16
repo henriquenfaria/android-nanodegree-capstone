@@ -27,4 +27,9 @@
         <item name="android:textSize">@dimen/expense_text_size</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
+
+    <style name="BudgetText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">@dimen/expense_text_size</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
 </resources>

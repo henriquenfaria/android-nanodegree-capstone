@@ -20,51 +20,44 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.flexibles.ExpenseHeader;
-import com.henriquenfaria.wisetrip.flexibles.ExpenseItem;
-import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
-import com.henriquenfaria.wisetrip.models.ExpenseHeaderModel;
-import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.flexibles.BudgetItem;
+import com.henriquenfaria.wisetrip.listeners.OnBudgetInteractionListener;
+import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-
 import java.util.Comparator;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.IFlexible;
-import eu.davidea.flexibleadapter.items.IHeader;
 import timber.log.Timber;
 
-public class ExpenseListFragment extends BaseFragment implements
+public class BudgetListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
+    
+    @BindView(R.id.budget_list_recycler_view)
+    protected RecyclerView mBudgetListRecyclerView;
 
-    @BindView(R.id.expense_list_recycler_view)
-    protected RecyclerView mExpenseListRecyclerView;
-
-    @BindView(R.id.empty_expense_list_text)
-    protected TextView mEmptyExpenseListText;
+    @BindView(R.id.empty_budget_list_text)
+    protected TextView mEmptyBudgetListText;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mExpensesReference;
+    private DatabaseReference mBudgetReference;
     private FirebaseUser mCurrentUser;
-    private FlexibleAdapter<IFlexible> mExpenseAdapter;
+    private FlexibleAdapter<IFlexible> mBudgetAdapter;
     private ValueEventListener mValueEventListener;
     private ChildEventListener mChildEventListener;
     private TripModel mTrip;
-    private OnExpenseInteractionListener mOnExpenseInteractionListener;
+    private OnBudgetInteractionListener mOnBudgetInteractionListener;
 
     // Create new Fragment instance with TripModel info
-    public static ExpenseListFragment newInstance(TripModel trip) {
-        ExpenseListFragment fragment = new ExpenseListFragment();
+    public static BudgetListFragment newInstance(TripModel trip) {
+        BudgetListFragment fragment = new BudgetListFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TRIP, trip);
         fragment.setArguments(args);
@@ -82,24 +75,23 @@ public class ExpenseListFragment extends BaseFragment implements
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
-
-        mExpensesReference = mFirebaseDatabase.getReference()
-                .child("expenses")
+        //TODO: Need to order by child?
+        mBudgetReference = mFirebaseDatabase.getReference()
+                .child("budgets")
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_expense_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_budget_list, container, false);
         ButterKnife.bind(this, rootView);
 
         // TODO: If date is properly indexed, use:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
-       /* new FirebaseIndexRecyclerAdapter<mExpenseAdapter, TripFirebaseHolder>(mExpenseAdapter
+       /* new FirebaseIndexRecyclerAdapter<mBudgetAdapter, TripFirebaseHolder>(mBudgetAdapter
        .class,
                 R.layout.trip_item,
                 TripFirebaseHolder.class,
@@ -109,22 +101,22 @@ public class ExpenseListFragment extends BaseFragment implements
          */
 
 
-        mExpenseAdapter = new FlexibleAdapter<>(null, this);
-        mExpenseAdapter
+        mBudgetAdapter = new FlexibleAdapter<>(null, this);
+        /*mBudgetAdapter
                 .setDisplayHeadersAtStartUp(true)
                 .setStickyHeaders(true)
-                .setUnlinkAllItemsOnRemoveHeaders(true);
+                .setUnlinkAllItemsOnRemoveHeaders(true);*/
 
-        mExpenseListRecyclerView.setLayoutManager(
+        mBudgetListRecyclerView.setLayoutManager(
                 new SmoothScrollLinearLayoutManager(mFragmentActivity));
-        mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mExpenseListRecyclerView.setAdapter(mExpenseAdapter);
+        mBudgetListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mBudgetListRecyclerView.setAdapter(mBudgetAdapter);
 
 
         //TODO: Must uncomment fastScroller logic
       /*  FastScroller fastScroller = getView().findViewById(R.id.fast_scroller);
         fastScroller.addOnScrollStateChangeListener((MainActivity) getActivity());
-        mExpenseAdapter.setFastScroller(fastScroller);*/
+        mBudgetAdapter.setFastScroller(fastScroller);*/
 
         attachDatabaseReadListener();
 
@@ -135,28 +127,28 @@ public class ExpenseListFragment extends BaseFragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnExpenseInteractionListener) {
-            mOnExpenseInteractionListener = (OnExpenseInteractionListener) context;
+        if (context instanceof OnBudgetInteractionListener) {
+            mOnBudgetInteractionListener = (OnBudgetInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnExpenseInteractionListener");
+                    + " must implement OnBudgetInteractionListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mOnExpenseInteractionListener = null;
+        mOnBudgetInteractionListener = null;
     }
 
     @Override
     public boolean onItemClick(int position) {
-        IFlexible flexibleItem = mExpenseAdapter.getItem(position);
-        if (flexibleItem instanceof ExpenseItem) {
-            ExpenseItem expenseItem = (ExpenseItem) flexibleItem;
-            ExpenseModel expense = expenseItem.getModel();
-            if (mOnExpenseInteractionListener != null) {
-                mOnExpenseInteractionListener.onExpenseClicked(expense);
+        IFlexible flexibleItem = mBudgetAdapter.getItem(position);
+        if (flexibleItem instanceof BudgetItem) {
+            BudgetItem budgetItem = (BudgetItem) flexibleItem;
+            BudgetModel budget = budgetItem.getModel();
+            if (mOnBudgetInteractionListener != null) {
+                mOnBudgetInteractionListener.onBudgetClicked(budget);
             }
             return false;
         }
@@ -165,8 +157,8 @@ public class ExpenseListFragment extends BaseFragment implements
     }
 
     // TODO: Optimize with binary search?
-    private ExpenseHeader getHeaderForExpense(ExpenseModel expense) {
-        List<IHeader> headerList = mExpenseAdapter.getHeaderItems();
+    /*private ExpenseHeader getHeaderForExpense(ExpenseModel expense) {
+        List<IHeader> headerList = mBudgetAdapter.getHeaderItems();
         if (!headerList.isEmpty()) {
             for (IHeader header : headerList) {
                 if (header instanceof ExpenseHeader) {
@@ -179,7 +171,7 @@ public class ExpenseListFragment extends BaseFragment implements
         }
 
         return null;
-    }
+    }*/
 
     // TODO: Move attach/detach to onResume and on onPause.
     // Preserve listener instances (Serializable) to avoid getting items again on orientation change
@@ -190,10 +182,10 @@ public class ExpenseListFragment extends BaseFragment implements
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildAdded");
 
-                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())
-                            && mExpenseAdapter != null) {
-                        addExpense(expense);
+                    BudgetModel budget = dataSnapshot.getValue(BudgetModel.class);
+                    if (budget != null && !TextUtils.isEmpty(budget.getId())
+                            && mBudgetAdapter != null) {
+                        addBudget(budget);
                     }
                 }
 
@@ -201,10 +193,10 @@ public class ExpenseListFragment extends BaseFragment implements
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildChanged");
 
-                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())
-                            && mExpenseAdapter != null) {
-                        changeExpense(expense);
+                    BudgetModel budget = dataSnapshot.getValue(BudgetModel.class);
+                    if (budget != null && !TextUtils.isEmpty(budget.getId())
+                            && mBudgetAdapter != null) {
+                        changeBudget(budget);
                     }
                 }
 
@@ -212,10 +204,10 @@ public class ExpenseListFragment extends BaseFragment implements
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Timber.d("onChildRemoved");
 
-                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())
-                            && mExpenseAdapter != null) {
-                        removeExpense(expense);
+                    BudgetModel budget = dataSnapshot.getValue(BudgetModel.class);
+                    if (budget != null && !TextUtils.isEmpty(budget.getId())
+                            && mBudgetAdapter != null) {
+                        removeBudget(budget);
                     }
                 }
 
@@ -232,38 +224,39 @@ public class ExpenseListFragment extends BaseFragment implements
                 }
 
             };
-            mExpensesReference.addChildEventListener(mChildEventListener);
+            mBudgetReference.addChildEventListener(mChildEventListener);
         }
 
         // To disable weird animations until all data is retrieved
         // MUST be added after mChildEventListener
         if (mValueEventListener == null) {
-            mExpenseListRecyclerView.setVisibility(View.GONE);
-            mExpenseListRecyclerView.setItemAnimator(null);
+            mBudgetListRecyclerView.setVisibility(View.GONE);
+            mBudgetListRecyclerView.setItemAnimator(null);
 
             mValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Timber.d("onDataChange");
 
-                    mExpenseListRecyclerView.setVisibility(View.VISIBLE);
-                    mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    mBudgetListRecyclerView.setVisibility(View.VISIBLE);
+                    mBudgetListRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Timber.d("onCancelled");
-                    mExpenseListRecyclerView.setVisibility(View.VISIBLE);
-                    mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    mBudgetListRecyclerView.setVisibility(View.VISIBLE);
+                    mBudgetListRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 }
             };
-            mExpensesReference.addListenerForSingleValueEvent(mValueEventListener);
+            mBudgetReference.addListenerForSingleValueEvent(mValueEventListener);
         }
     }
 
 
-    private void addExpense(ExpenseModel expense) {
-        ExpenseHeader headerHolder = getHeaderForExpense(expense);
+    private void addBudget(BudgetModel budget) {
+        // TODO: Implement
+        /*ExpenseHeader headerHolder = getHeaderForExpense(expense);
 
         // Add new section
         if (headerHolder == null) {
@@ -276,13 +269,14 @@ public class ExpenseListFragment extends BaseFragment implements
             headerHolder = new ExpenseHeader(headerModel);
         }
         ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new ExpenseItemComparator());
+        mBudgetAdapter.addItemToSection(itemHolder, headerHolder, new BudgetItemComparator());*/
 
     }
 
 
-    private void changeExpense(ExpenseModel expense) {
-        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+    private void changeBudget(BudgetModel budget) {
+        // TODO: Implement
+       /* ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
         DateTime dateTime = new DateTime(expense.getDate());
         String formattedDateTime = dateTime.toString(DateTimeFormat.mediumDate());
         headerModel.setTitle(formattedDateTime);
@@ -290,54 +284,55 @@ public class ExpenseListFragment extends BaseFragment implements
         ExpenseHeader expenseHeader = new ExpenseHeader(headerModel);
         ExpenseItem expenseItem = new ExpenseItem(expense, expenseHeader);
 
-        ExpenseItem retrievedItem = (ExpenseItem) mExpenseAdapter
-                .getItem(mExpenseAdapter.getGlobalPositionOf(expenseItem));
+        ExpenseItem retrievedItem = (ExpenseItem) mBudgetAdapter
+                .getItem(mBudgetAdapter.getGlobalPositionOf(expenseItem));
         if (retrievedItem != null) {
             if (retrievedItem.getModel().getDate().equals(expense.getDate())) {
                 // No section change, just update the expense
-                mExpenseAdapter.updateItem(expenseItem);
+                mBudgetAdapter.updateItem(expenseItem);
             } else {
                 // Move it to a new Section
                 ExpenseHeader destinationHeader = getHeaderForExpense(expense);
-                removeExpense(expense);
+                removeBudget(expense);
                 if (destinationHeader != null) {
                     expenseHeader = destinationHeader;
                     expenseItem = new ExpenseItem(expense, expenseHeader);
                 }
-                mExpenseAdapter.addItemToSection(expenseItem, expenseHeader,
-                        new ExpenseItemComparator());
+                mBudgetAdapter.addItemToSection(expenseItem, expenseHeader,
+                        new BudgetItemComparator());
             }
         } else {
-            mExpenseAdapter.updateItem(expenseItem);
-        }
+            mBudgetAdapter.updateItem(expenseItem);
+        }*/
     }
 
-    private void removeExpense(ExpenseModel expense) {
-        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+    private void removeBudget(BudgetModel budget) {
+        // TODO: Implement
+        /*ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
         headerModel.setId(expense.getDate());
         ExpenseHeader headerHolder = new ExpenseHeader(headerModel);
         ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        int position = mExpenseAdapter.getGlobalPositionOf(itemHolder);
+        int position = mBudgetAdapter.getGlobalPositionOf(itemHolder);
         if (position >= 0) {
-            IHeader header = mExpenseAdapter.getSectionHeader(position);
-            mExpenseAdapter.removeItem(position);
+            IHeader header = mBudgetAdapter.getSectionHeader(position);
+            mBudgetAdapter.removeItem(position);
 
             // Remove empty section
-            if (header != null && mExpenseAdapter.getSectionItems(header).size()
+            if (header != null && mBudgetAdapter.getSectionItems(header).size()
                     == 0) {
-                mExpenseAdapter.removeItem(
-                        mExpenseAdapter.getGlobalPositionOf(header));
+                mBudgetAdapter.removeItem(
+                        mBudgetAdapter.getGlobalPositionOf(header));
             }
-        }
+        }*/
     }
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mExpensesReference.removeEventListener(mChildEventListener);
+            mBudgetReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
         if (mValueEventListener != null) {
-            mExpensesReference.removeEventListener(mValueEventListener);
+            mBudgetReference.removeEventListener(mValueEventListener);
             mValueEventListener = null;
         }
     }
@@ -351,21 +346,36 @@ public class ExpenseListFragment extends BaseFragment implements
     @Override
     public void onUpdateEmptyView(int size) {
         if (size > 0) {
-            mEmptyExpenseListText.setVisibility(View.GONE);
+            mEmptyBudgetListText.setVisibility(View.GONE);
         } else {
-            mEmptyExpenseListText.setVisibility(View.VISIBLE);
+            mEmptyBudgetListText.setVisibility(View.VISIBLE);
         }
     }
 
-    private class ExpenseItemComparator implements Comparator<IFlexible> {
+    private class BudgetItemComparator implements Comparator<IFlexible> {
 
         @Override
         public int compare(IFlexible v1, IFlexible v2) {
             int result = 0;
-            if (v1 instanceof ExpenseHeader && v2 instanceof ExpenseHeader) {
+            if (v1 instanceof BudgetItem && v2 instanceof BudgetItem) {
+               /* result = ((BudgetItem) v2).getHeader().getModel().getId().compareTo((
+                        (BudgetItem) v1).getHeader().getModel().getId());*/
+
+                // TODO: Add a modified timestamp for the expense and use it in the comparison
+                // Current logic below it not ok for updated objects,
+                // since they are put in the middle of section
+                // Update timestamp only on add or on update where the expense date was changed
+                //if (result == 0) {
+                    result = ((BudgetItem) v1).getModel().getTitle().compareTo(((BudgetItem) v2)
+                            .getModel().getTitle());
+               // }
+            }
+
+
+            /*if (v1 instanceof ExpenseHeader && v2 instanceof ExpenseHeader) {
                 result = ((ExpenseHeader) v2).getModel().getId().compareTo(((ExpenseHeader) v1)
                         .getModel().getId());
-            } else if (v1 instanceof ExpenseItem && v2 instanceof ExpenseItem) {
+            if (v1 instanceof ExpenseItem && v2 instanceof ExpenseItem) {
                 result = ((ExpenseItem) v2).getHeader().getModel().getId().compareTo((
                         (ExpenseItem) v1).getHeader().getModel().getId());
 
@@ -391,7 +401,7 @@ public class ExpenseListFragment extends BaseFragment implements
                 if (result == 0) {
                     result--;
                 }
-            }
+            }*/
             return result;
         }
     }

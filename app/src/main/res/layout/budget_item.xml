@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/budget_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:paddingBottom="@dimen/expense_layout_vertical_padding"
+    android:paddingTop="@dimen/expense_layout_vertical_padding">
+
+    <TextView
+        android:id="@+id/budget_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/expense_horizontal_margin"
+        android:layout_marginLeft="@dimen/expense_horizontal_margin"
+        android:layout_marginRight="@dimen/expense_horizontal_margin"
+        android:layout_marginStart="@dimen/expense_horizontal_margin"
+        android:layout_toLeftOf="@+id/budget_amount"
+        android:layout_toStartOf="@+id/budget_amount"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:minLines="1"
+        android:textAppearance="@style/ExpenseText"/>
+
+    <TextView
+        android:id="@id/budget_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/expense_horizontal_margin"
+        android:layout_marginLeft="@dimen/expense_horizontal_margin"
+        android:layout_marginRight="@dimen/expense_horizontal_margin"
+        android:layout_marginStart="@dimen/expense_horizontal_margin"
+        android:maxLines="1"
+        android:minLines="1"
+        android:textAppearance="@style/ExpenseText"/>
+</RelativeLayout>

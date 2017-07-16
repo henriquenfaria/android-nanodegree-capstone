@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
@@ -26,33 +26,27 @@ import com.mukesh.countrypicker.Country;
 import com.mukesh.countrypicker.CountryPicker;
 import com.mukesh.countrypicker.CountryPickerListener;
 
-import org.joda.time.DateTime;
-
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class ExpenseFactoryFragment extends BaseFragment implements
-        DatePickerDialogFragment.OnDateSetListener,
+public class BudgetFactoryFragment extends BaseFragment implements
         AlertDialogFragment.OnAlertListener,
         CountryPickerListener {
 
-    private static final String ARG_EXPENSE = "arg_expense";
+    private static final String ARG_BUDGET = "arg_budget";
     private static final String ARG_TRIP = "arg_trip";
 
-    private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String TAG_COUNTRY_PICKER_FRAGMENT = "tag_country_picker_fragment";
     private static final String TAG_ALERT_DIALOG_FRAGMENT = "tag_alert_dialog_fragment";
     private static final String SAVE_TRIP = "save_trip";
-    private static final String SAVE_EXPENSE = "save_expense";
+    private static final String SAVE_BUDGET = "save_budget";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
 
     @BindView(R.id.title_edit_text)
-    protected EditText mExpenseTitleEditText;
-    @BindView(R.id.date_text)
-    protected TextView mDateTextView;
+    protected EditText mBudgetTitleEditText;
     @BindView(R.id.currency_text)
     protected TextView mCurrencyTextView;
     @BindView(R.id.amount_edit_text)
@@ -61,35 +55,23 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     protected ImageView mCurrencyIcon;
 
     private TripModel mTrip;
-    private ExpenseModel mExpense;
+    private BudgetModel mBudget;
     private boolean mIsEditMode;
     private CountryPicker mCountryPicker;
-    private DatePickerDialogFragment mDatePickerFragment;
     private AlertDialogFragment mAlertDialogFragment;
 
-    private OnExpenseFactoryListener mOnExpenseFactoryListener;
+    private OnBudgetFactoryListener mOnBudgetFactoryListener;
 
     private View.OnClickListener mOnCurrencyClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
             mCountryPicker = CountryPicker.newInstance(getString(R.string.select_country));
-            mCountryPicker.setListener(ExpenseFactoryFragment.this);
+            mCountryPicker.setListener(BudgetFactoryFragment.this);
             mCountryPicker.show(getFragmentManager(), TAG_COUNTRY_PICKER_FRAGMENT);
         }
     };
 
-    private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(final View v) {
-            mDatePickerFragment = new DatePickerDialogFragment();
-            mDatePickerFragment.setOnDateSetListener(ExpenseFactoryFragment.this);
-            mDatePickerFragment.setCurrentDate(mExpense.getDate());
-            mDatePickerFragment.setTargetViewId(v.getId());
-            mDatePickerFragment.show(getFragmentManager(), TAG_DATE_PICKER_FRAGMENT);
-        }
-    };
-
-    private TextWatcher mExpenseTitleTextWatcher = new TextWatcher() {
+    private TextWatcher mBudgetTitleTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -101,21 +83,21 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         @Override
         public void afterTextChanged(Editable s) {
             if (s != null) {
-                mExpense.setTitle(s.toString());
+                mBudget.setTitle(s.toString());
             }
         }
     };
 
-    public ExpenseFactoryFragment() {
+    public BudgetFactoryFragment() {
         // Required empty public constructor
     }
 
     // Create new Fragment instance with TripModel info
-    public static ExpenseFactoryFragment newInstance(TripModel trip, ExpenseModel expense) {
-        ExpenseFactoryFragment fragment = new ExpenseFactoryFragment();
+    public static BudgetFactoryFragment newInstance(TripModel trip, BudgetModel budget) {
+        BudgetFactoryFragment fragment = new BudgetFactoryFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TRIP, trip);
-        args.putParcelable(ARG_EXPENSE, expense);
+        args.putParcelable(ARG_BUDGET, budget);
         fragment.setArguments(args);
         return fragment;
     }
@@ -125,7 +107,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_TRIP, mTrip);
-        outState.putParcelable(SAVE_EXPENSE, mExpense);
+        outState.putParcelable(SAVE_BUDGET, mBudget);
         outState.putBoolean(SAVE_IS_EDIT_MODE, mIsEditMode);
     }
 
@@ -134,28 +116,22 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTrip = getArguments().getParcelable(ARG_TRIP);
-            mExpense = getArguments().getParcelable(ARG_EXPENSE);
+            mBudget = getArguments().getParcelable(ARG_BUDGET);
 
-            if (mExpense == null) {
-                mExpense = new ExpenseModel();
-                mExpense.setDate(DateTime.now().withTimeAtStartOfDay().getMillis());
+            if (mBudget == null) {
+                mBudget = new BudgetModel();
+                //mBudget.setDate(DateTime.now().withTimeAtStartOfDay().getMillis());
                 String country = Utils.getStringFromSharedPrefs(mFragmentActivity,
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY);
                 String currency = Utils.getStringFromSharedPrefs(mFragmentActivity,
                         Constants.Preference.PREFERENCE_DEFAULT_CURRENCY);
-                mExpense.setCountry(country);
-                mExpense.setCurrency(currency);
+                mBudget.setCountry(country);
+                mBudget.setCurrency(currency);
             }
 
-            if (!TextUtils.isEmpty(mExpense.getId())) {
+            if (!TextUtils.isEmpty(mBudget.getId())) {
                 mIsEditMode = true;
             }
-        }
-
-        mDatePickerFragment = (DatePickerDialogFragment)
-                getFragmentManager().findFragmentByTag(TAG_DATE_PICKER_FRAGMENT);
-        if (mDatePickerFragment != null) {
-            mDatePickerFragment.setOnDateSetListener(this);
         }
 
         mAlertDialogFragment = (AlertDialogFragment)
@@ -196,7 +172,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         int id = item.getItemId();
 
         if (id == R.id.action_save) {
-            saveExpense();
+            saveBudget();
             return true;
         } else if (id == R.id.action_delete) {
             createDeleteTripConfirmationDialog();
@@ -209,10 +185,10 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mOnExpenseFactoryListener = (OnExpenseFactoryListener) context;
+            mOnBudgetFactoryListener = (OnBudgetFactoryListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnExpenseFactoryListener");
+                    + " must implement OnBudgetFactoryListener");
         }
     }
 
@@ -223,16 +199,15 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         // Restore instances
         if (savedInstanceState != null) {
             mTrip = savedInstanceState.getParcelable(SAVE_TRIP);
-            mExpense = savedInstanceState.getParcelable(SAVE_EXPENSE);
+            mBudget = savedInstanceState.getParcelable(SAVE_BUDGET);
             mIsEditMode = savedInstanceState.getBoolean(SAVE_IS_EDIT_MODE);
         }
 
-        View rootView = inflater.inflate(R.layout.fragment_expense_factory, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_budget_factory, container, false);
         ButterKnife.bind(this, rootView);
-        mOnExpenseFactoryListener.changeActionBarTitle(getString(R.string.create_new_expense));
+        mOnBudgetFactoryListener.changeActionBarTitle(getString(R.string.create_new_budget));
 
-        mExpenseTitleEditText.addTextChangedListener(mExpenseTitleTextWatcher);
-        mDateTextView.setOnClickListener(mOnDateClickListener);
+        mBudgetTitleEditText.addTextChangedListener(mBudgetTitleTextWatcher);
 
         mAmountEditText.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
@@ -245,7 +220,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
                 String str = mAmountEditText.getText().toString();
 
                 if (TextUtils.isEmpty(str)) {
-                    mExpense.setAmount(0d);
+                    mBudget.setTotalAmount(0d);
                     return;
                 }
 
@@ -260,11 +235,11 @@ public class ExpenseFactoryFragment extends BaseFragment implements
                 }
 
                 try {
-                    mExpense.setAmount(Double.parseDouble(str2));
+                    mBudget.setTotalAmount(Double.parseDouble(str2));
                 } catch (NumberFormatException e) {
-                    Timber.e("NumberFormatException while parsing expense amount");
+                    Timber.e("NumberFormatException while parsing budget amount");
                     e.printStackTrace();
-                    mExpense.setAmount(0d);
+                    mBudget.setTotalAmount(0d);
                 }
             }
         });
@@ -277,16 +252,15 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     }
 
     private void populateFormFields() {
-        mExpenseTitleEditText.setText(mExpense.getTitle());
-        mDateTextView.setText(Utils.getFormattedExpenseDateText(mExpense.getDate()));
+        mBudgetTitleEditText.setText(mBudget.getTitle());
         Country country = new Country();
-        country.setCode(mExpense.getCountry());
+        country.setCode(mBudget.getCountry());
         country.loadFlagByCode(mFragmentActivity);
         mCurrencyIcon.setImageResource(country.getFlag());
-        mCurrencyTextView.setText(mExpense.getCurrency());
-        if (mExpense.getAmount() != null) {
+        mCurrencyTextView.setText(mBudget.getCurrency());
+        if (mBudget.getTotalAmount() != null) {
             // Hardcoding value to use only points
-            mAmountEditText.setText(String.format(Locale.US, "%.2f", mExpense.getAmount()));
+            mAmountEditText.setText(String.format(Locale.US, "%.2f", mBudget.getTotalAmount()));
         }
     }
 
@@ -294,18 +268,13 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         boolean isValid = true;
 
         //TODO: Is title mandatory?
-        if (TextUtils.isEmpty(mExpense.getTitle())) {
-            mExpenseTitleEditText.setError(getString(R.string.mandatory_field));
+        if (TextUtils.isEmpty(mBudget.getTitle())) {
+            mBudgetTitleEditText.setError(getString(R.string.mandatory_field));
             isValid = false;
         }
 
-        if (mExpense.getAmount() == null || mExpense.getAmount() <= 0d) {
+        if (mBudget.getTotalAmount() == null || mBudget.getTotalAmount() <= 0d) {
             mAmountEditText.setError(getString(R.string.mandatory_field));
-            isValid = false;
-        }
-
-        if (mExpense.getDate() <= 0) {
-            mDateTextView.setError(getString(R.string.mandatory_field));
             isValid = false;
         }
 
@@ -313,14 +282,14 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     }
 
 
-    private void saveExpense() {
+    private void saveBudget() {
         if (isValidFormFields()) {
-            mOnExpenseFactoryListener.saveExpense(mTrip, mExpense, mIsEditMode);
+            mOnBudgetFactoryListener.saveBudget(mTrip, mBudget, mIsEditMode);
         }
     }
 
-    private void deleteExpense() {
-        mOnExpenseFactoryListener.deleteExpense(mTrip, mExpense);
+    private void deleteBudget() {
+        mOnBudgetFactoryListener.deleteBudget(mTrip, mBudget);
     }
 
     private void createDeleteTripConfirmationDialog() {
@@ -331,19 +300,9 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         mAlertDialogFragment.show(getFragmentManager(), TAG_ALERT_DIALOG_FRAGMENT);
     }
 
-
-    @Override
-    public void onDateSet(int targetViewId, long dateMillis) {
-        if (mDateTextView.getId() == targetViewId) {
-            mExpense.setDate(new DateTime(dateMillis).withTimeAtStartOfDay().getMillis());
-            mDateTextView.setText(Utils.getFormattedExpenseDateText(dateMillis));
-            mDateTextView.setError(null);
-        }
-    }
-
     @Override
     public void positiveAlertButtonClicked() {
-        deleteExpense();
+        deleteBudget();
     }
 
     @Override
@@ -356,8 +315,8 @@ public class ExpenseFactoryFragment extends BaseFragment implements
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
                         Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency);
-                mExpense.setCountry(country);
-                mExpense.setCurrency(currency);
+                mBudget.setCountry(country);
+                mBudget.setCurrency(currency);
                 if (flagDrawableResID > 0) {
                     mCurrencyIcon.setImageResource(flagDrawableResID);
                 }
@@ -368,12 +327,11 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         }
     }
 
-    public interface OnExpenseFactoryListener {
+    public interface OnBudgetFactoryListener {
         void changeActionBarTitle(String newTitle);
 
-        void saveExpense(TripModel trip, ExpenseModel expense, boolean isEditMode);
+        void saveBudget(TripModel trip, BudgetModel budget, boolean isEditMode);
 
-        void deleteExpense(TripModel trip, ExpenseModel expense);
+        void deleteBudget(TripModel trip, BudgetModel budget);
     }
-
 }
