@@ -259,77 +259,23 @@ public class BudgetListFragment extends BaseFragment implements
         }
     }
 
-
     private void addBudget(BudgetModel budget) {
-        // TODO: Implement
-        /*ExpenseHeader headerHolder = getHeaderForExpense(expense);
-
-        // Add new section
-        if (headerHolder == null) {
-            ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-            DateTime dateTime = new DateTime(expense.getDate());
-            String formattedDateTime = dateTime.toString(DateTimeFormat
-                    .mediumDate());
-            headerModel.setTitle(formattedDateTime);
-            headerModel.setId(expense.getDate());
-            headerHolder = new ExpenseHeader(headerModel);
-        }
-        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        mBudgetAdapter.addItemToSection(itemHolder, headerHolder, new BudgetItemComparator());*/
-
+        BudgetItem budgetItem = new BudgetItem(budget);
+        mBudgetAdapter.addItem(mBudgetAdapter
+                .calculatePositionFor(budgetItem, new BudgetItemComparator()), budgetItem);
     }
 
 
     private void changeBudget(BudgetModel budget) {
-        // TODO: Implement
-       /* ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-        DateTime dateTime = new DateTime(expense.getDate());
-        String formattedDateTime = dateTime.toString(DateTimeFormat.mediumDate());
-        headerModel.setTitle(formattedDateTime);
-        headerModel.setId(expense.getDate());
-        ExpenseHeader expenseHeader = new ExpenseHeader(headerModel);
-        ExpenseItem expenseItem = new ExpenseItem(expense, expenseHeader);
-
-        ExpenseItem retrievedItem = (ExpenseItem) mBudgetAdapter
-                .getItem(mBudgetAdapter.getGlobalPositionOf(expenseItem));
-        if (retrievedItem != null) {
-            if (retrievedItem.getModel().getDate().equals(expense.getDate())) {
-                // No section change, just update the expense
-                mBudgetAdapter.updateItem(expenseItem);
-            } else {
-                // Move it to a new Section
-                ExpenseHeader destinationHeader = getHeaderForExpense(expense);
-                removeBudget(expense);
-                if (destinationHeader != null) {
-                    expenseHeader = destinationHeader;
-                    expenseItem = new ExpenseItem(expense, expenseHeader);
-                }
-                mBudgetAdapter.addItemToSection(expenseItem, expenseHeader,
-                        new BudgetItemComparator());
-            }
-        } else {
-            mBudgetAdapter.updateItem(expenseItem);
-        }*/
+        BudgetItem budgetItem = new BudgetItem(budget);
+        mBudgetAdapter.updateItem(budgetItem);
+        mBudgetAdapter.moveItem(mBudgetAdapter.getGlobalPositionOf(budgetItem), mBudgetAdapter
+                .calculatePositionFor(budgetItem, new BudgetItemComparator()));
     }
 
     private void removeBudget(BudgetModel budget) {
-        // TODO: Implement
-        /*ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-        headerModel.setId(expense.getDate());
-        ExpenseHeader headerHolder = new ExpenseHeader(headerModel);
-        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        int position = mBudgetAdapter.getGlobalPositionOf(itemHolder);
-        if (position >= 0) {
-            IHeader header = mBudgetAdapter.getSectionHeader(position);
-            mBudgetAdapter.removeItem(position);
-
-            // Remove empty section
-            if (header != null && mBudgetAdapter.getSectionItems(header).size()
-                    == 0) {
-                mBudgetAdapter.removeItem(
-                        mBudgetAdapter.getGlobalPositionOf(header));
-            }
-        }*/
+        BudgetItem budgetItem = new BudgetItem(budget);
+        mBudgetAdapter.removeItem(mBudgetAdapter.getGlobalPositionOf(budgetItem));
     }
 
     private void detachDatabaseReadListener() {
@@ -372,9 +318,9 @@ public class BudgetListFragment extends BaseFragment implements
                 // since they are put in the middle of section
                 // Update timestamp only on add or on update where the expense date was changed
                 //if (result == 0) {
-                    result = ((BudgetItem) v1).getModel().getTitle().compareTo(((BudgetItem) v2)
-                            .getModel().getTitle());
-               // }
+                result = ((BudgetItem) v1).getModel().getTitle().compareTo(((BudgetItem) v2)
+                        .getModel().getTitle());
+                // }
             }
 
 
