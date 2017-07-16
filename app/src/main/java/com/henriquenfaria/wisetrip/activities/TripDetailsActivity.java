@@ -1,7 +1,6 @@
 package com.henriquenfaria.wisetrip.activities;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -11,22 +10,16 @@ import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,13 +33,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.adapters.TempSimpleRecyclerAdapter;
 import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
 import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
 import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
-import com.henriquenfaria.wisetrip.models.TempVersionModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Features;
@@ -55,8 +46,6 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -245,10 +234,10 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
-        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
-                .string.budgets));
-        adapter.addFragment(new TempDummyFragment(android.R.color.background_light), getString(R
-                .string.places));
+
+        //TODO: Temporary
+        adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
+        adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
@@ -446,47 +435,6 @@ public class TripDetailsActivity extends AppCompatActivity implements OnExpenseI
     @Override
     public void onExpenseClicked(ExpenseModel expense) {
         startExpenseFactory(expense);
-    }
-
-    //TODO: Temp dummy Fragment code
-    public static class TempDummyFragment extends Fragment {
-        int color;
-        TempSimpleRecyclerAdapter adapter;
-
-        public TempDummyFragment() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public TempDummyFragment(int color) {
-            this.color = color;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
-                savedInstanceState) {
-            View view = inflater.inflate(R.layout.temp_dummy_fragment, container, false);
-
-            final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
-            frameLayout.setBackgroundColor(color);
-
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(
-                    R.id.dummyfrag_scrollableview);
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity()
-                    .getBaseContext());
-            recyclerView.setLayoutManager(linearLayoutManager);
-            recyclerView.setHasFixedSize(true);
-
-            List<String> list = new ArrayList<>();
-            for (int i = 0; i < TempVersionModel.data.length; i++) {
-                list.add(TempVersionModel.data[i]);
-            }
-
-            adapter = new TempSimpleRecyclerAdapter(list);
-            recyclerView.setAdapter(adapter);
-
-            return view;
-        }
     }
 
     private static abstract class AppBarStateChangeListener implements
