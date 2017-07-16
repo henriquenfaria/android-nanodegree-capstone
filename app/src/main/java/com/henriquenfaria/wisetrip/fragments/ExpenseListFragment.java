@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,7 +56,10 @@ public class ExpenseListFragment extends BaseFragment implements
     protected RecyclerView mExpenseListRecyclerView;
 
     @BindView(R.id.empty_view)
-    protected RelativeLayout mEmptyListView;
+    protected RelativeLayout mEmptyView;
+
+    @BindView(R.id.empty_text)
+    protected TextView mEmptyText;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -113,6 +117,7 @@ public class ExpenseListFragment extends BaseFragment implements
                  keyRef's location represents a list item in the RecyclerView.
          */
 
+        mEmptyText.setText(R.string.no_saved_expenses);
 
         mExpenseAdapter = new FlexibleAdapter<>(null, this);
         mExpenseAdapter
@@ -352,9 +357,9 @@ public class ExpenseListFragment extends BaseFragment implements
     @Override
     public void onUpdateEmptyView(int size) {
         if (size > 0) {
-            ViewCompat.animate(mEmptyListView).alpha(0);
+            ViewCompat.animate(mEmptyView).alpha(0);
         } else {
-            ViewCompat.animate(mEmptyListView).alpha(1);
+            ViewCompat.animate(mEmptyView).alpha(1);
         }
     }
 

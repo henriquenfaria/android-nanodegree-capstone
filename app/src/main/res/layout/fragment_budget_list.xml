@@ -17,7 +17,7 @@
             android:scrollbarStyle="outsideInset"
             android:scrollbars="vertical"/>
 
-        <include layout="@layout/empty_list_view"/>
+        <include layout="@layout/trip_detail_empty_list_view"/>
 
     </FrameLayout>
 
