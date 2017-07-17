@@ -4,6 +4,7 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="trip_list_vertical_margin">18dp</dimen>
     <dimen name="factory_form_item_margin_top">24dp</dimen>
     <dimen name="factory_form_icon_margin_horizontal">8dp</dimen>
     <dimen name="factory_form_date_separator_margin_horizontal">4dp</dimen>
@@ -25,5 +26,5 @@
     <dimen name="trip_card_view_edit_button_padding">8dp</dimen>
     <dimen name="trip_card_view_height">200dp</dimen>
     <dimen name="trip_card_view_title_additional_margin">8dp</dimen>
-    <dimen name="expense_text_size">16sp</dimen>
+    <dimen name="expense_text_size">15sp</dimen>
 </resources>

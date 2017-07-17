@@ -2,7 +2,9 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/trip_list_vertical_margin"
+    android:layout_marginTop="@dimen/trip_list_vertical_margin">
 
     <com.henriquenfaria.wisetrip.views.SizeAwareRecyclerView
 
