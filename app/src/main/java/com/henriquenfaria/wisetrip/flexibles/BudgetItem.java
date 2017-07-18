@@ -2,11 +2,13 @@ package com.henriquenfaria.wisetrip.flexibles;
 
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.mukesh.countrypicker.Country;
 
 import java.text.DecimalFormat;
 import java.util.Currency;
@@ -100,6 +102,11 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
             e.printStackTrace();
             holder.mRemainingAmount.setText("");
         }
+
+        Country country = new Country();
+        country.setCode(mBudget.getCountry());
+        country.loadFlagByCode(holder.mCurrencyIcon.getContext());
+        holder.mCurrencyIcon.setImageResource(country.getFlag());
     }
 
     static class ItemViewHolder extends FlexibleViewHolder {
@@ -115,6 +122,9 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
 
         @BindView(R.id.remaining_amount)
         public TextView mRemainingAmount;
+
+        @BindView(R.id.currency_icon)
+        public ImageView mCurrencyIcon;
 
         public ItemViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);

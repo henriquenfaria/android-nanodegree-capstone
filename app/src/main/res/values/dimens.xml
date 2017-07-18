@@ -4,7 +4,7 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="trip_list_vertical_margin">18dp</dimen>
+    <dimen name="trip_list_vertical_padding">15dp</dimen>
     <dimen name="factory_form_item_margin_top">24dp</dimen>
     <dimen name="factory_form_icon_margin_horizontal">8dp</dimen>
     <dimen name="factory_form_date_separator_margin_horizontal">4dp</dimen>
@@ -31,7 +31,9 @@
     <dimen name="budget_card_view_outer_vertical_margin">6dp</dimen>
     <dimen name="budget_card_title_bottom_margin">12dp</dimen>
     <dimen name="budget_card_line_bottom_margin">6dp</dimen>
+    <dimen name="budget_card_currency_image_size">36dp</dimen>
     <dimen name="expense_item_text_size">15sp</dimen>
     <dimen name="budget_item_text_size">15sp</dimen>
     <dimen name="budget_title_text_size">17sp</dimen>
+    <dimen name="divider_height">1dp</dimen>
 </resources>

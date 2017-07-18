@@ -19,7 +19,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/budget_card_view_outer_vertical_margin"
         android:layout_marginEnd="@dimen/budget_horizontal_margin"
         android:layout_marginLeft="@dimen/budget_horizontal_margin"
@@ -39,19 +39,38 @@
             android:minLines="1"
             android:textAppearance="@style/BudgetTitleText"/>
 
+        <View
+            android:id="@+id/title_divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:layout_below="@id/budget_title"
+            android:layout_marginBottom="@dimen/budget_card_title_bottom_margin"
+            android:background="@android:color/darker_gray"/>
+
+        <ImageView
+            android:id="@+id/currency_icon"
+            android:layout_width="@dimen/budget_card_currency_image_size"
+            android:layout_height="@dimen/budget_card_currency_image_size"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/total_amount_layout"
+            android:layout_below="@id/title_divider"
+            android:layout_marginEnd="@dimen/budget_horizontal_margin"
+            android:layout_marginRight="@dimen/budget_horizontal_margin"/>
+
         <RelativeLayout
             android:id="@+id/total_amount_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/budget_title"
-            android:layout_marginBottom="@dimen/budget_card_line_bottom_margin">
+            android:layout_below="@id/title_divider"
+            android:layout_marginBottom="@dimen/budget_card_line_bottom_margin"
+            android:layout_toEndOf="@id/currency_icon"
+            android:layout_toRightOf="@id/currency_icon">
 
             <TextView
                 android:id="@+id/total_amount_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:minLines="1"
@@ -75,14 +94,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/total_amount_layout"
-            android:layout_marginBottom="@dimen/budget_card_line_bottom_margin">
+            android:layout_marginBottom="@dimen/budget_card_line_bottom_margin"
+            android:layout_toEndOf="@id/currency_icon"
+            android:layout_toRightOf="@id/currency_icon">
 
             <TextView
                 android:id="@+id/remaining_amount_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
+
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:minLines="1"
