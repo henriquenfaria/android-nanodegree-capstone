@@ -7,8 +7,8 @@
     android:layout_height="@dimen/trip_card_view_height"
     android:layout_marginBottom="@dimen/trip_card_view_outer_vertical_margin"
     android:layout_marginTop="@dimen/trip_card_view_outer_vertical_margin"
-    card_view:cardCornerRadius="@dimen/trip_card_view_corner_radius"
-    card_view:cardElevation="@dimen/trip_card_view_elevation"
+    card_view:cardCornerRadius="@dimen/card_view_corner_radius"
+    card_view:cardElevation="@dimen/card_view_elevation"
     card_view:cardUseCompatPadding="true">
 
     <RelativeLayout

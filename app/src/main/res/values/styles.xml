@@ -24,12 +24,18 @@
     </style>
 
     <style name="ExpenseText" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textSize">@dimen/expense_text_size</item>
+        <item name="android:textSize">@dimen/expense_item_text_size</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
 
     <style name="BudgetText" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textSize">@dimen/expense_text_size</item>
+        <item name="android:textSize">@dimen/budget_item_text_size</item>
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="BudgetTitleText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">@dimen/budget_title_text_size</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

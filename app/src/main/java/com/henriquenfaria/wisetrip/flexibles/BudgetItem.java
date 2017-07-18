@@ -1,7 +1,7 @@
 package com.henriquenfaria.wisetrip.flexibles;
 
+import android.support.v7.widget.CardView;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
@@ -68,6 +68,7 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
     @Override
     public void bindViewHolder(final FlexibleAdapter adapter, ItemViewHolder holder,
                                int position, List payloads) {
+
         holder.mTitle.setText(mBudget.getTitle());
 
         Currency currency;
@@ -81,26 +82,44 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
 
         DecimalFormat decimalFormat = new DecimalFormat("¤ ###,###,###.00");
         decimalFormat.setCurrency(currency);
-        String formattedAmount = decimalFormat.format(mBudget.getTotalAmount());
-        holder.mAmount.setText(formattedAmount);
+
+        try {
+            String formattedTotalAmount = decimalFormat.format(mBudget.getTotalAmount());
+            holder.mTotalAmount.setText(formattedTotalAmount);
+        } catch (IllegalArgumentException e) {
+            Timber.e("Exception while formatting total budget amount");
+            e.printStackTrace();
+            holder.mTotalAmount.setText("");
+        }
+
+        try {
+            String formattedRemainingAmount = decimalFormat.format(mBudget.getRemainingAmount());
+            holder.mRemainingAmount.setText(formattedRemainingAmount);
+        } catch (IllegalArgumentException e) {
+            Timber.e("Exception while formatting total budget amount");
+            e.printStackTrace();
+            holder.mRemainingAmount.setText("");
+        }
     }
 
     static class ItemViewHolder extends FlexibleViewHolder {
 
-        @BindView(R.id.budget_item_layout)
-        public RelativeLayout mLayout;
+        @BindView(R.id.budget_card)
+        public CardView mBudgetCard;
 
         @BindView(R.id.budget_title)
         public TextView mTitle;
 
         @BindView(R.id.budget_amount)
-        public TextView mAmount;
+        public TextView mTotalAmount;
 
+        @BindView(R.id.remaining_amount)
+        public TextView mRemainingAmount;
 
         public ItemViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             ButterKnife.bind(this, view);
-            mLayout.setOnClickListener(new View.OnClickListener() {
+            mBudgetCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mAdapter.mItemClickListener != null) {
