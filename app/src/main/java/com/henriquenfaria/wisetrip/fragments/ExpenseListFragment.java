@@ -203,7 +203,7 @@ public class ExpenseListFragment extends BaseFragment implements
                     ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
                     if (expense != null && !TextUtils.isEmpty(expense.getId())
                             && mExpenseAdapter != null) {
-                        addExpense(expense);
+                        expenseAdded(expense);
                     }
                 }
 
@@ -214,7 +214,7 @@ public class ExpenseListFragment extends BaseFragment implements
                     ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
                     if (expense != null && !TextUtils.isEmpty(expense.getId())
                             && mExpenseAdapter != null) {
-                        changeExpense(expense);
+                        expenseChanged(expense);
                     }
                 }
 
@@ -225,7 +225,7 @@ public class ExpenseListFragment extends BaseFragment implements
                     ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
                     if (expense != null && !TextUtils.isEmpty(expense.getId())
                             && mExpenseAdapter != null) {
-                        removeExpense(expense);
+                        expenseRemoved(expense);
                     }
                 }
 
@@ -237,8 +237,7 @@ public class ExpenseListFragment extends BaseFragment implements
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled");
-                    //TODO: Implementation needed?
+                    Timber.d("onCancelled", databaseError.getMessage());
                 }
 
             };
@@ -258,7 +257,7 @@ public class ExpenseListFragment extends BaseFragment implements
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled");
+                    Timber.d("onCancelled", databaseError.getMessage());
 
                     mExpenseListLayout.setVisibility(View.VISIBLE);
                 }
@@ -268,7 +267,7 @@ public class ExpenseListFragment extends BaseFragment implements
     }
 
 
-    private void addExpense(ExpenseModel expense) {
+    private void expenseAdded(ExpenseModel expense) {
         ExpenseHeader headerHolder = getHeaderForExpense(expense);
 
         // Add new section
@@ -287,7 +286,7 @@ public class ExpenseListFragment extends BaseFragment implements
     }
 
 
-    private void changeExpense(ExpenseModel expense) {
+    private void expenseChanged(ExpenseModel expense) {
         ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
         DateTime dateTime = new DateTime(expense.getDate());
         String formattedDateTime = dateTime.toString(DateTimeFormat.mediumDate());
@@ -305,7 +304,7 @@ public class ExpenseListFragment extends BaseFragment implements
             } else {
                 // Move it to a new Section
                 ExpenseHeader destinationHeader = getHeaderForExpense(expense);
-                removeExpense(expense);
+                expenseRemoved(expense);
                 if (destinationHeader != null) {
                     expenseHeader = destinationHeader;
                     expenseItem = new ExpenseItem(expense, expenseHeader);
@@ -318,7 +317,7 @@ public class ExpenseListFragment extends BaseFragment implements
         }
     }
 
-    private void removeExpense(ExpenseModel expense) {
+    private void expenseRemoved(ExpenseModel expense) {
         ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
         headerModel.setId(expense.getDate());
         ExpenseHeader headerHolder = new ExpenseHeader(headerModel);

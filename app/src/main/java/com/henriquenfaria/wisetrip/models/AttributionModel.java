@@ -19,12 +19,15 @@ public class AttributionModel implements Parcelable, Serializable {
             return new AttributionModel[size];
         }
     };
+
     // TripModel or PlaceModel id
     private String id;
     private String text;
 
     public AttributionModel() {
         // Required for Firebase
+        id = "";
+        text = "";
     }
 
     protected AttributionModel(Parcel in) {

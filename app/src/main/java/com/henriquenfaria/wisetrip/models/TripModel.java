@@ -28,11 +28,14 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
             return new TripModel[size];
         }
     };
+
     private String id;
     private String title;
     private Long startDate;
     private Long endDate;
     private Map<String, TravelerModel> travelers;
+
+    //TODO: Replace it with a Map?
     private List<DestinationModel> destinations;
 
     public TripModel() {

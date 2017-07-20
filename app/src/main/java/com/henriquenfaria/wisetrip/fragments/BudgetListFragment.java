@@ -195,7 +195,7 @@ public class BudgetListFragment extends BaseFragment implements
                     BudgetModel budget = dataSnapshot.getValue(BudgetModel.class);
                     if (budget != null && !TextUtils.isEmpty(budget.getId())
                             && mBudgetAdapter != null) {
-                        addBudget(budget);
+                        budgetAdded(budget);
                     }
                 }
 
@@ -206,7 +206,7 @@ public class BudgetListFragment extends BaseFragment implements
                     BudgetModel budget = dataSnapshot.getValue(BudgetModel.class);
                     if (budget != null && !TextUtils.isEmpty(budget.getId())
                             && mBudgetAdapter != null) {
-                        changeBudget(budget);
+                        budgetChanged(budget);
                     }
                 }
 
@@ -217,7 +217,7 @@ public class BudgetListFragment extends BaseFragment implements
                     BudgetModel budget = dataSnapshot.getValue(BudgetModel.class);
                     if (budget != null && !TextUtils.isEmpty(budget.getId())
                             && mBudgetAdapter != null) {
-                        removeBudget(budget);
+                        budgetRemoved(budget);
                     }
                 }
 
@@ -229,8 +229,7 @@ public class BudgetListFragment extends BaseFragment implements
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled");
-                    //TODO: Implementation needed?
+                    Timber.d("onCancelled", databaseError.getMessage());
                 }
 
             };
@@ -250,7 +249,7 @@ public class BudgetListFragment extends BaseFragment implements
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled");
+                    Timber.d("onCancelled", databaseError.getMessage());
 
                     mBudgetListLayout.setVisibility(View.VISIBLE);
                 }
@@ -259,21 +258,21 @@ public class BudgetListFragment extends BaseFragment implements
         }
     }
 
-    private void addBudget(BudgetModel budget) {
+    private void budgetAdded(BudgetModel budget) {
         BudgetItem budgetItem = new BudgetItem(budget);
         mBudgetAdapter.addItem(mBudgetAdapter
                 .calculatePositionFor(budgetItem, new BudgetItemComparator()), budgetItem);
     }
 
 
-    private void changeBudget(BudgetModel budget) {
+    private void budgetChanged(BudgetModel budget) {
         BudgetItem budgetItem = new BudgetItem(budget);
         mBudgetAdapter.updateItem(budgetItem);
         mBudgetAdapter.moveItem(mBudgetAdapter.getGlobalPositionOf(budgetItem), mBudgetAdapter
                 .calculatePositionFor(budgetItem, new BudgetItemComparator()));
     }
 
-    private void removeBudget(BudgetModel budget) {
+    private void budgetRemoved(BudgetModel budget) {
         BudgetItem budgetItem = new BudgetItem(budget);
         mBudgetAdapter.removeItem(mBudgetAdapter.getGlobalPositionOf(budgetItem));
     }

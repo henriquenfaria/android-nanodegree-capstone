@@ -27,11 +27,14 @@ public class TravelerModel implements Parcelable, Serializable {
     };
     private String contactId;
     private String name;
+
     @Exclude
     private Uri photoUri;
 
     public TravelerModel() {
         // Required for Firebase
+        contactId = "";
+        name = "";
     }
 
     public TravelerModel(Cursor cursor) {

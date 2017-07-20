@@ -5,20 +5,42 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BudgetModel implements Parcelable, Serializable {
+
+    public static final Creator<BudgetModel> CREATOR = new Creator<BudgetModel>() {
+        @Override
+        public BudgetModel createFromParcel(Parcel source) {
+            return new BudgetModel(source);
+        }
+
+        @Override
+        public BudgetModel[] newArray(int size) {
+            return new BudgetModel[size];
+        }
+    };
 
     // TripModel id
     private String id;
     private String title;
     private String country;
     private String currency;
-    private Double totalAmount;
-    private Double remainingAmount;
+    private Double budgetAmount;
+    private Double expensesAmount;
     private Double notificationAt;
+    private Map<String, Double> expenses;
 
     public BudgetModel() {
-        // Required for Firebase
+        id = "";
+        title = "";
+        country = "";
+        currency = "";
+        budgetAmount = 0d;
+        expensesAmount = 0d;
+        notificationAt = 0d;
+        expenses = new HashMap<>();
     }
 
     protected BudgetModel(Parcel in) {
@@ -26,9 +48,16 @@ public class BudgetModel implements Parcelable, Serializable {
         this.title = in.readString();
         this.country = in.readString();
         this.currency = in.readString();
-        this.totalAmount = (Double) in.readValue(Double.class.getClassLoader());
-        this.remainingAmount = (Double) in.readValue(Double.class.getClassLoader());
+        this.budgetAmount = (Double) in.readValue(Double.class.getClassLoader());
+        this.expensesAmount = (Double) in.readValue(Double.class.getClassLoader());
         this.notificationAt = (Double) in.readValue(Double.class.getClassLoader());
+        int expensesSize = in.readInt();
+        this.expenses = new HashMap<>(expensesSize);
+        for (int i = 0; i < expensesSize; i++) {
+            String key = in.readString();
+            Double value = (Double) in.readValue(Double.class.getClassLoader());
+            this.expenses.put(key, value);
+        }
     }
 
     public String getId() {
@@ -63,20 +92,20 @@ public class BudgetModel implements Parcelable, Serializable {
         this.currency = currency;
     }
 
-    public Double getTotalAmount() {
-        return totalAmount;
+    public Double getBudgetAmount() {
+        return budgetAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setBudgetAmount(Double budgetAmount) {
+        this.budgetAmount = budgetAmount;
     }
 
-    public Double getRemainingAmount() {
-        return remainingAmount;
+    public Double getExpensesAmount() {
+        return expensesAmount;
     }
 
-    public void setRemainingAmount(Double remainingAmount) {
-        this.remainingAmount = remainingAmount;
+    public void setExpensesAmount(Double expensesAmount) {
+        this.expensesAmount = expensesAmount;
     }
 
     public Double getNotificationAt() {
@@ -85,6 +114,22 @@ public class BudgetModel implements Parcelable, Serializable {
 
     public void setNotificationAt(Double notificationAt) {
         this.notificationAt = notificationAt;
+    }
+
+    public Map<String, Double> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(Map<String, Double> expenses) {
+        this.expenses = expenses;
+    }
+
+    public void updateExpensesAmount() {
+        Double updatedExpensesAmount = 0d;
+        for (Double amount : expenses.values()) {
+            updatedExpensesAmount += amount;
+        }
+        this.expensesAmount = updatedExpensesAmount;
     }
 
     @Override
@@ -112,20 +157,13 @@ public class BudgetModel implements Parcelable, Serializable {
         dest.writeString(this.title);
         dest.writeString(this.country);
         dest.writeString(this.currency);
-        dest.writeValue(this.totalAmount);
-        dest.writeValue(this.remainingAmount);
+        dest.writeValue(this.budgetAmount);
+        dest.writeValue(this.expensesAmount);
         dest.writeValue(this.notificationAt);
+        dest.writeInt(this.expenses.size());
+        for (Map.Entry<String, Double> entry : this.expenses.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeValue(entry.getValue());
+        }
     }
-
-    public static final Creator<BudgetModel> CREATOR = new Creator<BudgetModel>() {
-        @Override
-        public BudgetModel createFromParcel(Parcel source) {
-            return new BudgetModel(source);
-        }
-
-        @Override
-        public BudgetModel[] newArray(int size) {
-            return new BudgetModel[size];
-        }
-    };
 }

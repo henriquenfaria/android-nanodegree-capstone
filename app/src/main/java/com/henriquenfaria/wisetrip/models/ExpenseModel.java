@@ -8,6 +8,18 @@ import java.io.Serializable;
 
 public class ExpenseModel implements Parcelable, Serializable {
 
+    public static final Creator<ExpenseModel> CREATOR = new Creator<ExpenseModel>() {
+        @Override
+        public ExpenseModel createFromParcel(Parcel source) {
+            return new ExpenseModel(source);
+        }
+
+        @Override
+        public ExpenseModel[] newArray(int size) {
+            return new ExpenseModel[size];
+        }
+    };
+
     // TripModel id
     private String id;
     private String title;
@@ -18,6 +30,12 @@ public class ExpenseModel implements Parcelable, Serializable {
 
     public ExpenseModel() {
         // Required for Firebase
+        id = "";
+        title = "";
+        country = "";
+        currency = "";
+        amount = 0d;
+        date = -1L;
     }
 
     protected ExpenseModel(Parcel in) {
@@ -105,16 +123,4 @@ public class ExpenseModel implements Parcelable, Serializable {
         dest.writeValue(this.amount);
         dest.writeValue(this.date);
     }
-
-    public static final Creator<ExpenseModel> CREATOR = new Creator<ExpenseModel>() {
-        @Override
-        public ExpenseModel createFromParcel(Parcel source) {
-            return new ExpenseModel(source);
-        }
-
-        @Override
-        public ExpenseModel[] newArray(int size) {
-            return new ExpenseModel[size];
-        }
-    };
 }

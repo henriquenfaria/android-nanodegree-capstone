@@ -1,5 +1,6 @@
 package com.henriquenfaria.wisetrip.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -122,36 +123,42 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.Request.REQUEST_TRIP_FACTORY) {
-            TripModel trip = null;
-            if (data != null) {
-                trip = data.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
-            }
+        if (requestCode == Constants.Request.REQUEST_TRIP_FACTORY
+                && resultCode != Activity.RESULT_CANCELED) {
+            handleRequestTripFactory(resultCode, data);
+        }
+    }
 
-            if (resultCode == Constants.Result.RESULT_TRIP_ADDED && trip != null) {
-                DatabaseReference databaseReference = mTripsReference.push();
-                trip.setId(databaseReference.getKey());
-                databaseReference.setValue(trip);
+    private void handleRequestTripFactory(int resultCode, Intent data) {
+        if (data == null) {
+            return;
+        }
 
-            } else if (resultCode == Constants.Result.RESULT_TRIP_CHANGED
-                    && trip != null && !TextUtils.isEmpty(trip.getId())) {
-                DatabaseReference databaseReference = mTripsReference.child(trip.getId());
-                databaseReference.setValue(trip);
+        final TripModel trip = data.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
 
-            } else if (resultCode == Constants.Result.RESULT_TRIP_REMOVED
-                    && trip != null && !TextUtils.isEmpty(trip.getId())) {
-                mTripsReference.child(trip.getId()).removeValue();
-                removeOtherTripData(trip);
+        if (resultCode == Constants.Result.RESULT_TRIP_ADDED && trip != null) {
+            DatabaseReference databaseReference = mTripsReference.push();
+            trip.setId(databaseReference.getKey());
+            databaseReference.setValue(trip);
 
-            } else if (resultCode == Constants.Result.RESULT_TRIP_ERROR) {
-                Toast.makeText(this, getString(R.string.trip_updated_error),
-                        Toast.LENGTH_SHORT).show();
-            }
+        } else if (resultCode == Constants.Result.RESULT_TRIP_CHANGED
+                && trip != null && !TextUtils.isEmpty(trip.getId())) {
+            DatabaseReference databaseReference = mTripsReference.child(trip.getId());
+            databaseReference.setValue(trip);
+
+        } else if (resultCode == Constants.Result.RESULT_TRIP_REMOVED
+                && trip != null && !TextUtils.isEmpty(trip.getId())) {
+            mTripsReference.child(trip.getId()).removeValue();
+            removeOtherTripData(trip);
+
+        } else if (resultCode == Constants.Result.RESULT_TRIP_ERROR) {
+            Toast.makeText(this, getString(R.string.trip_updated_error),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     // Remove trip attributions, expenses, budgets and places
-    private void removeOtherTripData(TripModel trip){
+    private void removeOtherTripData(TripModel trip) {
         // Remove Trip attributions
         DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
                 .child("attributions")

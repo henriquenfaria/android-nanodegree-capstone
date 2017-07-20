@@ -21,6 +21,7 @@ public class DestinationModel implements Parcelable, Serializable {
             return new DestinationModel[size];
         }
     };
+
     private String id;
     private String name;
     private double latitude;

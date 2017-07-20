@@ -182,8 +182,7 @@ public class TripHolder extends RecyclerView.ViewHolder {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Timber.d("onCancelled");
-                        //TODO: Implementation needed?
+                        Timber.d("onCancelled", databaseError.getMessage());
                     }
                 });
             } else {

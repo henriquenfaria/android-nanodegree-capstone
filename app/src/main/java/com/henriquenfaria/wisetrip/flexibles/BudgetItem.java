@@ -86,7 +86,7 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
         decimalFormat.setCurrency(currency);
 
         try {
-            String formattedTotalAmount = decimalFormat.format(mBudget.getTotalAmount());
+            String formattedTotalAmount = decimalFormat.format(mBudget.getBudgetAmount());
             holder.mTotalAmount.setText(formattedTotalAmount);
         } catch (IllegalArgumentException e) {
             Timber.e("Exception while formatting total budget amount");
@@ -95,7 +95,8 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
         }
 
         try {
-            String formattedRemainingAmount = decimalFormat.format(mBudget.getRemainingAmount());
+            String formattedRemainingAmount = decimalFormat.format(
+                    mBudget.getBudgetAmount() - mBudget.getExpensesAmount());
             holder.mRemainingAmount.setText(formattedRemainingAmount);
         } catch (IllegalArgumentException e) {
             Timber.e("Exception while formatting total budget amount");

@@ -6,7 +6,11 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
+import com.henriquenfaria.wisetrip.models.BudgetModel;
+import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.squareup.picasso.Picasso;
 
@@ -221,5 +225,12 @@ public class Utils {
         }
 
         return currencySymbol;
+    }
+
+    // Helper method that returns if an specific expense should be part of a specific budget
+    // This method can grow to include other validations, such as: payment method, label, category, etc
+    public static boolean isBudgetExpense(@NonNull BudgetModel budget, @NonNull ExpenseModel expense) {
+        return TextUtils.equals(budget.getCurrency(), expense.getCurrency())
+                && TextUtils.equals(budget.getCountry(), expense.getCountry());
     }
 }

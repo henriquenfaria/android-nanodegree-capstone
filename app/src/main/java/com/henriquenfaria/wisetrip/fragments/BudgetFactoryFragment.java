@@ -220,7 +220,7 @@ public class BudgetFactoryFragment extends BaseFragment implements
                 String str = mAmountEditText.getText().toString();
 
                 if (TextUtils.isEmpty(str)) {
-                    mBudget.setTotalAmount(0d);
+                    mBudget.setBudgetAmount(0d);
                     return;
                 }
 
@@ -235,11 +235,11 @@ public class BudgetFactoryFragment extends BaseFragment implements
                 }
 
                 try {
-                    mBudget.setTotalAmount(Double.parseDouble(str2));
+                    mBudget.setBudgetAmount(Double.parseDouble(str2));
                 } catch (NumberFormatException e) {
                     Timber.e("NumberFormatException while parsing budget amount");
                     e.printStackTrace();
-                    mBudget.setTotalAmount(0d);
+                    mBudget.setBudgetAmount(0d);
                 }
             }
         });
@@ -258,9 +258,9 @@ public class BudgetFactoryFragment extends BaseFragment implements
         country.loadFlagByCode(mFragmentActivity);
         mCurrencyIcon.setImageResource(country.getFlag());
         mCurrencyTextView.setText(mBudget.getCurrency());
-        if (mBudget.getTotalAmount() != null) {
+        if (mBudget.getBudgetAmount() != null) {
             // Hardcoding value to use only points
-            mAmountEditText.setText(String.format(Locale.US, "%.2f", mBudget.getTotalAmount()));
+            mAmountEditText.setText(String.format(Locale.US, "%.2f", mBudget.getBudgetAmount()));
         }
     }
 
@@ -273,7 +273,7 @@ public class BudgetFactoryFragment extends BaseFragment implements
             isValid = false;
         }
 
-        if (mBudget.getTotalAmount() == null || mBudget.getTotalAmount() <= 0d) {
+        if (mBudget.getBudgetAmount() == null || mBudget.getBudgetAmount() <= 0d) {
             mAmountEditText.setError(getString(R.string.mandatory_field));
             isValid = false;
         }
