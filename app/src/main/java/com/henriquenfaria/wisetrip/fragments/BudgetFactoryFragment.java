@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.henriquenfaria.wisetrip.R;
@@ -53,6 +54,10 @@ public class BudgetFactoryFragment extends BaseFragment implements
     protected EditText mAmountEditText;
     @BindView(R.id.currency_icon)
     protected ImageView mCurrencyIcon;
+    @BindView(R.id.notification_seekbar)
+    protected SeekBar mNotificationSeekbar;
+    @BindView(R.id.notification_percentage)
+    protected TextView mNotificationPercentageText;
 
     private TripModel mTrip;
     private BudgetModel mBudget;
@@ -85,6 +90,24 @@ public class BudgetFactoryFragment extends BaseFragment implements
             if (s != null) {
                 mBudget.setTitle(s.toString());
             }
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener mOnSeekbarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            mBudget.setNotificationAt((double) progress);
+            mNotificationPercentageText.setText(String.format(getString(R.string.notification_percentage), progress));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
         }
     };
 
@@ -127,6 +150,7 @@ public class BudgetFactoryFragment extends BaseFragment implements
                         Constants.Preference.PREFERENCE_DEFAULT_CURRENCY);
                 mBudget.setCountry(country);
                 mBudget.setCurrency(currency);
+                mBudget.setNotificationAt((double) Constants.General.DEFAULT_BUDGET_NOTIFICATION);
             }
 
             if (!TextUtils.isEmpty(mBudget.getId())) {
@@ -246,6 +270,10 @@ public class BudgetFactoryFragment extends BaseFragment implements
 
         mCurrencyTextView.setOnClickListener(mOnCurrencyClickListener);
 
+        mNotificationSeekbar.setMax(Constants.General.DEFAULT_BUDGET_NOTIFICATION_MAX);
+        mNotificationSeekbar.setProgress(mBudget.getNotificationAt().intValue());
+        mNotificationSeekbar.setOnSeekBarChangeListener(mOnSeekbarChangeListener);
+
         populateFormFields();
 
         return rootView;
@@ -258,10 +286,9 @@ public class BudgetFactoryFragment extends BaseFragment implements
         country.loadFlagByCode(mFragmentActivity);
         mCurrencyIcon.setImageResource(country.getFlag());
         mCurrencyTextView.setText(mBudget.getCurrency());
-        if (mBudget.getBudgetAmount() != null) {
-            // Hardcoding value to use only points
-            mAmountEditText.setText(String.format(Locale.US, "%.2f", mBudget.getBudgetAmount()));
-        }
+        mNotificationPercentageText.setText(String.format(getString(R.string.notification_percentage),
+                mBudget.getNotificationAt().intValue()));
+        mAmountEditText.setText(String.format(Locale.US, "%.2f", mBudget.getBudgetAmount()));
     }
 
     private boolean isValidFormFields() {
@@ -312,9 +339,9 @@ public class BudgetFactoryFragment extends BaseFragment implements
             String currency = Utils.getCurrencySymbol(country);
             if (!TextUtils.isEmpty(currency)) {
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
+                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country, false);
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency);
+                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency, false);
                 mBudget.setCountry(country);
                 mBudget.setCurrency(currency);
                 if (flagDrawableResID > 0) {

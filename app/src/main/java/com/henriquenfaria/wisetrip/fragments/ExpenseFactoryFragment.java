@@ -353,9 +353,9 @@ public class ExpenseFactoryFragment extends BaseFragment implements
             String currency = Utils.getCurrencySymbol(country);
             if (!TextUtils.isEmpty(currency)) {
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
+                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country, false);
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency);
+                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency, false);
                 mExpense.setCountry(country);
                 mExpense.setCurrency(currency);
                 if (flagDrawableResID > 0) {

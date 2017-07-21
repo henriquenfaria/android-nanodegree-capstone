@@ -27,6 +27,8 @@ import com.henriquenfaria.wisetrip.flexibles.BudgetItem;
 import com.henriquenfaria.wisetrip.listeners.OnBudgetInteractionListener;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
+import com.henriquenfaria.wisetrip.utils.NotificationUtils;
+import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.Comparator;
 
@@ -166,23 +168,6 @@ public class BudgetListFragment extends BaseFragment implements
         return false;
     }
 
-    // TODO: Optimize with binary search?
-    /*private ExpenseHeader getHeaderForExpense(ExpenseModel expense) {
-        List<IHeader> headerList = mBudgetAdapter.getHeaderItems();
-        if (!headerList.isEmpty()) {
-            for (IHeader header : headerList) {
-                if (header instanceof ExpenseHeader) {
-                    if (((ExpenseHeader) header).getModel().getId()
-                            .equals(expense.getDate())) {
-                        return (ExpenseHeader) header;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }*/
-
     // TODO: Move attach/detach to onResume and on onPause.
     // Preserve listener instances (Serializable) to avoid getting items again on orientation change
     private void attachDatabaseReadListener() {
@@ -196,6 +181,8 @@ public class BudgetListFragment extends BaseFragment implements
                     if (budget != null && !TextUtils.isEmpty(budget.getId())
                             && mBudgetAdapter != null) {
                         budgetAdded(budget);
+
+                        Utils.saveBooleanToSharedPrefs(mFragmentActivity, budget.getId(), false, true);
                     }
                 }
 
@@ -207,6 +194,12 @@ public class BudgetListFragment extends BaseFragment implements
                     if (budget != null && !TextUtils.isEmpty(budget.getId())
                             && mBudgetAdapter != null) {
                         budgetChanged(budget);
+
+                        if (budget.isBudgetExceeded()
+                                && !Utils.getBooleanFromSharedPrefs(mFragmentActivity, budget.getId(), false)) {
+                            NotificationUtils.notifyBudgetLimitExceeded(mFragmentActivity, budget, mTrip);
+                            Utils.saveBooleanToSharedPrefs(mFragmentActivity, budget.getId(), true, true);
+                        }
                     }
                 }
 
@@ -218,6 +211,8 @@ public class BudgetListFragment extends BaseFragment implements
                     if (budget != null && !TextUtils.isEmpty(budget.getId())
                             && mBudgetAdapter != null) {
                         budgetRemoved(budget);
+
+                        Utils.deleteSharedPrefs(mFragmentActivity, budget.getId(), true);
                     }
                 }
 

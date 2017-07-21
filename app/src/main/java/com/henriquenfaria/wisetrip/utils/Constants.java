@@ -21,6 +21,9 @@ public class Constants {
         // Fallback currency
         public static final String DEFAULT_COUNTRY = "US";
         public static final String DEFAULT_CURRENCY = "USD";
+
+        public static final int DEFAULT_BUDGET_NOTIFICATION_MAX = 99;
+        public static final int DEFAULT_BUDGET_NOTIFICATION = 20;
     }
 
     public static class Transition {
@@ -37,6 +40,7 @@ public class Constants {
         public static final String EXTRA_TRAVELER = "extra_traveler";
         public static final String EXTRA_EXPENSE = "extra_expense";
         public static final String EXTRA_BUDGET = "extra_budget";
+        public static final String EXTRA_TRIP_DETAILS_TAB_INDEX = "extra_trip_details_tab_index";
     }
 
     // Activity requests

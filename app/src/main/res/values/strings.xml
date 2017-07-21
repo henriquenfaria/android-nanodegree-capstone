@@ -59,6 +59,9 @@
     <string name="search_traveler_hint">Search traveler…</string>
     <string name="contacts_permission_title">Contacts permission</string>
     <string name="contacts_permission_message">Contacts permission is needed to find travelers in your contacts list.</string>
+    <string name="notification_at">Notification at:</string>
+    <string name="notification_percentage">%1$d%%</string>
+    <string name="budget_limit_exceeded">Budget limit exceeded</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

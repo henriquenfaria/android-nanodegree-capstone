@@ -64,9 +64,9 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
     private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
             "save_is_shared_element_transition";
-    private static final int TAB_EXPENSES_POSITION = 0;
-    private static final int TAB_BUDGETS_POSITION = 1;
-    private static final int TAB_PLACES_POSITION = 2;
+    public static final int TAB_EXPENSES_POSITION = 0;
+    public static final int TAB_BUDGETS_POSITION = 1;
+    public static final int TAB_PLACES_POSITION = 2;
 
     @BindView(R.id.attribution_container)
     protected LinearLayout mAttributionContainer;
@@ -92,6 +92,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRootReference;
     private FirebaseUser mCurrentUser;
+    private int mDefaultTabIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +104,13 @@ public class TripDetailsActivity extends AppCompatActivity implements
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRootReference = mFirebaseDatabase.getReference();
 
+        if (getIntent() != null) {
+            mTrip = getIntent().getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+            mDefaultTabIndex = getIntent().getIntExtra(Constants.Extra.EXTRA_TRIP_DETAILS_TAB_INDEX,
+                    TAB_EXPENSES_POSITION);
+        }
 
-        mTrip = getIntent().getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+
         if (mTrip == null) {
             Toast.makeText(this, R.string.could_not_load_trip_details, Toast.LENGTH_LONG).show();
             finish();
@@ -130,7 +136,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
         setupAppBarLayout();
         setupToolbar();
         setupFab();
-        setupViewPager();
+        setupViewPager(mDefaultTabIndex);
         setTransitionNames();
     }
 
@@ -234,7 +240,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
 
-    private void setupViewPager() {
+    private void setupViewPager(int defaultTabIndex) {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
@@ -246,6 +252,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
+        viewPager.setCurrentItem(defaultTabIndex);
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -433,7 +440,8 @@ public class TripDetailsActivity extends AppCompatActivity implements
             databaseReference.setValue(expense);
 
             // Add expense for applicable budgets
-            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_ADDED, budgetReference, expense);
+            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_ADDED,
+                    budgetReference, expense);
 
         } else if (resultCode == Constants.Result.RESULT_EXPENSE_CHANGED
                 && expense != null && !TextUtils.isEmpty(expense.getId())) {
@@ -442,14 +450,16 @@ public class TripDetailsActivity extends AppCompatActivity implements
             databaseReference.setValue(expense);
 
             // Update expense for applicable budgets
-            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_CHANGED, budgetReference, expense);
+            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_CHANGED,
+                    budgetReference, expense);
 
         } else if (resultCode == Constants.Result.RESULT_EXPENSE_REMOVED
                 && expense != null && !TextUtils.isEmpty(expense.getId())) {
             expenseReference.child(mTrip.getId()).child(expense.getId()).removeValue();
 
             // Remove expense from applicable budgets
-            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_REMOVED, budgetReference, expense);
+            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_REMOVED,
+                    budgetReference, expense);
 
         } else if (resultCode == Constants.Result.RESULT_EXPENSE_ERROR) {
             Toast.makeText(this, getString(R.string.expense_updated_error), Toast.LENGTH_SHORT)
@@ -458,7 +468,8 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
     // Iterates through all budgets and add/remove/update the expense if applicable
-    private void updateExpenseForCurrentBudgets(final int result, final DatabaseReference budgetReference,
+    private void updateExpenseForCurrentBudgets(final int result, final DatabaseReference
+            budgetReference,
                                                 final ExpenseModel expense) {
         budgetReference.child(mTrip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -483,7 +494,8 @@ public class TripDetailsActivity extends AppCompatActivity implements
                                 }
                             }
                             budget.updateExpensesAmount();
-                            budgetReference.child(mTrip.getId()).child(budget.getId()).setValue(budget);
+                            budgetReference.child(mTrip.getId()).child(budget.getId()).setValue
+                                    (budget);
                         }
                     }
                 }
@@ -540,8 +552,10 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
     // Iterates through all expenses and add them to the created/updated budget if applicable
-    private void updateBudgetForCurrentExpenses(final int result, final DatabaseReference expenseReference,
-                                                final DatabaseReference budgetReference, final BudgetModel budget) {
+    private void updateBudgetForCurrentExpenses(final int result, final DatabaseReference
+            expenseReference,
+                                                final DatabaseReference budgetReference, final
+                                                BudgetModel budget) {
         expenseReference.child(mTrip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

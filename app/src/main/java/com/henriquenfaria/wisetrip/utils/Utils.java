@@ -26,7 +26,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 
-/* Utility class with static helper methods */
+/* Utility class with static common helper methods */
 public class Utils {
 
     public static String getFormattedFullTripDateText(long startDateMillis, long endDateMillis) {
@@ -156,11 +156,26 @@ public class Utils {
         return file.exists();
     }
 
-    public static void saveBooleanToSharedPrefs(Context context, String key, boolean value) {
+    public static void saveBooleanToSharedPrefs(Context context, String key, boolean value, boolean isImmediate) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(key, value);
-        editor.apply();
+        if (isImmediate) {
+            editor.commit();
+        } else {
+            editor.apply();
+        }
+    }
+
+    public static void deleteSharedPrefs(Context context, String key, boolean isImmediate) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(key);
+        if (isImmediate) {
+            editor.commit();
+        } else {
+            editor.apply();
+        }
     }
 
     public static boolean getBooleanFromSharedPrefs(Context context, String key,
@@ -169,11 +184,15 @@ public class Utils {
         return sharedPrefs.getBoolean(key, defaultValue);
     }
 
-    public static void saveStringToSharedPrefs(Context context, String key, String value) {
+    public static void saveStringToSharedPrefs(Context context, String key, String value, boolean isImmediate) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.apply();
+        if (isImmediate) {
+            editor.commit();
+        } else {
+            editor.apply();
+        }
     }
 
     public static String getStringFromSharedPrefs(Context context, String key) {

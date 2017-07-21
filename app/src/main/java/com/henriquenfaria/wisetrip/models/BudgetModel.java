@@ -132,6 +132,11 @@ public class BudgetModel implements Parcelable, Serializable {
         this.expensesAmount = updatedExpensesAmount;
     }
 
+    public boolean isBudgetExceeded() {
+        double limit = (this.budgetAmount * (this.notificationAt / 100));
+        return this.expensesAmount > limit;
+    }
+
     @Override
     public int hashCode() {
         return id.hashCode();

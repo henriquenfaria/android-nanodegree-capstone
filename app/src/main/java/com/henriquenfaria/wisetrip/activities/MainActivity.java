@@ -247,17 +247,17 @@ public class MainActivity extends AppCompatActivity
                 Constants.Preference.PREFERENCE_DEFAULT_COUNTRY))) {
             if (!TextUtils.isEmpty(country) && country.length() == 2) {
                 Utils.saveStringToSharedPrefs(context,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country);
+                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country, false);
                 Utils.saveStringToSharedPrefs(context,
                         Constants.Preference.PREFERENCE_DEFAULT_CURRENCY,
-                        Utils.getCurrencySymbol(country));
+                        Utils.getCurrencySymbol(country), false);
             } else {
                 Utils.saveStringToSharedPrefs(context,
                         Constants.Preference.PREFERENCE_DEFAULT_COUNTRY,
-                        Constants.General.DEFAULT_COUNTRY);
+                        Constants.General.DEFAULT_COUNTRY, false);
                 Utils.saveStringToSharedPrefs(context,
                         Constants.Preference.PREFERENCE_DEFAULT_CURRENCY,
-                        Constants.General.DEFAULT_CURRENCY);
+                        Constants.General.DEFAULT_CURRENCY, false);
             }
         }
     }
