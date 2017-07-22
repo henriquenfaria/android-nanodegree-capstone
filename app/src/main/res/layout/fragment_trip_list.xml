@@ -15,7 +15,7 @@
         android:clipToPadding="false"
         android:paddingBottom="@dimen/trip_list_vertical_padding"
         android:paddingTop="@dimen/trip_list_vertical_padding"
-        android:scrollbarStyle="outsideOverlay"
+        android:scrollbarStyle="outsideInset"
         android:scrollbars="vertical"/>
 
     <TextView
