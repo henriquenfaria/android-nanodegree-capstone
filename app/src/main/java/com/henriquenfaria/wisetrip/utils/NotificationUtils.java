@@ -17,7 +17,7 @@ import com.henriquenfaria.wisetrip.models.TripModel;
 /* Utility class with static helper methods for notifications */
 public class NotificationUtils {
 
-    public static final int BUDGET_LIMIT_EXCEEDED_NOTIFICATION_ID = 1;
+    public static final int BUDGET_LIMIT_EXCEEDED_NOTIFICATION_START_ID = 1;
 
     public static void notifyBudgetLimitExceeded(Context context, BudgetModel budget,
                                                  TripModel trip) {
@@ -45,6 +45,15 @@ public class NotificationUtils {
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        mNotificationManager.notify(BUDGET_LIMIT_EXCEEDED_NOTIFICATION_ID, mBuilder.build());
+        // Do not replace previous budget notification
+        int nextNotificationId =  Utils.getIntFromSharedPrefs(context,
+                Constants.Preference.PREFERENCE_LAST_BUDGET_NOTIFICATION_ID,
+                BUDGET_LIMIT_EXCEEDED_NOTIFICATION_START_ID) + 1;
+
+        Utils.saveIntToSharedPrefs(context,
+                Constants.Preference.PREFERENCE_LAST_BUDGET_NOTIFICATION_ID,
+                nextNotificationId, true);
+
+        mNotificationManager.notify(nextNotificationId, mBuilder.build());
     }
 }

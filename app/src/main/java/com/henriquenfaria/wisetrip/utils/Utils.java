@@ -195,9 +195,25 @@ public class Utils {
         }
     }
 
-    public static String getStringFromSharedPrefs(Context context, String key) {
+    public static String getStringFromSharedPrefs(Context context, String key, String defaultValue) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPrefs.getString(key, "");
+        return sharedPrefs.getString(key, defaultValue);
+    }
+
+    public static void saveIntToSharedPrefs(Context context, String key, int value, boolean isImmediate) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, value);
+        if (isImmediate) {
+            editor.commit();
+        } else {
+            editor.apply();
+        }
+    }
+
+    public static int getIntFromSharedPrefs(Context context, String key, int defaultValue) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPrefs.getInt(key, defaultValue);
     }
 
     // Based on https://stackoverflow.com/a/24397810/2983102

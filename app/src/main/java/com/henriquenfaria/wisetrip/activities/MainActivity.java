@@ -244,19 +244,20 @@ public class MainActivity extends AppCompatActivity
         Locale defaultLocale = Locale.getDefault();
         String country = defaultLocale.getCountry();
         if (TextUtils.isEmpty(Utils.getStringFromSharedPrefs(context,
-                Constants.Preference.PREFERENCE_DEFAULT_COUNTRY))) {
+                Constants.Preference.PREFERENCE_LAST_USED_COUNTRY,
+                Constants.General.DEFAULT_COUNTRY))) {
             if (!TextUtils.isEmpty(country) && country.length() == 2) {
                 Utils.saveStringToSharedPrefs(context,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country, false);
+                        Constants.Preference.PREFERENCE_LAST_USED_COUNTRY, country, false);
                 Utils.saveStringToSharedPrefs(context,
-                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY,
+                        Constants.Preference.PREFERENCE_LAST_USED_CURRENCY,
                         Utils.getCurrencySymbol(country), false);
             } else {
                 Utils.saveStringToSharedPrefs(context,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY,
+                        Constants.Preference.PREFERENCE_LAST_USED_COUNTRY,
                         Constants.General.DEFAULT_COUNTRY, false);
                 Utils.saveStringToSharedPrefs(context,
-                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY,
+                        Constants.Preference.PREFERENCE_LAST_USED_CURRENCY,
                         Constants.General.DEFAULT_CURRENCY, false);
             }
         }

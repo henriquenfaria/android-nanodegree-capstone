@@ -79,8 +79,10 @@ public class Constants {
 
     // Shared Preferences
     public static class Preference {
-        public static final String PREFERENCE_DEFAULT_COUNTRY = "preference_default_country";
-        public static final String PREFERENCE_DEFAULT_CURRENCY = "preference_default_currency";
+        public static final String PREFERENCE_LAST_USED_COUNTRY = "preference_last_used_country";
+        public static final String PREFERENCE_LAST_USED_CURRENCY = "preference_last_used_currency";
+        public static final String PREFERENCE_LAST_BUDGET_NOTIFICATION_ID
+                = "preference_last_budget_notification_id";
     }
 
 }

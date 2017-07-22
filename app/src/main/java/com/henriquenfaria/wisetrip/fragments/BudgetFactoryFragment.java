@@ -145,9 +145,11 @@ public class BudgetFactoryFragment extends BaseFragment implements
                 mBudget = new BudgetModel();
                 //mBudget.setDate(DateTime.now().withTimeAtStartOfDay().getMillis());
                 String country = Utils.getStringFromSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY);
+                        Constants.Preference.PREFERENCE_LAST_USED_COUNTRY,
+                        Constants.General.DEFAULT_COUNTRY);
                 String currency = Utils.getStringFromSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY);
+                        Constants.Preference.PREFERENCE_LAST_USED_CURRENCY,
+                        Constants.General.DEFAULT_CURRENCY);
                 mBudget.setCountry(country);
                 mBudget.setCurrency(currency);
                 mBudget.setNotificationAt((double) Constants.General.DEFAULT_BUDGET_NOTIFICATION);
@@ -339,9 +341,9 @@ public class BudgetFactoryFragment extends BaseFragment implements
             String currency = Utils.getCurrencySymbol(country);
             if (!TextUtils.isEmpty(currency)) {
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_COUNTRY, country, false);
+                        Constants.Preference.PREFERENCE_LAST_USED_COUNTRY, country, false);
                 Utils.saveStringToSharedPrefs(mFragmentActivity,
-                        Constants.Preference.PREFERENCE_DEFAULT_CURRENCY, currency, false);
+                        Constants.Preference.PREFERENCE_LAST_USED_CURRENCY, currency, false);
                 mBudget.setCountry(country);
                 mBudget.setCurrency(currency);
                 if (flagDrawableResID > 0) {
