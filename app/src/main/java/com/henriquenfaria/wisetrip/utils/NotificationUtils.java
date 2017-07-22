@@ -36,7 +36,7 @@ public class NotificationUtils {
                         .addNextIntent(tripDetails)
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher_round)
+        mBuilder.setSmallIcon(getNotificationIcon())
                 .setContentTitle(budget.getTitle())
                 .setContentText(context.getString(R.string.budget_limit_exceeded))
                 .setContentIntent(pendingIntent)
@@ -55,5 +55,11 @@ public class NotificationUtils {
                 nextNotificationId, true);
 
         mNotificationManager.notify(nextNotificationId, mBuilder.build());
+    }
+
+    // Based on https://stackoverflow.com/a/29207365
+    private static int getNotificationIcon() {
+        boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+        return useWhiteIcon ? R.drawable.ic_notification : R.mipmap.ic_launcher;
     }
 }
