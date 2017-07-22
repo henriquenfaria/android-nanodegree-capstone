@@ -82,7 +82,7 @@ public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
             currency = Currency.getInstance(Constants.General.DEFAULT_CURRENCY);
         }
 
-        DecimalFormat decimalFormat = new DecimalFormat("¤ ###,###,###.00");
+        DecimalFormat decimalFormat = new DecimalFormat(" ¤ ###,###,##0.00");
         decimalFormat.setCurrency(currency);
 
         try {
