@@ -66,7 +66,7 @@ public class BudgetListFragment extends BaseFragment implements
     private TripModel mTrip;
     private OnBudgetInteractionListener mOnBudgetInteractionListener;
 
-    // Create new Fragment instance with TripModel info
+    // Create new Fragment instance with BudgetModel info
     public static BudgetListFragment newInstance(TripModel trip) {
         BudgetListFragment fragment = new BudgetListFragment();
         Bundle args = new Bundle();

@@ -115,7 +115,7 @@ public class BudgetFactoryFragment extends BaseFragment implements
         // Required empty public constructor
     }
 
-    // Create new Fragment instance with TripModel info
+    // Create new Fragment instance with BudgetModel info
     public static BudgetFactoryFragment newInstance(TripModel trip, BudgetModel budget) {
         BudgetFactoryFragment fragment = new BudgetFactoryFragment();
         Bundle args = new Bundle();
@@ -323,8 +323,8 @@ public class BudgetFactoryFragment extends BaseFragment implements
 
     private void createDeleteTripConfirmationDialog() {
         mAlertDialogFragment = new AlertDialogFragment();
-        mAlertDialogFragment.setTitle(R.string.title_delete_trip);
-        mAlertDialogFragment.setMessage(R.string.message_delete_trip);
+        mAlertDialogFragment.setTitle(R.string.title_delete_budget);
+        mAlertDialogFragment.setMessage(R.string.message_delete_budget);
         mAlertDialogFragment.setOnAlertListener(this);
         mAlertDialogFragment.show(getFragmentManager(), TAG_ALERT_DIALOG_FRAGMENT);
     }

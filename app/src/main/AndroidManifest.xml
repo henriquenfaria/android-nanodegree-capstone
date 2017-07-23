@@ -56,6 +56,13 @@
                 android:value=".activities.TripDetailsActivity"/>
         </activity>
         <activity
+            android:name=".activities.PlaceFactoryActivity"
+            android:parentActivityName=".activities.TripDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.TripDetailsActivity"/>
+        </activity>
+        <activity
             android:name=".activities.TravelerActivity"
             android:parentActivityName=".activities.TripFactoryActivity">
             <meta-data

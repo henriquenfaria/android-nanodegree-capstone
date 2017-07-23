@@ -12,6 +12,7 @@
     <string name="create_new_trip">Create new Trip</string>
     <string name="create_new_expense">Create new Expense</string>
     <string name="create_new_budget">Create new Budget</string>
+    <string name="create_new_place">Create new Place</string>
     <string name="select_country">Select Country</string>
     <string name="hint_start_date">Start Date *</string>
     <string name="hint_expense_date">Expense Date *</string>
@@ -36,11 +37,18 @@
     <string name="budget_updated_error">Error while updating the budget</string>
     <string name="expense_loading_error">Error loading expense</string>
     <string name="budget_loading_error">Error loading budget</string>
+    <string name="place_loading_error">Error loading place</string>
     <string name="done">Done</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="title_delete_trip">Delete Trip</string>
+    <string name="title_delete_expense">Delete Expense</string>
+    <string name="title_delete_budget">Delete Budget</string>
+    <string name="title_delete_place">Delete Place</string>
     <string name="message_delete_trip">Do you want to permanently delete this Trip?</string>
+    <string name="message_delete_expense">Do you want to permanently delete this Expense?</string>
+    <string name="message_delete_budget">Do you want to permanently delete this Budget?</string>
+    <string name="message_delete_place">Do you want to permanently delete this Place?</string>
     <string name="current">Current</string>
     <string name="upcoming">Upcoming</string>
     <string name="past">Past</string>

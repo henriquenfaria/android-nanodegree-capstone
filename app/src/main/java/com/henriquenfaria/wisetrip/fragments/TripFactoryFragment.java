@@ -273,7 +273,7 @@ public class TripFactoryFragment extends BaseFragment implements
             mOnTripFactoryListener = (OnTripFactoryListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnExpenseFactoryListener");
+                    + " must implement OnTripFactoryListener");
         }
     }
 

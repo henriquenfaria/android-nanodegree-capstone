@@ -44,7 +44,7 @@ import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
 import timber.log.Timber;
 
-public class ExpenseListFragment extends BaseFragment implements
+public class PlaceListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
@@ -71,9 +71,9 @@ public class ExpenseListFragment extends BaseFragment implements
     private TripModel mTrip;
     private OnExpenseInteractionListener mOnExpenseInteractionListener;
 
-    // Create new Fragment instance with ExpenseModel info
-    public static ExpenseListFragment newInstance(TripModel trip) {
-        ExpenseListFragment fragment = new ExpenseListFragment();
+    // Create new Fragment instance with PlaceModel info
+    public static PlaceListFragment newInstance(TripModel trip) {
+        PlaceListFragment fragment = new PlaceListFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_TRIP, trip);
         fragment.setArguments(args);

@@ -37,11 +37,14 @@ import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
 import com.henriquenfaria.wisetrip.fragments.BudgetListFragment;
 import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
+import com.henriquenfaria.wisetrip.fragments.PlaceListFragment;
 import com.henriquenfaria.wisetrip.listeners.OnBudgetInteractionListener;
 import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
+import com.henriquenfaria.wisetrip.listeners.OnPlaceInteractionListener;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Features;
@@ -60,7 +63,8 @@ import timber.log.Timber;
 /* Activity to display all related data of a specific TripModel */
 public class TripDetailsActivity extends AppCompatActivity implements
         OnExpenseInteractionListener,
-        OnBudgetInteractionListener {
+        OnBudgetInteractionListener,
+        OnPlaceInteractionListener {
 
     private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
             "save_is_shared_element_transition";
@@ -164,9 +168,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
                         startBudgetFactory(null);
                         break;
                     case TAB_PLACES_POSITION:
-                        //TODO: Implement
-                        Toast.makeText(TripDetailsActivity.this, R.string.places,
-                                Toast.LENGTH_SHORT).show();
+                        startPlaceFactory(null);
                         break;
                 }
             }
@@ -246,9 +248,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
         adapter.addFragment(BudgetListFragment.newInstance(mTrip), getString(R.string.budgets));
-
-        //TODO: Temporary, must set Places fragment
-        adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
+        adapter.addFragment(PlaceListFragment.newInstance(mTrip), getString(R.string.places));
 
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
@@ -408,6 +408,16 @@ public class TripDetailsActivity extends AppCompatActivity implements
             intent.putExtra(Constants.Extra.EXTRA_BUDGET, (Parcelable) budget);
         }
         startActivityForResult(intent, Constants.Request.REQUEST_BUDGET_FACTORY);
+    }
+
+    public void startPlaceFactory(PlaceModel place) {
+        Intent intent = new Intent(TripDetailsActivity.this,
+                PlaceFactoryActivity.class);
+        intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
+        if (place != null) {
+            intent.putExtra(Constants.Extra.EXTRA_PLACE, (Parcelable) place);
+        }
+        startActivityForResult(intent, Constants.Request.REQUEST_PLACE_FACTORY);
     }
 
     @Override
@@ -614,6 +624,11 @@ public class TripDetailsActivity extends AppCompatActivity implements
     @Override
     public void onBudgetClicked(BudgetModel budget) {
         startBudgetFactory(budget);
+    }
+
+    @Override
+    public void onPlaceClicked(PlaceModel place) {
+        startPlaceFactory(place);
     }
 
     private static abstract class AppBarStateChangeListener implements
