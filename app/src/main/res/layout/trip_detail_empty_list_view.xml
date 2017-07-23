@@ -9,20 +9,11 @@
     android:gravity="center_vertical"
     tools:alpha="1.0">
 
-    <!-- <ImageView
-        android:id="@+id/label_background"
-        android:layout_width="164dp"
-        android:layout_height="164dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-16dp"
-        android:alpha="0.2"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_xml_grey600_48dp"/> -->
-
     <TextView
         android:id="@+id/empty_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/trip_detail_empty_list_view_margin_bottom"
         android:freezesText="true"
         android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
