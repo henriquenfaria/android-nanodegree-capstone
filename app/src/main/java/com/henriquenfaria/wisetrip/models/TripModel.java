@@ -39,7 +39,7 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
     private List<DestinationModel> destinations;
 
     public TripModel() {
-        // Required for Firebase
+        // Required by Firebase
         id = "";
         title = "";
         startDate = -1L;

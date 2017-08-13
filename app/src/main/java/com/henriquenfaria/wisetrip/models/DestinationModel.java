@@ -3,6 +3,7 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.places.Place;
 
@@ -10,48 +11,39 @@ import java.io.Serializable;
 
 public class DestinationModel implements Parcelable, Serializable {
 
-    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
-        @Override
-        public DestinationModel createFromParcel(Parcel source) {
-            return new DestinationModel(source);
-        }
-
-        @Override
-        public DestinationModel[] newArray(int size) {
-            return new DestinationModel[size];
-        }
-    };
-
     private String id;
     private String name;
-    private double latitude;
-    private double longitude;
-    private String attribution;
+    private String address;
+    private String attributions;
+    private String phoneNumber;
+    private String websiteUri;
+    private Long priceLevel;
+    private Double rating;
+    private LatLngModel latLng;
+    private LatLngBoundsModel latLngBounds;
+
 
     public DestinationModel() {
-        // Required for Firebase
+        // Required by Firebase
     }
 
     public DestinationModel(Place place) {
         id = place.getId();
-        name = String.valueOf(place.getName());
+        name = place.getName() != null ? String.valueOf(place.getName()) : "";
+        address = place.getAddress() != null ? String.valueOf(place.getAddress()) : "";
+        attributions = place.getAttributions() != null ? String.valueOf(place.getAttributions())
+                : "";
+        phoneNumber = place.getPhoneNumber() != null ? String.valueOf(place.getPhoneNumber()) : "";
+        websiteUri = place.getWebsiteUri() != null ? place.getWebsiteUri().toString() : "";
+        priceLevel = (long) place.getPriceLevel();
+        rating = (double) place.getRating();
         if (place.getLatLng() != null) {
-            latitude = place.getLatLng().latitude;
-            longitude = place.getLatLng().longitude;
-        } else {
-            // Undefined
-            latitude = -1;
-            longitude = -1;
+            latLng = new LatLngModel(place.getLatLng());
         }
-        attribution = "";
-    }
 
-    protected DestinationModel(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.latitude = in.readDouble();
-        this.longitude = in.readDouble();
-        this.attribution = in.readString();
+        if (place.getViewport() != null) {
+            latLngBounds = new LatLngBoundsModel((place.getViewport()));
+        }
     }
 
     public String getId() {
@@ -70,28 +62,30 @@ public class DestinationModel implements Parcelable, Serializable {
         this.name = name;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public LatLngModel getLatLng() {
+        return latLng;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLatLng(LatLngModel latLng) {
+        this.latLng = latLng;
     }
 
-    public double getLongitude() {
-        return longitude;
+    @Nullable
+    public LatLngBoundsModel getLatLngBounds() {
+        return latLngBounds;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLatLngBounds(LatLngBoundsModel latLngBounds) {
+        this.latLngBounds = latLngBounds;
     }
 
-    public String getAttribution() {
-        return attribution;
+    @Nullable
+    public String getAttributions() {
+        return attributions;
     }
 
-    public void setAttribution(String attribution) {
-        this.attribution = attribution;
+    public void setAttributions(String attributions) {
+        this.attributions = attributions;
     }
 
     @Override
@@ -103,8 +97,38 @@ public class DestinationModel implements Parcelable, Serializable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
         dest.writeString(this.name);
-        dest.writeDouble(this.latitude);
-        dest.writeDouble(this.longitude);
-        dest.writeString(this.attribution);
+        dest.writeString(this.address);
+        dest.writeString(this.phoneNumber);
+        dest.writeValue(this.priceLevel);
+        dest.writeValue(this.rating);
+        dest.writeString(this.websiteUri);
+        dest.writeParcelable(this.latLng, flags);
+        dest.writeParcelable(this.latLngBounds, flags);
+        dest.writeString(this.attributions);
     }
+
+    protected DestinationModel(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.address = in.readString();
+        this.phoneNumber = in.readString();
+        this.priceLevel = (Long) in.readValue(Long.class.getClassLoader());
+        this.rating = (Double) in.readValue(Double.class.getClassLoader());
+        this.websiteUri = in.readString();
+        this.latLng = in.readParcelable(LatLngModel.class.getClassLoader());
+        this.latLngBounds = in.readParcelable(LatLngBoundsModel.class.getClassLoader());
+        this.attributions = in.readString();
+    }
+
+    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
+        @Override
+        public DestinationModel createFromParcel(Parcel source) {
+            return new DestinationModel(source);
+        }
+
+        @Override
+        public DestinationModel[] newArray(int size) {
+            return new DestinationModel[size];
+        }
+    };
 }

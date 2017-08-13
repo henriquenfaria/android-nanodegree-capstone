@@ -29,7 +29,7 @@ public class ExpenseModel implements Parcelable, Serializable {
     private Long date;
 
     public ExpenseModel() {
-        // Required for Firebase
+        // Required by Firebase
         id = "";
         title = "";
         country = "";

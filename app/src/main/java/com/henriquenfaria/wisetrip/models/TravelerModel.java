@@ -32,7 +32,7 @@ public class TravelerModel implements Parcelable, Serializable {
     private Uri photoUri;
 
     public TravelerModel() {
-        // Required for Firebase
+        // Required by Firebase
         contactId = "";
         name = "";
     }

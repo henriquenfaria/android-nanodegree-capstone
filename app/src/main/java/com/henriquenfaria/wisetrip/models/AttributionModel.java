@@ -25,7 +25,7 @@ public class AttributionModel implements Parcelable, Serializable {
     private String text;
 
     public AttributionModel() {
-        // Required for Firebase
+        // Required by Firebase
         id = "";
         text = "";
     }

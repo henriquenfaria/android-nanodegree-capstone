@@ -11,6 +11,7 @@ public class PlaceModel implements Parcelable, Serializable {
     private String id;
     private String name;
     private Long date;
+    private DestinationModel destination;
 
     public String getId() {
         return id;
@@ -36,6 +37,14 @@ public class PlaceModel implements Parcelable, Serializable {
         this.date = date;
     }
 
+    public DestinationModel getDestination() {
+        return destination;
+    }
+
+    public void setDestination(DestinationModel destination) {
+        this.destination = destination;
+    }
+
     public PlaceModel() {
         id = "";
         name = "";
@@ -52,12 +61,14 @@ public class PlaceModel implements Parcelable, Serializable {
         dest.writeString(this.id);
         dest.writeString(this.name);
         dest.writeValue(this.date);
+        dest.writeParcelable(this.destination, flags);
     }
 
     protected PlaceModel(Parcel in) {
         this.id = in.readString();
         this.name = in.readString();
         this.date = (Long) in.readValue(Long.class.getClassLoader());
+        this.destination = in.readParcelable(DestinationModel.class.getClassLoader());
     }
 
     public static final Creator<PlaceModel> CREATOR = new Creator<PlaceModel>() {
