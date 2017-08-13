@@ -70,6 +70,5 @@
                 android:freezesText="true"
                 android:hint="@string/hint_expense_date"/>
         </LinearLayout>
-
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -40,7 +40,6 @@ public class LatLngBoundsModel implements Parcelable {
         this.northeast = northeast;
     }
 
-
     @Override
     public int describeContents() {
         return 0;

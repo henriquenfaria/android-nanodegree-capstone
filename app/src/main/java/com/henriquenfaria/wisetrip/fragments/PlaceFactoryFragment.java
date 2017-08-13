@@ -213,9 +213,9 @@ public class PlaceFactoryFragment extends BaseFragment implements
                 Place place = PlacePicker.getPlace(mFragmentActivity, data);
                 if (place != null) {
                     DestinationModel destination = new DestinationModel(place);
-                    //TODO: Finish implementation and remove toast
-                    Toast.makeText(mFragmentActivity, destination.getName(), Toast.LENGTH_SHORT)
-                            .show();
+                    mPlace.setDestination(destination);
+                    mDestinationTextView.setText(destination.getName());
+                    mDestinationTextView.setError(null);
                 }
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getActivity(), data);
@@ -259,9 +259,13 @@ public class PlaceFactoryFragment extends BaseFragment implements
             isValid = false;
         }
 
+        if (mPlace.getDestination() == null){
+            mDestinationTextView.setError(getString(R.string.mandatory_field));
+            isValid = false;
+        }
+
         return isValid;
     }
-
 
     private void savePlace() {
         if (isValidFormFields()) {
