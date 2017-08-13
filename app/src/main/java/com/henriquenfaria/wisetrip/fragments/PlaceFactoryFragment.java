@@ -195,7 +195,12 @@ public class PlaceFactoryFragment extends BaseFragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_place_factory, container, false);
         ButterKnife.bind(this, rootView);
-        mOnPlaceFactoryListener.changeActionBarTitle(getString(R.string.create_new_place));
+
+        if (mIsEditMode) {
+            mOnPlaceFactoryListener.changeActionBarTitle(getString(R.string.edit_place));
+        } else {
+            mOnPlaceFactoryListener.changeActionBarTitle(getString(R.string.create_new_place));
+        }
 
         mDestinationTextView.setOnClickListener(mOnDestinationClickListener);
         mDateTextView.setOnClickListener(mOnDateClickListener);

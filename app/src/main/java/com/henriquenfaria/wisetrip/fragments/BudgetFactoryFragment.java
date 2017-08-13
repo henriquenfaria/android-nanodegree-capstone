@@ -231,7 +231,12 @@ public class BudgetFactoryFragment extends BaseFragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_budget_factory, container, false);
         ButterKnife.bind(this, rootView);
-        mOnBudgetFactoryListener.changeActionBarTitle(getString(R.string.create_new_budget));
+
+        if (mIsEditMode) {
+            mOnBudgetFactoryListener.changeActionBarTitle(getString(R.string.edit_budget));
+        } else {
+            mOnBudgetFactoryListener.changeActionBarTitle(getString(R.string.create_new_budget));
+        }
 
         mBudgetTitleEditText.addTextChangedListener(mBudgetTitleTextWatcher);
 

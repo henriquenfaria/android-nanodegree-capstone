@@ -261,7 +261,12 @@ public class TripFactoryFragment extends BaseFragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_trip_factory, container, false);
         ButterKnife.bind(this, rootView);
-        mOnTripFactoryListener.changeActionBarTitle(getString(R.string.create_new_trip));
+
+        if (mIsEditMode) {
+            mOnTripFactoryListener.changeActionBarTitle(getString(R.string.edit_trip));
+        } else {
+            mOnTripFactoryListener.changeActionBarTitle(getString(R.string.create_new_trip));
+        }
 
         mTripTitleEditText.addTextChangedListener(mTripTitleTextWatcher);
         mStartDateTextView.setOnClickListener(mOnDateClickListener);

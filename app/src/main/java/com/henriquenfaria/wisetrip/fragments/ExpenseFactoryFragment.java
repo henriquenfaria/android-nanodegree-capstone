@@ -231,7 +231,12 @@ public class ExpenseFactoryFragment extends BaseFragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_expense_factory, container, false);
         ButterKnife.bind(this, rootView);
-        mOnExpenseFactoryListener.changeActionBarTitle(getString(R.string.create_new_expense));
+
+        if (mIsEditMode) {
+            mOnExpenseFactoryListener.changeActionBarTitle(getString(R.string.edit_expense));
+        } else {
+            mOnExpenseFactoryListener.changeActionBarTitle(getString(R.string.create_new_expense));
+        }
 
         mExpenseTitleEditText.addTextChangedListener(mExpenseTitleTextWatcher);
         mDateTextView.setOnClickListener(mOnDateClickListener);
