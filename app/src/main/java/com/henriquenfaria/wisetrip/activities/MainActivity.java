@@ -1,6 +1,5 @@
 package com.henriquenfaria.wisetrip.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,11 +22,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripListFragment;
-import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
@@ -47,14 +43,11 @@ public class MainActivity extends AppCompatActivity
     private Fragment mFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mTripsReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
 
@@ -64,10 +57,6 @@ public class MainActivity extends AppCompatActivity
             finish();
             return;
         }
-
-        mTripsReference = mFirebaseDatabase.getReference()
-                .child("trips")
-                .child(mCurrentUser.getUid());
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -118,76 +107,8 @@ public class MainActivity extends AppCompatActivity
 
     private void startTripFactory() {
         Intent intent = new Intent(MainActivity.this, TripFactoryActivity.class);
-        startActivityForResult(intent, Constants.Request.REQUEST_TRIP_FACTORY);
+        startActivity(intent);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.Request.REQUEST_TRIP_FACTORY
-                && resultCode != Activity.RESULT_CANCELED) {
-            handleRequestTripFactory(resultCode, data);
-        }
-    }
-
-    private void handleRequestTripFactory(int resultCode, Intent data) {
-        if (data == null) {
-            return;
-        }
-
-        final TripModel trip = data.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
-
-        if (resultCode == Constants.Result.RESULT_TRIP_ADDED && trip != null) {
-            DatabaseReference databaseReference = mTripsReference.push();
-            trip.setId(databaseReference.getKey());
-            databaseReference.setValue(trip);
-
-        } else if (resultCode == Constants.Result.RESULT_TRIP_CHANGED
-                && trip != null && !TextUtils.isEmpty(trip.getId())) {
-            DatabaseReference databaseReference = mTripsReference.child(trip.getId());
-            databaseReference.setValue(trip);
-
-        } else if (resultCode == Constants.Result.RESULT_TRIP_REMOVED
-                && trip != null && !TextUtils.isEmpty(trip.getId())) {
-            mTripsReference.child(trip.getId()).removeValue();
-            removeOtherTripData(trip);
-
-        } else if (resultCode == Constants.Result.RESULT_TRIP_ERROR) {
-            Toast.makeText(this, getString(R.string.trip_updated_error),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // Remove trip attributions, expenses, budgets and places
-    private void removeOtherTripData(TripModel trip) {
-        // Remove Trip attributions
-        DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
-                .child("attributions")
-                .child(mCurrentUser.getUid())
-                .child(trip.getId());
-        attributionsReference.removeValue();
-
-        // Remove Trip expenses
-        DatabaseReference expensesReference = mFirebaseDatabase.getReference()
-                .child("expenses")
-                .child(mCurrentUser.getUid())
-                .child(trip.getId());
-        expensesReference.removeValue();
-
-        // Remove Trip budgets
-        DatabaseReference budgetsReference = mFirebaseDatabase.getReference()
-                .child("budgets")
-                .child(mCurrentUser.getUid())
-                .child(trip.getId());
-        budgetsReference.removeValue();
-
-        // Remove Trip places
-         DatabaseReference placesReference = mFirebaseDatabase.getReference()
-                .child("places")
-                .child(mCurrentUser.getUid())
-                .child(trip.getId());
-        placesReference.removeValue();
-    }
-
 
     @Override
     public void onBackPressed() {

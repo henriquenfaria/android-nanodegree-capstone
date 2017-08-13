@@ -3,10 +3,15 @@ package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.TripFactoryFragment;
 import com.henriquenfaria.wisetrip.models.TripModel;
@@ -19,11 +24,18 @@ public class TripFactoryActivity extends AppCompatActivity
 
     private TripModel mTrip;
     private TripFactoryFragment mTripFactoryFragment;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mCurrentUser;
+    private FirebaseDatabase mFirebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_factory);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -51,7 +63,6 @@ public class TripFactoryActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void changeActionBarTitle(String newTitle) {
         if (getSupportActionBar() != null) {
@@ -62,12 +73,24 @@ public class TripFactoryActivity extends AppCompatActivity
     @Override
     public void saveTrip(TripModel trip, boolean isEditMode) {
         if (trip != null) {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
-            setResult(isEditMode ? Constants.Result.RESULT_TRIP_CHANGED
-                    : Constants.Result.RESULT_TRIP_ADDED, resultIntent);
+            final DatabaseReference tripReference
+                    = mFirebaseDatabase.getReference().child("trips").child(mCurrentUser.getUid());
+
+            if (isEditMode && !TextUtils.isEmpty(trip.getId())) {
+                DatabaseReference databaseReference = tripReference.child(trip.getId());
+                databaseReference.setValue(trip);
+            } else if (!isEditMode) {
+                DatabaseReference databaseReference = tripReference.push();
+                trip.setId(databaseReference.getKey());
+                databaseReference.setValue(trip);
+            } else {
+                Toast.makeText(this, getString(R.string.trip_updated_error),
+                        Toast.LENGTH_SHORT).show();
+            }
+
         } else {
-            setResult(Constants.Result.RESULT_TRIP_ERROR);
+            Toast.makeText(this, getString(R.string.trip_updated_error),
+                    Toast.LENGTH_SHORT).show();
         }
 
         finish();
@@ -75,15 +98,49 @@ public class TripFactoryActivity extends AppCompatActivity
 
     @Override
     public void deleteTrip(TripModel trip) {
+        final DatabaseReference tripReference
+                = mFirebaseDatabase.getReference().child("trips").child(mCurrentUser.getUid());
+
         if (trip != null) {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
-            setResult(Constants.Result.RESULT_TRIP_REMOVED, resultIntent);
+            tripReference.child(trip.getId()).removeValue();
+            removeOtherTripData(trip);
         } else {
-            setResult(Constants.Result.RESULT_TRIP_ERROR);
+            Toast.makeText(this, getString(R.string.trip_updated_error),
+                    Toast.LENGTH_SHORT).show();
         }
 
         finish();
+    }
+
+    // Remove trip attributions, expenses, budgets and places
+    private void removeOtherTripData(TripModel trip) {
+        // Remove Trip attributions
+        final DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
+                .child("attributions")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        attributionsReference.removeValue();
+
+        // Remove Trip expenses
+        final DatabaseReference expensesReference = mFirebaseDatabase.getReference()
+                .child("expenses")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        expensesReference.removeValue();
+
+        // Remove Trip budgets
+        final DatabaseReference budgetsReference = mFirebaseDatabase.getReference()
+                .child("budgets")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        budgetsReference.removeValue();
+
+        // Remove Trip places
+        final DatabaseReference placesReference = mFirebaseDatabase.getReference()
+                .child("places")
+                .child(mCurrentUser.getUid())
+                .child(trip.getId());
+        placesReference.removeValue();
     }
 
     @Override

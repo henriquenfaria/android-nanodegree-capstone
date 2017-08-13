@@ -3,11 +3,15 @@ package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.fragments.PlaceFactoryFragment;
 import com.henriquenfaria.wisetrip.models.PlaceModel;
@@ -22,10 +26,21 @@ public class PlaceFactoryActivity extends AppCompatActivity
     private PlaceModel mPlace;
     private PlaceFactoryFragment mPlaceFactoryFragment;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRootReference;
+    private FirebaseUser mCurrentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_factory);
+
+        // Initialize Firebase instances
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRootReference = mFirebaseDatabase.getReference();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -71,12 +86,26 @@ public class PlaceFactoryActivity extends AppCompatActivity
     @Override
     public void savePlace(TripModel trip, PlaceModel place, boolean isEditMode) {
         if (place != null) {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(Constants.Extra.EXTRA_PLACE, (Parcelable) place);
-            setResult(isEditMode ? Constants.Result.RESULT_PLACE_CHANGED
-                    : Constants.Result.RESULT_PLACE_ADDED, resultIntent);
+            final DatabaseReference placeReference
+                    = mRootReference.child("places").child(mCurrentUser.getUid());
+
+            if (isEditMode && !TextUtils.isEmpty(place.getId())) {
+                DatabaseReference databaseReference = placeReference.child(mTrip.getId())
+                        .child(place.getId());
+                databaseReference.setValue(place);
+
+            } else if (!isEditMode) {
+                DatabaseReference databaseReference = placeReference.child(mTrip.getId()).push();
+                place.setId(databaseReference.getKey());
+                databaseReference.setValue(place);
+
+            } else {
+                Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
+                        .show();
+            }
         } else {
-            setResult(Constants.Result.RESULT_PLACE_ERROR);
+            Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
+                    .show();
         }
 
         finish();
@@ -85,11 +114,13 @@ public class PlaceFactoryActivity extends AppCompatActivity
     @Override
     public void deletePlace(TripModel trip, PlaceModel place) {
         if (place != null) {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(Constants.Extra.EXTRA_PLACE, (Parcelable) place);
-            setResult(Constants.Result.RESULT_PLACE_REMOVED, resultIntent);
+            final DatabaseReference placeReference
+                    = mRootReference.child("places").child(mCurrentUser.getUid());
+
+            placeReference.child(mTrip.getId()).child(place.getId()).removeValue();
         } else {
-            setResult(Constants.Result.RESULT_PLACE_ERROR);
+            Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
+                    .show();
         }
 
         finish();

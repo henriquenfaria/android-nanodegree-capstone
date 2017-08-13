@@ -1,7 +1,6 @@
 package com.henriquenfaria.wisetrip.activities;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -48,7 +47,6 @@ import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Features;
-import com.henriquenfaria.wisetrip.utils.Utils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -91,22 +89,11 @@ public class TripDetailsActivity extends AppCompatActivity implements
     protected TabLayout mTabLayout;
     private TripModel mTrip;
     private boolean mIsSharedElementTransition;
-
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mRootReference;
-    private FirebaseUser mCurrentUser;
     private int mDefaultTabIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize Firebase instances
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRootReference = mFirebaseDatabase.getReference();
 
         if (getIntent() != null) {
             mTrip = getIntent().getParcelableExtra(Constants.Extra.EXTRA_TRIP);
@@ -387,262 +374,40 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
     public void startExpenseFactory(ExpenseModel expense) {
-        Intent intent = new Intent(TripDetailsActivity.this,
-                ExpenseFactoryActivity.class);
+        Intent intent = new Intent(TripDetailsActivity.this, ExpenseFactoryActivity.class);
         intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
         if (expense != null) {
             intent.putExtra(Constants.Extra.EXTRA_EXPENSE, (Parcelable) expense);
         }
-        startActivityForResult(intent, Constants.Request.REQUEST_EXPENSE_FACTORY);
+        startActivity(intent);
     }
 
     public void startBudgetFactory(BudgetModel budget) {
-        Intent intent = new Intent(TripDetailsActivity.this,
-                BudgetFactoryActivity.class);
+        Intent intent = new Intent(TripDetailsActivity.this, BudgetFactoryActivity.class);
         intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
         if (budget != null) {
             intent.putExtra(Constants.Extra.EXTRA_BUDGET, (Parcelable) budget);
         }
-        startActivityForResult(intent, Constants.Request.REQUEST_BUDGET_FACTORY);
+        startActivity(intent);
     }
 
     public void startPlaceFactory(PlaceModel place) {
+        Intent intent = new Intent(TripDetailsActivity.this, PlaceFactoryActivity.class);
+        intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
+        if (place != null) {
+            intent.putExtra(Constants.Extra.EXTRA_PLACE, (Parcelable) place);
+        }
+        startActivity(intent);
+    }
+
+    public void startPlaceDetails(PlaceModel place) {
         Intent intent = new Intent(TripDetailsActivity.this,
                 PlaceFactoryActivity.class);
         intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
         if (place != null) {
             intent.putExtra(Constants.Extra.EXTRA_PLACE, (Parcelable) place);
         }
-        startActivityForResult(intent, Constants.Request.REQUEST_PLACE_FACTORY);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_CANCELED) {
-            if (requestCode == Constants.Request.REQUEST_EXPENSE_FACTORY) {
-                handleRequestExpenseFactory(resultCode, data);
-            } else if (requestCode == Constants.Request.REQUEST_BUDGET_FACTORY) {
-                handleRequestBudgetFactory(resultCode, data);
-            } else if (requestCode == Constants.Request.REQUEST_PLACE_FACTORY) {
-                handleRequestPlaceFactory(resultCode, data);
-            }
-        }
-    }
-
-    private void handleRequestExpenseFactory(int resultCode, Intent data) {
-        if (data == null) {
-            return;
-        }
-
-        final ExpenseModel expense = data.getParcelableExtra(Constants.Extra.EXTRA_EXPENSE);
-        final DatabaseReference expenseReference
-                = mRootReference.child("expenses").child(mCurrentUser.getUid());
-
-        final DatabaseReference budgetReference
-                = mRootReference.child("budgets").child(mCurrentUser.getUid());
-
-        if (resultCode == Constants.Result.RESULT_EXPENSE_ADDED && expense != null) {
-            // Add expense
-            DatabaseReference databaseReference = expenseReference.child(mTrip.getId()).push();
-            expense.setId(databaseReference.getKey());
-            databaseReference.setValue(expense);
-
-            // Add expense for applicable budgets
-            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_ADDED,
-                    budgetReference, expense);
-
-        } else if (resultCode == Constants.Result.RESULT_EXPENSE_CHANGED
-                && expense != null && !TextUtils.isEmpty(expense.getId())) {
-            DatabaseReference databaseReference = expenseReference.child(mTrip.getId())
-                    .child(expense.getId());
-            databaseReference.setValue(expense);
-
-            // Update expense for applicable budgets
-            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_CHANGED,
-                    budgetReference, expense);
-
-        } else if (resultCode == Constants.Result.RESULT_EXPENSE_REMOVED
-                && expense != null && !TextUtils.isEmpty(expense.getId())) {
-            expenseReference.child(mTrip.getId()).child(expense.getId()).removeValue();
-
-            // Remove expense from applicable budgets
-            updateExpenseForCurrentBudgets(Constants.Result.RESULT_EXPENSE_REMOVED,
-                    budgetReference, expense);
-
-        } else if (resultCode == Constants.Result.RESULT_EXPENSE_ERROR) {
-            Toast.makeText(this, getString(R.string.expense_updated_error), Toast.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
-    // Iterates through all budgets and add/remove/update the expense if applicable
-    private void updateExpenseForCurrentBudgets(final int result, final DatabaseReference
-            budgetReference,
-                                                final ExpenseModel expense) {
-        budgetReference.child(mTrip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Timber.d("onDataChange");
-                if (dataSnapshot != null) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        final BudgetModel budget = snapshot.getValue(BudgetModel.class);
-                        final boolean isBudgetExpense = Utils.isBudgetExpense(budget, expense);
-                        if (budget != null) {
-                            if (result == Constants.Result.RESULT_EXPENSE_REMOVED
-                                    && isBudgetExpense) {
-                                budget.getExpenses().remove(expense.getId());
-                            } else if (result == Constants.Result.RESULT_EXPENSE_ADDED
-                                    && isBudgetExpense) {
-                                budget.getExpenses().put(expense.getId(), expense.getAmount());
-                            } else if (result == Constants.Result.RESULT_EXPENSE_CHANGED) {
-                                if (isBudgetExpense) {
-                                    budget.getExpenses().put(expense.getId(), expense.getAmount());
-                                } else {
-                                    budget.getExpenses().remove(expense.getId());
-                                }
-                            }
-                            budget.updateExpensesAmount();
-                            budgetReference.child(mTrip.getId()).child(budget.getId()).setValue
-                                    (budget);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Timber.d("onCancelled", databaseError.getMessage());
-            }
-        });
-    }
-
-    private void handleRequestBudgetFactory(int resultCode, Intent data) {
-        if (data == null) {
-            return;
-        }
-
-        final BudgetModel budget = data.getParcelableExtra(Constants.Extra.EXTRA_BUDGET);
-        final DatabaseReference budgetReference
-                = mRootReference.child("budgets").child(mCurrentUser.getUid());
-
-        final DatabaseReference expenseReference
-                = mRootReference.child("expenses").child(mCurrentUser.getUid());
-
-        if (resultCode == Constants.Result.RESULT_BUDGET_ADDED && budget != null) {
-            DatabaseReference databaseReference = budgetReference.child(mTrip.getId()).push();
-            budget.setId(databaseReference.getKey());
-            databaseReference.setValue(budget);
-
-            // Update budget by updating it with applicable expenses
-            updateBudgetForCurrentExpenses(Constants.Result.RESULT_BUDGET_CHANGED,
-                    expenseReference, budgetReference, budget);
-
-        } else if (resultCode == Constants.Result.RESULT_BUDGET_CHANGED
-                && budget != null && !TextUtils.isEmpty(budget.getId())) {
-            DatabaseReference databaseReference = budgetReference.child(mTrip.getId())
-                    .child(budget.getId());
-            databaseReference.setValue(budget);
-
-            // Update budget by adding applicable expenses
-            updateBudgetForCurrentExpenses(Constants.Result.RESULT_BUDGET_CHANGED,
-                    expenseReference, budgetReference, budget);
-
-        } else if (resultCode == Constants.Result.RESULT_BUDGET_REMOVED
-                && budget != null && !TextUtils.isEmpty(budget.getId())) {
-            budgetReference.child(mTrip.getId()).child(budget.getId()).removeValue();
-
-            // No need to update expenses here. Just delete the budget.
-
-        } else if (resultCode == Constants.Result.RESULT_BUDGET_ERROR) {
-            Toast.makeText(this, getString(R.string.budget_updated_error), Toast.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
-    // Iterates through all expenses and add them to the created/updated budget if applicable
-    private void updateBudgetForCurrentExpenses(final int result, final DatabaseReference
-            expenseReference,
-                                                final DatabaseReference budgetReference, final
-                                                BudgetModel budget) {
-        expenseReference.child(mTrip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Timber.d("onDataChange");
-                if (dataSnapshot != null) {
-
-                    boolean budgetChangedProcessed = false;
-
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        final ExpenseModel expense = snapshot.getValue(ExpenseModel.class);
-                        final boolean isBudgetExpense = Utils.isBudgetExpense(budget, expense);
-                        if (expense != null) {
-                            if (result == Constants.Result.RESULT_BUDGET_CHANGED
-                                    && !budgetChangedProcessed) {
-                                if (!isBudgetExpense) {
-                                    budget.getExpenses().clear();
-                                }
-                                budgetChangedProcessed = true;
-                            }
-
-                            if (isBudgetExpense) {
-                                budget.getExpenses().put(expense.getId(), expense.getAmount());
-                            }
-
-                            /*if (result == Constants.Result.RESULT_BUDGET_ADDED
-                                    && isBudgetExpense) {
-                                budget.getExpenses().put(expense.getId(), expense.getAmount());
-                            } else if (result == Constants.Result.RESULT_BUDGET_CHANGED) {
-                                if (isBudgetExpense) {
-                                    budget.getExpenses().put(expense.getId(), expense.getAmount());
-                                } else {
-                                    budget.getExpenses().remove(expense.getId());
-                                }
-                            }*/
-
-                        }
-                    }
-
-                    budget.updateExpensesAmount();
-                    budgetReference.child(mTrip.getId()).child(budget.getId()).setValue(budget);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Timber.d("onCancelled", databaseError.getMessage());
-            }
-        });
-    }
-
-
-    private void handleRequestPlaceFactory(int resultCode, Intent data) {
-        if (data == null) {
-            return;
-        }
-
-        final PlaceModel place = data.getParcelableExtra(Constants.Extra.EXTRA_PLACE);
-        final DatabaseReference placeReference
-                = mRootReference.child("places").child(mCurrentUser.getUid());
-
-        if (resultCode == Constants.Result.RESULT_PLACE_ADDED && place != null) {
-            DatabaseReference databaseReference = placeReference.child(mTrip.getId()).push();
-            place.setId(databaseReference.getKey());
-            databaseReference.setValue(place);
-
-        } else if (resultCode == Constants.Result.RESULT_PLACE_CHANGED
-                && place != null && !TextUtils.isEmpty(place.getId())) {
-            DatabaseReference databaseReference = placeReference.child(mTrip.getId())
-                    .child(place.getId());
-            databaseReference.setValue(place);
-
-        } else if (resultCode == Constants.Result.RESULT_PLACE_REMOVED
-                && place != null && !TextUtils.isEmpty(place.getId())) {
-            placeReference.child(mTrip.getId()).child(place.getId()).removeValue();
-
-        } else if (resultCode == Constants.Result.RESULT_PLACE_ERROR) {
-            Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
-                    .show();
-        }
+        startActivity(intent);
     }
 
     @Override
@@ -657,7 +422,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
     @Override
     public void onPlaceClicked(PlaceModel place) {
-        startPlaceFactory(place);
+        startPlaceDetails(place);
     }
 
     private static abstract class AppBarStateChangeListener implements

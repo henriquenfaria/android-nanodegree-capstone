@@ -81,7 +81,7 @@ public class TripListSection extends StatelessSection {
                 MainActivity context = (MainActivity) view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
                 intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList.get(position));
-                context.startActivityForResult(intent, Constants.Request.REQUEST_TRIP_FACTORY);
+                context.startActivity(intent);
             }
         });
     }
