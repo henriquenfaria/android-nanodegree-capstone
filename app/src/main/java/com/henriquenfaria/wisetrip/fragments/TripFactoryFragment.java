@@ -4,12 +4,9 @@ package com.henriquenfaria.wisetrip.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -41,9 +38,12 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -51,12 +51,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class TripFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
-        DestinationAdapter.OnDestinationClickListener {
+        DestinationAdapter.OnDestinationClickListener,
+        EasyPermissions.PermissionCallbacks {
 
     private static final String ARG_TRIP = "arg_trip";
     private static final String TAG_DATE_PICKER_FRAGMENT = "tag_date_picker_fragment";
     private static final String TAG_DELETE_ALERT_DIALOG = "tag_delete_alert_dialog";
-    private static final String TAG_PERMISSION_ALERT_DIALOG = "tag_permission_alert_dialog";
     private static final String SAVE_TRIP = "save_trip";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
     private static final String SAVE_DESTINATION_ADAPTER_CLICKED_POSITION =
@@ -118,40 +118,11 @@ public class TripFactoryFragment extends BaseFragment implements
             deleteTrip();
         }
     };
-    private AlertDialogFragment.OnAlertListener mPermissionAlertListener = new
-            AlertDialogFragment.OnAlertListener() {
 
-                @Override
-                public void positiveAlertButtonClicked() {
-                    requestPermission(new String[]{Manifest.permission.READ_CONTACTS},
-                            PERMISSION_REQUEST_READ_CONTACTS);
-                }
-            };
     private View.OnClickListener mOnTravelerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
-            // TODO: Replace all getActivity instances for mFragmentActivity?
-            // TODO: Replace current permission code with EasyPermissions library?
-            if (ContextCompat.checkSelfPermission(TripFactoryFragment.this.getActivity(),
-                    Manifest.permission.READ_CONTACTS)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(TripFactoryFragment
-                                .this.getActivity(),
-                        Manifest.permission.READ_CONTACTS)) {
-
-                    showPermissionExplanationDialog(R.string.contacts_permission_title,
-                            R.string.contacts_permission_message);
-
-                } else {
-                    // No explanation needed, we can request the permission.
-                    requestPermission(new String[]{Manifest.permission.READ_CONTACTS},
-                            PERMISSION_REQUEST_READ_CONTACTS);
-                }
-            } else {
-                startTravelerActivityForResult();
-            }
+            requestReadContactsPermission();
         }
     };
     private TextWatcher mTripTitleTextWatcher = new TextWatcher() {
@@ -184,8 +155,9 @@ public class TripFactoryFragment extends BaseFragment implements
         return fragment;
     }
 
-    private void requestPermission(String[] permission, int requestCode) {
-        TripFactoryFragment.this.requestPermissions(permission, requestCode);
+    private void requestReadContactsPermission() {
+        EasyPermissions.requestPermissions(this, getString(R.string.contacts_permission_message),
+                PERMISSION_REQUEST_READ_CONTACTS, Manifest.permission.READ_CONTACTS);
     }
 
     @Override
@@ -224,12 +196,6 @@ public class TripFactoryFragment extends BaseFragment implements
                 getFragmentManager().findFragmentByTag(TAG_DELETE_ALERT_DIALOG);
         if (deleteAlertDialogFragment != null) {
             deleteAlertDialogFragment.setOnAlertListener(mDeleteAlertListener);
-        }
-
-        AlertDialogFragment permissionAlertDialogFragment = (AlertDialogFragment)
-                getFragmentManager().findFragmentByTag(TAG_PERMISSION_ALERT_DIALOG);
-        if (permissionAlertDialogFragment != null) {
-            permissionAlertDialogFragment.setOnAlertListener(mPermissionAlertListener);
         }
 
         setHasOptionsMenu(true);
@@ -374,14 +340,6 @@ public class TripFactoryFragment extends BaseFragment implements
         alertDialogFragment.show(getFragmentManager(), TAG_DELETE_ALERT_DIALOG);
     }
 
-    private void showPermissionExplanationDialog(int title, int message) {
-        AlertDialogFragment alertDialogFragment = new AlertDialogFragment();
-        alertDialogFragment.setTitle(title);
-        alertDialogFragment.setMessage(message);
-        alertDialogFragment.setOnAlertListener(mPermissionAlertListener);
-        alertDialogFragment.show(getFragmentManager(), TAG_PERMISSION_ALERT_DIALOG);
-    }
-
     @Override
     public void onDateSet(int targetViewId, long dateMillis) {
         if (mStartDateTextView.getId() == targetViewId) {
@@ -399,20 +357,11 @@ public class TripFactoryFragment extends BaseFragment implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_READ_CONTACTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    startTravelerActivityForResult();
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-                } else {
-                    // Permission denied, do nothing
-                }
-                return;
-            }
-        }
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override
@@ -431,6 +380,7 @@ public class TripFactoryFragment extends BaseFragment implements
             // Response from Place Autocomplete, we'll update a previously set destination
         } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_UPDATE) {
             if (resultCode == RESULT_OK) {
+                // TODO: Replace all getActivity instances for mFragmentActivity?
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 if (place != null) {
                     //TODO: Must save and use place.getAttributions()
@@ -470,7 +420,7 @@ public class TripFactoryFragment extends BaseFragment implements
         }
     }
 
-    void startTravelerActivityForResult() {
+    private void startTravelerActivityForResult() {
         Intent intent = new Intent(getContext(), TravelerActivity.class);
         startActivityForResult(intent, REQUEST_PICK_TRAVELER);
     }
@@ -508,6 +458,21 @@ public class TripFactoryFragment extends BaseFragment implements
         } catch (GooglePlayServicesRepairableException
                 | GooglePlayServicesNotAvailableException e) {
             Toast.makeText(mFragmentActivity, R.string.google_play_services_error,
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        startTravelerActivityForResult();
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this).build().show();
+        } else {
+            Toast.makeText(mFragmentActivity, R.string.contacts_permission_denied,
                     Toast.LENGTH_SHORT).show();
         }
     }

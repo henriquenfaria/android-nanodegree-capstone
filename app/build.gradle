@@ -75,6 +75,9 @@ dependencies {
     //Google Play Services - Places
     compile 'com.google.android.gms:play-services-places:11.0.1'
 
+    //EasyPermissions library for runtime permissions
+    compile 'pub.devrel:easypermissions:0.4.3'
+
     testCompile 'junit:junit:4.12'
 }
 

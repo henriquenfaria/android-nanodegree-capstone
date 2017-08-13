@@ -70,6 +70,7 @@
     <string name="notification_at">Notification at:</string>
     <string name="notification_percentage">%1$d%%</string>
     <string name="budget_limit_exceeded">Budget limit exceeded</string>
+    <string name="contacts_permission_denied">Contacts permission denied</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>
