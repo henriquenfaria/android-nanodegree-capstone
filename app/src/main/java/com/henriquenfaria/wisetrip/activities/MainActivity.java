@@ -181,12 +181,11 @@ public class MainActivity extends AppCompatActivity
         budgetsReference.removeValue();
 
         // Remove Trip places
-        //TODO: Uncomment this after places implementation
-        /* DatabaseReference placesReference = mFirebaseDatabase.getReference()
-                .child("attributions")
+         DatabaseReference placesReference = mFirebaseDatabase.getReference()
+                .child("places")
                 .child(mCurrentUser.getUid())
                 .child(trip.getId());
-        placesReference.removeValue();*/
+        placesReference.removeValue();
     }
 
 

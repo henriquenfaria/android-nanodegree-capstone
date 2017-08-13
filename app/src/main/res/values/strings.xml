@@ -46,7 +46,7 @@
     <string name="title_delete_expense">Delete Expense</string>
     <string name="title_delete_budget">Delete Budget</string>
     <string name="title_delete_place">Delete Place</string>
-    <string name="message_delete_trip">Do you want to permanently delete this Trip?</string>
+    <string name="message_delete_trip">Do you want to permanently delete this Trip and all associated data?</string>
     <string name="message_delete_expense">Do you want to permanently delete this Expense?</string>
     <string name="message_delete_budget">Do you want to permanently delete this Budget?</string>
     <string name="message_delete_place">Do you want to permanently delete this Place?</string>
