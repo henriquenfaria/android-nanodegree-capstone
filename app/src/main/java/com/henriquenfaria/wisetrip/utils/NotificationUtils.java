@@ -1,5 +1,6 @@
 package com.henriquenfaria.wisetrip.utils;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -39,6 +40,8 @@ public class NotificationUtils {
         mBuilder.setSmallIcon(getNotificationIcon())
                 .setContentTitle(budget.getTitle())
                 .setContentText(context.getString(R.string.budget_limit_exceeded))
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
@@ -46,7 +49,7 @@ public class NotificationUtils {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Do not replace previous budget notification
-        int nextNotificationId =  Utils.getIntFromSharedPrefs(context,
+        int nextNotificationId = Utils.getIntFromSharedPrefs(context,
                 Constants.Preference.PREFERENCE_LAST_BUDGET_NOTIFICATION_ID,
                 BUDGET_LIMIT_EXCEEDED_NOTIFICATION_START_ID) + 1;
 
@@ -59,7 +62,8 @@ public class NotificationUtils {
 
     // Based on https://stackoverflow.com/a/29207365
     private static int getNotificationIcon() {
-        boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+        boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build
+                .VERSION_CODES.LOLLIPOP);
         return useWhiteIcon ? R.drawable.ic_notification : R.mipmap.ic_launcher;
     }
 }
