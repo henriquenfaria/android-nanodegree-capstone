@@ -38,6 +38,7 @@
                 android:freezesText="true"
                 android:hint="@string/hint_what_is_the_budget_name"
                 android:imeActionLabel="@string/done"
+                android:inputType="textCapSentences"
                 android:maxLength="25"
                 android:maxLines="1"
                 android:singleLine="true"/>
@@ -97,10 +98,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/factory_form_item_margin_top"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
