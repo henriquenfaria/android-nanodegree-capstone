@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#EEEEEE"
+    android:clickable="true"
+    android:elevation="@dimen/expense_header_elevation"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/expense_layout_vertical_padding"
+    android:paddingTop="@dimen/expense_layout_vertical_padding">
+
+    <TextView
+        android:id="@+id/place_header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/traveler_name_margin_start"
+        android:layout_marginStart="@dimen/traveler_name_margin_start"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:minLines="1"
+        android:textAppearance="@style/ExpenseText"/>
+</LinearLayout>

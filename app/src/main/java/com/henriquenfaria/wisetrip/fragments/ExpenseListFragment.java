@@ -26,7 +26,7 @@ import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.flexibles.ExpenseHeader;
 import com.henriquenfaria.wisetrip.flexibles.ExpenseItem;
 import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
-import com.henriquenfaria.wisetrip.models.ExpenseHeaderModel;
+import com.henriquenfaria.wisetrip.models.HeaderModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 
@@ -266,33 +266,30 @@ public class ExpenseListFragment extends BaseFragment implements
         }
     }
 
-
     private void expenseAdded(ExpenseModel expense) {
         ExpenseHeader headerHolder = getHeaderForExpense(expense);
 
         // Add new section
         if (headerHolder == null) {
-            ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+            HeaderModel header = new HeaderModel();
             DateTime dateTime = new DateTime(expense.getDate());
             String formattedDateTime = dateTime.toString(DateTimeFormat
                     .mediumDate());
-            headerModel.setTitle(formattedDateTime);
-            headerModel.setId(expense.getDate());
-            headerHolder = new ExpenseHeader(headerModel);
+            header.setTitle(formattedDateTime);
+            header.setId(expense.getDate());
+            headerHolder = new ExpenseHeader(header);
         }
         ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
         mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new ExpenseItemComparator());
-
     }
 
-
     private void expenseChanged(ExpenseModel expense) {
-        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
+        HeaderModel header = new HeaderModel();
         DateTime dateTime = new DateTime(expense.getDate());
         String formattedDateTime = dateTime.toString(DateTimeFormat.mediumDate());
-        headerModel.setTitle(formattedDateTime);
-        headerModel.setId(expense.getDate());
-        ExpenseHeader expenseHeader = new ExpenseHeader(headerModel);
+        header.setTitle(formattedDateTime);
+        header.setId(expense.getDate());
+        ExpenseHeader expenseHeader = new ExpenseHeader(header);
         ExpenseItem expenseItem = new ExpenseItem(expense, expenseHeader);
 
         ExpenseItem retrievedItem = (ExpenseItem) mExpenseAdapter
@@ -318,9 +315,9 @@ public class ExpenseListFragment extends BaseFragment implements
     }
 
     private void expenseRemoved(ExpenseModel expense) {
-        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-        headerModel.setId(expense.getDate());
-        ExpenseHeader headerHolder = new ExpenseHeader(headerModel);
+        HeaderModel listHeaderModel = new HeaderModel();
+        listHeaderModel.setId(expense.getDate());
+        ExpenseHeader headerHolder = new ExpenseHeader(listHeaderModel);
         ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
         int position = mExpenseAdapter.getGlobalPositionOf(itemHolder);
         if (position >= 0) {
@@ -328,8 +325,7 @@ public class ExpenseListFragment extends BaseFragment implements
             mExpenseAdapter.removeItem(position);
 
             // Remove empty section
-            if (header != null && mExpenseAdapter.getSectionItems(header).size()
-                    == 0) {
+            if (header != null && mExpenseAdapter.getSectionItems(header).size() == 0) {
                 mExpenseAdapter.removeItem(
                         mExpenseAdapter.getGlobalPositionOf(header));
             }

@@ -248,7 +248,11 @@ public class PlaceFactoryFragment extends BaseFragment implements
     }
 
     private void populateFormFields() {
-        mDateTextView.setText(Utils.getFormattedExpenseDateText(mPlace.getDate()));
+        mDateTextView.setText(Utils.getFormattedDateText(mPlace.getDate()));
+
+        if (mPlace.getDestination() != null) {
+            mDestinationTextView.setText(mPlace.getDestination().getName());
+        }
     }
 
     private boolean isValidFormFields() {
@@ -259,7 +263,7 @@ public class PlaceFactoryFragment extends BaseFragment implements
             isValid = false;
         }
 
-        if (mPlace.getDestination() == null){
+        if (mPlace.getDestination() == null) {
             mDestinationTextView.setError(getString(R.string.mandatory_field));
             isValid = false;
         }
@@ -273,7 +277,7 @@ public class PlaceFactoryFragment extends BaseFragment implements
         }
     }
 
-    private void deleteExpense() {
+    private void deletePlace() {
         mOnPlaceFactoryListener.deletePlace(mTrip, mPlace);
     }
 
@@ -285,19 +289,18 @@ public class PlaceFactoryFragment extends BaseFragment implements
         mAlertDialogFragment.show(getFragmentManager(), TAG_ALERT_DIALOG_FRAGMENT);
     }
 
-
     @Override
     public void onDateSet(int targetViewId, long dateMillis) {
         if (mDateTextView.getId() == targetViewId) {
             mPlace.setDate(new DateTime(dateMillis).withTimeAtStartOfDay().getMillis());
-            mDateTextView.setText(Utils.getFormattedExpenseDateText(dateMillis));
+            mDateTextView.setText(Utils.getFormattedDateText(dateMillis));
             mDateTextView.setError(null);
         }
     }
 
     @Override
     public void positiveAlertButtonClicked() {
-        deleteExpense();
+        deletePlace();
     }
 
 

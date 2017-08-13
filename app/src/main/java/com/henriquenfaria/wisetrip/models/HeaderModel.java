@@ -6,35 +6,35 @@ import android.os.Parcelable;
 import java.io.Serializable;
 
 
-public class ExpenseHeaderModel implements Serializable, Parcelable {
+public class HeaderModel implements Serializable, Parcelable {
 
-    public static final Parcelable.Creator<ExpenseHeaderModel> CREATOR = new Parcelable
-            .Creator<ExpenseHeaderModel>() {
+    public static final Parcelable.Creator<HeaderModel> CREATOR = new Parcelable
+            .Creator<HeaderModel>() {
         @Override
-        public ExpenseHeaderModel createFromParcel(Parcel source) {
-            return new ExpenseHeaderModel(source);
+        public HeaderModel createFromParcel(Parcel source) {
+            return new HeaderModel(source);
         }
 
         @Override
-        public ExpenseHeaderModel[] newArray(int size) {
-            return new ExpenseHeaderModel[size];
+        public HeaderModel[] newArray(int size) {
+            return new HeaderModel[size];
         }
     };
     private Long id;
     private String title;
 
-    public ExpenseHeaderModel() {
+    public HeaderModel() {
     }
 
-    protected ExpenseHeaderModel(Parcel in) {
+    protected HeaderModel(Parcel in) {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.title = in.readString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ExpenseHeaderModel) {
-            ExpenseHeaderModel inItem = (ExpenseHeaderModel) obj;
+        if (obj instanceof HeaderModel) {
+            HeaderModel inItem = (HeaderModel) obj;
             return id.equals(inItem.getId());
         }
         return false;

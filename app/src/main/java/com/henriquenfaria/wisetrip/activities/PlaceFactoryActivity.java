@@ -61,7 +61,6 @@ public class PlaceFactoryActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public void changeActionBarTitle(String newTitle) {
         if (getSupportActionBar() != null) {

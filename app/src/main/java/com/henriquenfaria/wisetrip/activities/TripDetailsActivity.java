@@ -114,7 +114,6 @@ public class TripDetailsActivity extends AppCompatActivity implements
                     TAB_EXPENSES_POSITION);
         }
 
-
         if (mTrip == null) {
             Toast.makeText(this, R.string.could_not_load_trip_details, Toast.LENGTH_LONG).show();
             finish();
@@ -196,7 +195,6 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 }
             });
         }
-
     }
 
     private void setTransitionNames() {
@@ -209,7 +207,6 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 Constants.Transition.PREFIX_TRIP_ATTRIBUTION + tripId);
         ViewCompat.setTransitionName(mTripTitle,
                 Constants.Transition.PREFIX_TRIP_TITLE + tripId);
-
     }
 
     private int getFabImageResource() {
@@ -240,7 +237,6 @@ public class TripDetailsActivity extends AppCompatActivity implements
             });
         }
     }
-
 
     private void setupViewPager(int defaultTabIndex) {
         ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
@@ -563,36 +559,6 @@ public class TripDetailsActivity extends AppCompatActivity implements
         }
     }
 
-    private void handleRequestPlaceFactory(int resultCode, Intent data) {
-        if (data == null) {
-            return;
-        }
-
-        final PlaceModel place = data.getParcelableExtra(Constants.Extra.EXTRA_PLACE);
-        final DatabaseReference placeReference
-                = mRootReference.child("places").child(mCurrentUser.getUid());
-
-        if (resultCode == Constants.Result.RESULT_PLACE_ADDED && place != null) {
-            DatabaseReference databaseReference = placeReference.child(mTrip.getId()).push();
-            place.setId(databaseReference.getKey());
-            databaseReference.setValue(place);
-
-        } else if (resultCode == Constants.Result.RESULT_PLACE_CHANGED
-                && place != null && !TextUtils.isEmpty(place.getId())) {
-            DatabaseReference databaseReference = placeReference.child(mTrip.getId())
-                    .child(place.getId());
-            databaseReference.setValue(place);
-
-        } else if (resultCode == Constants.Result.RESULT_PLACE_REMOVED
-                && place != null && !TextUtils.isEmpty(place.getId())) {
-            placeReference.child(mTrip.getId()).child(place.getId()).removeValue();
-
-        } else if (resultCode == Constants.Result.RESULT_PLACE_ERROR) {
-            Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
     // Iterates through all expenses and add them to the created/updated budget if applicable
     private void updateBudgetForCurrentExpenses(final int result, final DatabaseReference
             expenseReference,
@@ -646,6 +612,37 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 Timber.d("onCancelled", databaseError.getMessage());
             }
         });
+    }
+
+
+    private void handleRequestPlaceFactory(int resultCode, Intent data) {
+        if (data == null) {
+            return;
+        }
+
+        final PlaceModel place = data.getParcelableExtra(Constants.Extra.EXTRA_PLACE);
+        final DatabaseReference placeReference
+                = mRootReference.child("places").child(mCurrentUser.getUid());
+
+        if (resultCode == Constants.Result.RESULT_PLACE_ADDED && place != null) {
+            DatabaseReference databaseReference = placeReference.child(mTrip.getId()).push();
+            place.setId(databaseReference.getKey());
+            databaseReference.setValue(place);
+
+        } else if (resultCode == Constants.Result.RESULT_PLACE_CHANGED
+                && place != null && !TextUtils.isEmpty(place.getId())) {
+            DatabaseReference databaseReference = placeReference.child(mTrip.getId())
+                    .child(place.getId());
+            databaseReference.setValue(place);
+
+        } else if (resultCode == Constants.Result.RESULT_PLACE_REMOVED
+                && place != null && !TextUtils.isEmpty(place.getId())) {
+            placeReference.child(mTrip.getId()).child(place.getId()).removeValue();
+
+        } else if (resultCode == Constants.Result.RESULT_PLACE_ERROR) {
+            Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
     @Override

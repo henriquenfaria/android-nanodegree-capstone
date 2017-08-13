@@ -42,6 +42,20 @@ public class PlaceModel implements Parcelable, Serializable {
     }
 
     @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PlaceModel) {
+            PlaceModel inItem = (PlaceModel) obj;
+            return id.equals(inItem.getId());
+        }
+        return false;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

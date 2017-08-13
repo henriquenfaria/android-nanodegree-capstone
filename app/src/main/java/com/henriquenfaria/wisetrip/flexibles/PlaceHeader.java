@@ -16,42 +16,42 @@ import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
-public class ExpenseHeader extends AbstractHeaderItem<ExpenseHeader.HeaderViewHolder>
+public class PlaceHeader extends AbstractHeaderItem<PlaceHeader.HeaderViewHolder>
         implements IFilterable, IHolder<HeaderModel> {
 
-    private HeaderModel mExpenseHeader;
+    private HeaderModel mPlaceHeader;
 
-    public ExpenseHeader(HeaderModel expenseHeader) {
-        mExpenseHeader = expenseHeader;
+    public PlaceHeader(HeaderModel placeHeader) {
+        mPlaceHeader = placeHeader;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ExpenseHeader) {
-            ExpenseHeader inItem = (ExpenseHeader) o;
-            return mExpenseHeader.equals(inItem.getModel());
+        if (o instanceof PlaceHeader) {
+            PlaceHeader inItem = (PlaceHeader) o;
+            return mPlaceHeader.equals(inItem.getModel());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return mExpenseHeader.hashCode();
+        return mPlaceHeader.hashCode();
     }
 
     @Override
     public HeaderModel getModel() {
-        return mExpenseHeader;
+        return mPlaceHeader;
     }
 
     @Override
     public boolean filter(String constraint) {
-        return mExpenseHeader.getTitle() != null && mExpenseHeader.getTitle().equals(constraint);
+        return mPlaceHeader.getTitle() != null && mPlaceHeader.getTitle().equals(constraint);
     }
 
     @Override
     public int getLayoutRes() {
-        return R.layout.expense_header_item;
+        return R.layout.place_header_item;
     }
 
     @Override
@@ -62,12 +62,12 @@ public class ExpenseHeader extends AbstractHeaderItem<ExpenseHeader.HeaderViewHo
     @Override
     public void bindViewHolder(final FlexibleAdapter adapter, HeaderViewHolder holder,
                                int position, List payloads) {
-        holder.mTitle.setText(mExpenseHeader.getTitle());
+        holder.mTitle.setText(mPlaceHeader.getTitle());
     }
 
     static class HeaderViewHolder extends FlexibleViewHolder {
 
-        @BindView(R.id.expense_header_title)
+        @BindView(R.id.place_header_title)
         public TextView mTitle;
 
         public HeaderViewHolder(View view, FlexibleAdapter adapter) {

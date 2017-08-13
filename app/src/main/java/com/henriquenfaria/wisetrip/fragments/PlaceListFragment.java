@@ -23,11 +23,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
-import com.henriquenfaria.wisetrip.flexibles.ExpenseHeader;
-import com.henriquenfaria.wisetrip.flexibles.ExpenseItem;
-import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
-import com.henriquenfaria.wisetrip.models.ExpenseHeaderModel;
-import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.flexibles.PlaceHeader;
+import com.henriquenfaria.wisetrip.flexibles.PlaceItem;
+import com.henriquenfaria.wisetrip.listeners.OnPlaceInteractionListener;
+import com.henriquenfaria.wisetrip.models.HeaderModel;
+import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 
 import org.joda.time.DateTime;
@@ -47,13 +47,14 @@ import timber.log.Timber;
 public class PlaceListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
+
     private static final String ARG_TRIP = "arg_trip";
 
-    @BindView(R.id.expense_list_layout)
-    protected FrameLayout mExpenseListLayout;
+    @BindView(R.id.place_list_layout)
+    protected FrameLayout mPlaceListLayout;
 
-    @BindView(R.id.expense_list_recycler_view)
-    protected RecyclerView mExpenseListRecyclerView;
+    @BindView(R.id.place_list_recycler_view)
+    protected RecyclerView mPlaceListRecyclerView;
 
     @BindView(R.id.empty_view)
     protected RelativeLayout mEmptyView;
@@ -63,13 +64,13 @@ public class PlaceListFragment extends BaseFragment implements
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mExpensesReference;
+    private DatabaseReference mPlacesReference;
     private FirebaseUser mCurrentUser;
-    private FlexibleAdapter<IFlexible> mExpenseAdapter;
+    private FlexibleAdapter<IFlexible> mPlacesAdapter;
     private ValueEventListener mValueEventListener;
     private ChildEventListener mChildEventListener;
     private TripModel mTrip;
-    private OnExpenseInteractionListener mOnExpenseInteractionListener;
+    private OnPlaceInteractionListener mOnPlacesInteractionListener;
 
     // Create new Fragment instance with PlaceModel info
     public static PlaceListFragment newInstance(TripModel trip) {
@@ -92,23 +93,22 @@ public class PlaceListFragment extends BaseFragment implements
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
 
-        mExpensesReference = mFirebaseDatabase.getReference()
-                .child("expenses")
+        mPlacesReference = mFirebaseDatabase.getReference()
+                .child("places")
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_expense_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_place_list, container, false);
         ButterKnife.bind(this, rootView);
 
         // TODO: If date is properly indexed, use:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
-       /* new FirebaseIndexRecyclerAdapter<mExpenseAdapter, TripFirebaseHolder>(mExpenseAdapter
+       /* new FirebaseIndexRecyclerAdapter<mPlacesAdapter, TripFirebaseHolder>(mPlacesAdapter
        .class,
                 R.layout.trip_item,
                 TripFirebaseHolder.class,
@@ -117,24 +117,24 @@ public class PlaceListFragment extends BaseFragment implements
                  keyRef's location represents a list item in the RecyclerView.
          */
 
-        mEmptyText.setText(R.string.no_saved_expenses);
+        mEmptyText.setText(R.string.no_saved_places);
 
-        mExpenseAdapter = new FlexibleAdapter<>(null, this);
-        mExpenseAdapter
+        mPlacesAdapter = new FlexibleAdapter<>(null, this);
+        mPlacesAdapter
                 .setDisplayHeadersAtStartUp(true)
                 .setStickyHeaders(true)
                 .setUnlinkAllItemsOnRemoveHeaders(true);
 
-        mExpenseListRecyclerView.setLayoutManager(
+        mPlaceListRecyclerView.setLayoutManager(
                 new SmoothScrollLinearLayoutManager(mFragmentActivity));
-        mExpenseListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mExpenseListRecyclerView.setAdapter(mExpenseAdapter);
+        mPlaceListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mPlaceListRecyclerView.setAdapter(mPlacesAdapter);
 
 
         //TODO: Must uncomment fastScroller logic
       /*  FastScroller fastScroller = getView().findViewById(R.id.fast_scroller);
         fastScroller.addOnScrollStateChangeListener((MainActivity) getActivity());
-        mExpenseAdapter.setFastScroller(fastScroller);*/
+        mPlacesAdapter.setFastScroller(fastScroller);*/
 
         attachDatabaseReadListener();
 
@@ -145,28 +145,28 @@ public class PlaceListFragment extends BaseFragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnExpenseInteractionListener) {
-            mOnExpenseInteractionListener = (OnExpenseInteractionListener) context;
+        if (context instanceof OnPlaceInteractionListener) {
+            mOnPlacesInteractionListener = (OnPlaceInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnExpenseInteractionListener");
+                    + " must implement OnPlaceInteractionListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mOnExpenseInteractionListener = null;
+        mOnPlacesInteractionListener = null;
     }
 
     @Override
     public boolean onItemClick(int position) {
-        IFlexible flexibleItem = mExpenseAdapter.getItem(position);
-        if (flexibleItem instanceof ExpenseItem) {
-            ExpenseItem expenseItem = (ExpenseItem) flexibleItem;
-            ExpenseModel expense = expenseItem.getModel();
-            if (mOnExpenseInteractionListener != null) {
-                mOnExpenseInteractionListener.onExpenseClicked(expense);
+        IFlexible flexibleItem = mPlacesAdapter.getItem(position);
+        if (flexibleItem instanceof PlaceItem) {
+            PlaceItem placeItem = (PlaceItem) flexibleItem;
+            PlaceModel place = placeItem.getModel();
+            if (mOnPlacesInteractionListener != null) {
+                mOnPlacesInteractionListener.onPlaceClicked(place);
             }
             return false;
         }
@@ -175,14 +175,14 @@ public class PlaceListFragment extends BaseFragment implements
     }
 
     // TODO: Optimize with binary search?
-    private ExpenseHeader getHeaderForExpense(ExpenseModel expense) {
-        List<IHeader> headerList = mExpenseAdapter.getHeaderItems();
+    private PlaceHeader getHeaderForPlace(PlaceModel places) {
+        List<IHeader> headerList = mPlacesAdapter.getHeaderItems();
         if (!headerList.isEmpty()) {
             for (IHeader header : headerList) {
-                if (header instanceof ExpenseHeader) {
-                    if (((ExpenseHeader) header).getModel().getId()
-                            .equals(expense.getDate())) {
-                        return (ExpenseHeader) header;
+                if (header instanceof PlaceHeader) {
+                    if (((PlaceHeader) header).getModel().getId()
+                            .equals(places.getDate())) {
+                        return (PlaceHeader) header;
                     }
                 }
             }
@@ -200,10 +200,10 @@ public class PlaceListFragment extends BaseFragment implements
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildAdded");
 
-                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())
-                            && mExpenseAdapter != null) {
-                        expenseAdded(expense);
+                    PlaceModel place = dataSnapshot.getValue(PlaceModel.class);
+                    if (place != null && !TextUtils.isEmpty(place.getId())
+                            && mPlacesAdapter != null) {
+                        placeAdded(place);
                     }
                 }
 
@@ -211,10 +211,10 @@ public class PlaceListFragment extends BaseFragment implements
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildChanged");
 
-                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())
-                            && mExpenseAdapter != null) {
-                        expenseChanged(expense);
+                    PlaceModel place = dataSnapshot.getValue(PlaceModel.class);
+                    if (place != null && !TextUtils.isEmpty(place.getId())
+                            && mPlacesAdapter != null) {
+                        placeChanged(place);
                     }
                 }
 
@@ -222,10 +222,10 @@ public class PlaceListFragment extends BaseFragment implements
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Timber.d("onChildRemoved");
 
-                    ExpenseModel expense = dataSnapshot.getValue(ExpenseModel.class);
-                    if (expense != null && !TextUtils.isEmpty(expense.getId())
-                            && mExpenseAdapter != null) {
-                        expenseRemoved(expense);
+                    PlaceModel place = dataSnapshot.getValue(PlaceModel.class);
+                    if (place != null && !TextUtils.isEmpty(place.getId())
+                            && mPlacesAdapter != null) {
+                        placeRemoved(place);
                     }
                 }
 
@@ -241,7 +241,7 @@ public class PlaceListFragment extends BaseFragment implements
                 }
 
             };
-            mExpensesReference.addChildEventListener(mChildEventListener);
+            mPlacesReference.addChildEventListener(mChildEventListener);
         }
 
         // To disable weird animations until all data is retrieved
@@ -252,97 +252,93 @@ public class PlaceListFragment extends BaseFragment implements
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Timber.d("onDataChange");
 
-                    mExpenseListLayout.setVisibility(View.VISIBLE);
+                    mPlaceListLayout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Timber.d("onCancelled", databaseError.getMessage());
 
-                    mExpenseListLayout.setVisibility(View.VISIBLE);
+                    mPlaceListLayout.setVisibility(View.VISIBLE);
                 }
             };
-            mExpensesReference.addListenerForSingleValueEvent(mValueEventListener);
+            mPlacesReference.addListenerForSingleValueEvent(mValueEventListener);
         }
     }
 
-
-    private void expenseAdded(ExpenseModel expense) {
-        ExpenseHeader headerHolder = getHeaderForExpense(expense);
+    private void placeAdded(PlaceModel place) {
+        PlaceHeader headerHolder = getHeaderForPlace(place);
 
         // Add new section
         if (headerHolder == null) {
-            ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-            DateTime dateTime = new DateTime(expense.getDate());
+            HeaderModel header = new HeaderModel();
+            DateTime dateTime = new DateTime(place.getDate());
             String formattedDateTime = dateTime.toString(DateTimeFormat
                     .mediumDate());
-            headerModel.setTitle(formattedDateTime);
-            headerModel.setId(expense.getDate());
-            headerHolder = new ExpenseHeader(headerModel);
+            header.setTitle(formattedDateTime);
+            header.setId(place.getDate());
+            headerHolder = new PlaceHeader(header);
         }
-        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        mExpenseAdapter.addItemToSection(itemHolder, headerHolder, new ExpenseItemComparator());
-
+        PlaceItem itemHolder = new PlaceItem(place, headerHolder);
+        mPlacesAdapter.addItemToSection(itemHolder, headerHolder, new PlaceItemComparator());
     }
 
-
-    private void expenseChanged(ExpenseModel expense) {
-        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-        DateTime dateTime = new DateTime(expense.getDate());
+    private void placeChanged(PlaceModel place) {
+        HeaderModel header = new HeaderModel();
+        DateTime dateTime = new DateTime(place.getDate());
         String formattedDateTime = dateTime.toString(DateTimeFormat.mediumDate());
-        headerModel.setTitle(formattedDateTime);
-        headerModel.setId(expense.getDate());
-        ExpenseHeader expenseHeader = new ExpenseHeader(headerModel);
-        ExpenseItem expenseItem = new ExpenseItem(expense, expenseHeader);
+        header.setTitle(formattedDateTime);
+        header.setId(place.getDate());
+        PlaceHeader placeHeader = new PlaceHeader(header);
+        PlaceItem placeItem = new PlaceItem(place, placeHeader);
 
-        ExpenseItem retrievedItem = (ExpenseItem) mExpenseAdapter
-                .getItem(mExpenseAdapter.getGlobalPositionOf(expenseItem));
+        PlaceItem retrievedItem = (PlaceItem) mPlacesAdapter
+                .getItem(mPlacesAdapter.getGlobalPositionOf(placeItem));
         if (retrievedItem != null) {
-            if (retrievedItem.getModel().getDate().equals(expense.getDate())) {
-                // No section change, just update the expense
-                mExpenseAdapter.updateItem(expenseItem);
+            if (retrievedItem.getModel().getDate().equals(place.getDate())) {
+                // No section change, just update the place
+                mPlacesAdapter.updateItem(placeItem);
             } else {
                 // Move it to a new Section
-                ExpenseHeader destinationHeader = getHeaderForExpense(expense);
-                expenseRemoved(expense);
+                PlaceHeader destinationHeader = getHeaderForPlace(place);
+                placeRemoved(place);
                 if (destinationHeader != null) {
-                    expenseHeader = destinationHeader;
-                    expenseItem = new ExpenseItem(expense, expenseHeader);
+                    placeHeader = destinationHeader;
+                    placeItem = new PlaceItem(place, placeHeader);
                 }
-                mExpenseAdapter.addItemToSection(expenseItem, expenseHeader,
-                        new ExpenseItemComparator());
+                mPlacesAdapter.addItemToSection(placeItem, placeHeader,
+                        new PlaceItemComparator());
             }
         } else {
-            mExpenseAdapter.updateItem(expenseItem);
+            mPlacesAdapter.updateItem(placeItem);
         }
     }
 
-    private void expenseRemoved(ExpenseModel expense) {
-        ExpenseHeaderModel headerModel = new ExpenseHeaderModel();
-        headerModel.setId(expense.getDate());
-        ExpenseHeader headerHolder = new ExpenseHeader(headerModel);
-        ExpenseItem itemHolder = new ExpenseItem(expense, headerHolder);
-        int position = mExpenseAdapter.getGlobalPositionOf(itemHolder);
+    private void placeRemoved(PlaceModel place) {
+        HeaderModel listHeaderModel = new HeaderModel();
+        listHeaderModel.setId(place.getDate());
+        PlaceHeader headerHolder = new PlaceHeader(listHeaderModel);
+        PlaceItem itemHolder = new PlaceItem(place, headerHolder);
+        int position = mPlacesAdapter.getGlobalPositionOf(itemHolder);
         if (position >= 0) {
-            IHeader header = mExpenseAdapter.getSectionHeader(position);
-            mExpenseAdapter.removeItem(position);
+            IHeader header = mPlacesAdapter.getSectionHeader(position);
+            mPlacesAdapter.removeItem(position);
 
             // Remove empty section
-            if (header != null && mExpenseAdapter.getSectionItems(header).size()
-                    == 0) {
-                mExpenseAdapter.removeItem(
-                        mExpenseAdapter.getGlobalPositionOf(header));
+            if (header != null && mPlacesAdapter.getSectionItems(header).size() == 0) {
+                mPlacesAdapter.removeItem(
+                        mPlacesAdapter.getGlobalPositionOf(header));
             }
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mExpensesReference.removeEventListener(mChildEventListener);
+            mPlacesReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
         if (mValueEventListener != null) {
-            mExpensesReference.removeEventListener(mValueEventListener);
+            mPlacesReference.removeEventListener(mValueEventListener);
             mValueEventListener = null;
         }
     }
@@ -362,37 +358,37 @@ public class PlaceListFragment extends BaseFragment implements
         }
     }
 
-    private class ExpenseItemComparator implements Comparator<IFlexible> {
+    private class PlaceItemComparator implements Comparator<IFlexible> {
 
         @Override
         public int compare(IFlexible v1, IFlexible v2) {
             int result = 0;
-            if (v1 instanceof ExpenseHeader && v2 instanceof ExpenseHeader) {
-                result = ((ExpenseHeader) v2).getModel().getId().compareTo(((ExpenseHeader) v1)
+            if (v1 instanceof PlaceHeader && v2 instanceof PlaceHeader) {
+                result = ((PlaceHeader) v2).getModel().getId().compareTo(((PlaceHeader) v1)
                         .getModel().getId());
-            } else if (v1 instanceof ExpenseItem && v2 instanceof ExpenseItem) {
-                result = ((ExpenseItem) v2).getHeader().getModel().getId().compareTo((
-                        (ExpenseItem) v1).getHeader().getModel().getId());
+            } else if (v1 instanceof PlaceItem && v2 instanceof PlaceItem) {
+                result = ((PlaceItem) v2).getHeader().getModel().getId().compareTo((
+                        (PlaceItem) v1).getHeader().getModel().getId());
 
-                // TODO: Add a modified timestamp for the expense and use it in the comparison
+                // TODO: Add a modified timestamp for the place and use it in the comparison
                 // Current logic below it not ok for updated objects,
                 // since they are put in the middle of section
-                // Update timestamp only on add or on update where the expense date was changed
+                // Update timestamp only on add or on update where the place date was changed
                 if (result == 0) {
-                    result = ((ExpenseItem) v2).getModel().getId().compareTo(((ExpenseItem) v1)
+                    result = ((PlaceItem) v2).getModel().getId().compareTo(((PlaceItem) v1)
                             .getModel().getId());
                 }
-            } else if (v1 instanceof ExpenseItem && v2 instanceof ExpenseHeader) {
+            } else if (v1 instanceof PlaceItem && v2 instanceof PlaceHeader) {
 
-                result = ((ExpenseHeader) v2).getModel().getId().compareTo(((ExpenseItem) v1)
+                result = ((PlaceHeader) v2).getModel().getId().compareTo(((PlaceItem) v1)
                         .getHeader().getModel().getId());
                 if (result == 0) {
                     result--;
                 }
-            } else if (v1 instanceof ExpenseHeader && v2 instanceof ExpenseItem) {
+            } else if (v1 instanceof PlaceHeader && v2 instanceof PlaceItem) {
 
-                result = ((ExpenseItem) v2).getHeader().getModel().getId().compareTo((
-                        (ExpenseHeader) v1).getModel().getId());
+                result = ((PlaceItem) v2).getHeader().getModel().getId().compareTo((
+                        (PlaceHeader) v1).getModel().getId());
                 if (result == 0) {
                     result--;
                 }

@@ -50,7 +50,7 @@ public class Utils {
         return dateFormat.format(dateCalendar.getTime());
     }
 
-    public static String getFormattedExpenseDateText(long dateMillis) {
+    public static String getFormattedDateText(long dateMillis) {
         Calendar startDateCalendar = Calendar.getInstance(Locale.getDefault());
         startDateCalendar.setTimeInMillis(dateMillis);
 

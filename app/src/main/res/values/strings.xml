@@ -25,7 +25,7 @@
     <string name="hint_where_are_you_going_required">Where are you going? *</string>
     <string name="hint_where_are_you_going">Where are you going?</string>
     <string name="hint_what_is_the_trip_name">What\'s the trip\'s name? *</string>
-    <string name="hint_what_is_the_expense_name">What\'s the expense\'s name? *</string>
+    <string name="hint_what_is_the_expense_name">What\'s the place\'s name? *</string>
     <string name="hint_what_is_the_budget_name">What\'s the budget\'s name? *</string>
     <string name="destination_item_description">Destination %d</string>
     <string name="destination_footer_description">Add new destination</string>
@@ -33,10 +33,10 @@
     <string name="reached_maximum_number_of_travelers">Reached maximum number of travelers</string>
     <string name="mandatory_field">Mandatory field</string>
     <string name="trip_updated_error">Error while updating Trip</string>
-    <string name="expense_updated_error">Error while updating the expense</string>
+    <string name="expense_updated_error">Error while updating the place</string>
     <string name="budget_updated_error">Error while updating the budget</string>
     <string name="place_updated_error">Error while updating the place</string>
-    <string name="expense_loading_error">Error loading expense</string>
+    <string name="expense_loading_error">Error loading place</string>
     <string name="budget_loading_error">Error loading budget</string>
     <string name="place_loading_error">Error loading place</string>
     <string name="done">Done</string>
@@ -57,6 +57,7 @@
     <string name="no_saved_trips">No saved trips :(</string>
     <string name="no_saved_expenses">No saved expenses</string>
     <string name="no_saved_budgets">No saved budgets</string>
+    <string name="no_saved_places">No saved places</string>
     <string name="could_not_load_trip_details">Could not load Trip details</string>
     <string name="photo_attribution_prefix">"Photo: "</string>
     <string name="expenses">Expenses</string>

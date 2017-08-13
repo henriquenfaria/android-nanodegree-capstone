@@ -280,7 +280,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
 
     private void populateFormFields() {
         mExpenseTitleEditText.setText(mExpense.getTitle());
-        mDateTextView.setText(Utils.getFormattedExpenseDateText(mExpense.getDate()));
+        mDateTextView.setText(Utils.getFormattedDateText(mExpense.getDate()));
         Country country = new Country();
         country.setCode(mExpense.getCountry());
         country.loadFlagByCode(mFragmentActivity);
@@ -337,7 +337,7 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     public void onDateSet(int targetViewId, long dateMillis) {
         if (mDateTextView.getId() == targetViewId) {
             mExpense.setDate(new DateTime(dateMillis).withTimeAtStartOfDay().getMillis());
-            mDateTextView.setText(Utils.getFormattedExpenseDateText(dateMillis));
+            mDateTextView.setText(Utils.getFormattedDateText(dateMillis));
             mDateTextView.setError(null);
         }
     }
