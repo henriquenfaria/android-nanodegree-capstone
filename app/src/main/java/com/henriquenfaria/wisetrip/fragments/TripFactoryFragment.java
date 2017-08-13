@@ -130,6 +130,8 @@ public class TripFactoryFragment extends BaseFragment implements
     private View.OnClickListener mOnTravelerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
+            // TODO: Replace all getActivity instances for mFragmentActivity?
+            // TODO: Replace current permission code with EasyPermissions library?
             if (ContextCompat.checkSelfPermission(TripFactoryFragment.this.getActivity(),
                     Manifest.permission.READ_CONTACTS)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -492,6 +494,7 @@ public class TripFactoryFragment extends BaseFragment implements
         startPlaceAutocomplete(REQUEST_PLACE_AUTOCOMPLETE_ADD);
     }
 
+    // TODO: Move startActivityForResult call to TripFactoryActivity?
     private void startPlaceAutocomplete(int requestId) {
         try {
             AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
