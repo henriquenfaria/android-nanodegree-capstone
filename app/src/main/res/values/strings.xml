@@ -35,6 +35,7 @@
     <string name="trip_updated_error">Error while updating Trip</string>
     <string name="expense_updated_error">Error while updating the expense</string>
     <string name="budget_updated_error">Error while updating the budget</string>
+    <string name="place_updated_error">Error while updating the place</string>
     <string name="expense_loading_error">Error loading expense</string>
     <string name="budget_loading_error">Error loading budget</string>
     <string name="place_loading_error">Error loading place</string>

@@ -427,6 +427,8 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 handleRequestExpenseFactory(resultCode, data);
             } else if (requestCode == Constants.Request.REQUEST_BUDGET_FACTORY) {
                 handleRequestBudgetFactory(resultCode, data);
+            } else if (requestCode == Constants.Request.REQUEST_PLACE_FACTORY) {
+                handleRequestPlaceFactory(resultCode, data);
             }
         }
     }
@@ -557,6 +559,36 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
         } else if (resultCode == Constants.Result.RESULT_BUDGET_ERROR) {
             Toast.makeText(this, getString(R.string.budget_updated_error), Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    private void handleRequestPlaceFactory(int resultCode, Intent data) {
+        if (data == null) {
+            return;
+        }
+
+        final PlaceModel place = data.getParcelableExtra(Constants.Extra.EXTRA_PLACE);
+        final DatabaseReference placeReference
+                = mRootReference.child("places").child(mCurrentUser.getUid());
+
+        if (resultCode == Constants.Result.RESULT_PLACE_ADDED && place != null) {
+            DatabaseReference databaseReference = placeReference.child(mTrip.getId()).push();
+            place.setId(databaseReference.getKey());
+            databaseReference.setValue(place);
+
+        } else if (resultCode == Constants.Result.RESULT_PLACE_CHANGED
+                && place != null && !TextUtils.isEmpty(place.getId())) {
+            DatabaseReference databaseReference = placeReference.child(mTrip.getId())
+                    .child(place.getId());
+            databaseReference.setValue(place);
+
+        } else if (resultCode == Constants.Result.RESULT_PLACE_REMOVED
+                && place != null && !TextUtils.isEmpty(place.getId())) {
+            placeReference.child(mTrip.getId()).child(place.getId()).removeValue();
+
+        } else if (resultCode == Constants.Result.RESULT_PLACE_ERROR) {
+            Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)
                     .show();
         }
     }

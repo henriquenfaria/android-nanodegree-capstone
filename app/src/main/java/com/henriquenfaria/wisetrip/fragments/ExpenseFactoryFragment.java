@@ -314,7 +314,6 @@ public class ExpenseFactoryFragment extends BaseFragment implements
         return isValid;
     }
 
-
     private void saveExpense() {
         if (isValidFormFields()) {
             mOnExpenseFactoryListener.saveExpense(mTrip, mExpense, mIsEditMode);

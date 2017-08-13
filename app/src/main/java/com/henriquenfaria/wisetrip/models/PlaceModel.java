@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class PlaceModel implements Parcelable, Serializable {
 
     private String id;
-    private String name;
     private Long date;
     private DestinationModel destination;
 
@@ -19,14 +18,6 @@ public class PlaceModel implements Parcelable, Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Long getDate() {
@@ -47,7 +38,6 @@ public class PlaceModel implements Parcelable, Serializable {
 
     public PlaceModel() {
         id = "";
-        name = "";
         date = -1L;
     }
 
@@ -59,14 +49,12 @@ public class PlaceModel implements Parcelable, Serializable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
-        dest.writeString(this.name);
         dest.writeValue(this.date);
         dest.writeParcelable(this.destination, flags);
     }
 
     protected PlaceModel(Parcel in) {
         this.id = in.readString();
-        this.name = in.readString();
         this.date = (Long) in.readValue(Long.class.getClassLoader());
         this.destination = in.readParcelable(DestinationModel.class.getClassLoader());
     }
