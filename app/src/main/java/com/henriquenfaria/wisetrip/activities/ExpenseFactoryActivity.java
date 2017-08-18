@@ -34,8 +34,6 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     private static final int RESULT_EXPENSE_REMOVED = 2;
     private static final int RESULT_EXPENSE_CHANGED = 3;
 
-    private TripModel mTrip;
-    private ExpenseModel mExpense;
     private ExpenseFactoryFragment mExpenseFactoryFragment;
 
     private FirebaseAuth mFirebaseAuth;
@@ -66,16 +64,16 @@ public class ExpenseFactoryActivity extends AppCompatActivity
                 return;
             }
 
-            mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+            TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
 
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 // ExpenseModel already exists
-                mExpense = intent.getParcelableExtra(Constants.Extra.EXTRA_EXPENSE);
-                mExpenseFactoryFragment = ExpenseFactoryFragment.newInstance(mTrip, mExpense);
+                ExpenseModel expense = intent.getParcelableExtra(Constants.Extra.EXTRA_EXPENSE);
+                mExpenseFactoryFragment = ExpenseFactoryFragment.newInstance(trip, expense);
 
             } else {
                 // New expense
-                mExpenseFactoryFragment = ExpenseFactoryFragment.newInstance(mTrip, null);
+                mExpenseFactoryFragment = ExpenseFactoryFragment.newInstance(trip, null);
             }
 
             getSupportFragmentManager().beginTransaction()
@@ -104,22 +102,22 @@ public class ExpenseFactoryActivity extends AppCompatActivity
                     = mRootReference.child("budgets").child(mCurrentUser.getUid());
 
             if (isEditMode && !TextUtils.isEmpty(expense.getId())) {
-                DatabaseReference databaseReference = expenseReference.child(mTrip.getId())
+                DatabaseReference databaseReference = expenseReference.child(trip.getId())
                         .child(expense.getId());
                 databaseReference.setValue(expense);
 
                 // Update expense for applicable budgets
                 updateExpenseForCurrentBudgets(RESULT_EXPENSE_CHANGED,
-                        budgetReference, expense);
+                        trip, budgetReference, expense);
             } else if (!isEditMode) {
                 // Add expense
-                DatabaseReference databaseReference = expenseReference.child(mTrip.getId()).push();
+                DatabaseReference databaseReference = expenseReference.child(trip.getId()).push();
                 expense.setId(databaseReference.getKey());
                 databaseReference.setValue(expense);
 
                 // Add expense for applicable budgets
                 updateExpenseForCurrentBudgets(RESULT_EXPENSE_ADDED,
-                        budgetReference, expense);
+                        trip, budgetReference, expense);
             } else {
                 Toast.makeText(this, getString(R.string.expense_updated_error), Toast.LENGTH_SHORT)
                         .show();
@@ -132,10 +130,10 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     }
 
     // Iterates through all budgets and add/remove/update the expense if applicable
-    private void updateExpenseForCurrentBudgets(final int result,
+    private void updateExpenseForCurrentBudgets(final int result, final TripModel trip,
                                                 final DatabaseReference budgetReference,
                                                 final ExpenseModel expense) {
-        budgetReference.child(mTrip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+        budgetReference.child(trip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Timber.d("onDataChange");
@@ -158,7 +156,7 @@ public class ExpenseFactoryActivity extends AppCompatActivity
                                 }
                             }
                             budget.updateExpensesAmount();
-                            budgetReference.child(mTrip.getId()).child(budget.getId()).setValue
+                            budgetReference.child(trip.getId()).child(budget.getId()).setValue
                                     (budget);
                         }
                     }
@@ -181,11 +179,11 @@ public class ExpenseFactoryActivity extends AppCompatActivity
             final DatabaseReference budgetReference
                     = mRootReference.child("budgets").child(mCurrentUser.getUid());
 
-            expenseReference.child(mTrip.getId()).child(expense.getId()).removeValue();
+            expenseReference.child(trip.getId()).child(expense.getId()).removeValue();
 
             // Remove expense from applicable budgets
-            updateExpenseForCurrentBudgets(RESULT_EXPENSE_REMOVED,
-                    budgetReference, expense);
+            updateExpenseForCurrentBudgets(RESULT_EXPENSE_REMOVED, trip, budgetReference,
+                    expense);
         } else {
             Toast.makeText(this, getString(R.string.expense_updated_error), Toast.LENGTH_SHORT)
                     .show();

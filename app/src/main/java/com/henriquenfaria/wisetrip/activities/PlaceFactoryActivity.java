@@ -25,8 +25,6 @@ public class PlaceFactoryActivity extends AppCompatActivity
     public static final int RESULT_PLACE_DELETED = 2;
 
     private static final String TAG_PLACE_FACTORY_FRAGMENT = "tag_place_factory_fragment";
-    private TripModel mTrip;
-    private PlaceModel mPlace;
     private PlaceFactoryFragment mPlaceFactoryFragment;
 
     private FirebaseAuth mFirebaseAuth;
@@ -57,16 +55,16 @@ public class PlaceFactoryActivity extends AppCompatActivity
                 return;
             }
 
-            mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+            TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
 
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 // PlaceModel already exists
-                mPlace = intent.getParcelableExtra(Constants.Extra.EXTRA_PLACE);
-                mPlaceFactoryFragment = PlaceFactoryFragment.newInstance(mTrip, mPlace);
+                PlaceModel place = intent.getParcelableExtra(Constants.Extra.EXTRA_PLACE);
+                mPlaceFactoryFragment = PlaceFactoryFragment.newInstance(trip, place);
 
             } else {
                 // New place
-                mPlaceFactoryFragment = PlaceFactoryFragment.newInstance(mTrip, null);
+                mPlaceFactoryFragment = PlaceFactoryFragment.newInstance(trip, null);
             }
 
             getSupportFragmentManager().beginTransaction()
@@ -93,13 +91,13 @@ public class PlaceFactoryActivity extends AppCompatActivity
                     = mRootReference.child("places").child(mCurrentUser.getUid());
 
             if (isEditMode && !TextUtils.isEmpty(place.getId())) {
-                DatabaseReference databaseReference = placeReference.child(mTrip.getId())
+                DatabaseReference databaseReference = placeReference.child(trip.getId())
                         .child(place.getId());
                 databaseReference.setValue(place);
                 setResult(RESULT_PLACE_UPDATED);
 
             } else if (!isEditMode) {
-                DatabaseReference databaseReference = placeReference.child(mTrip.getId()).push();
+                DatabaseReference databaseReference = placeReference.child(trip.getId()).push();
                 place.setId(databaseReference.getKey());
                 databaseReference.setValue(place);
 
@@ -121,7 +119,7 @@ public class PlaceFactoryActivity extends AppCompatActivity
             final DatabaseReference placeReference
                     = mRootReference.child("places").child(mCurrentUser.getUid());
 
-            placeReference.child(mTrip.getId()).child(place.getId()).removeValue();
+            placeReference.child(trip.getId()).child(place.getId()).removeValue();
             setResult(RESULT_PLACE_DELETED);
         } else {
             Toast.makeText(this, getString(R.string.place_updated_error), Toast.LENGTH_SHORT)

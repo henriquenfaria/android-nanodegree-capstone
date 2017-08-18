@@ -29,10 +29,8 @@ public class BudgetFactoryActivity extends AppCompatActivity
         implements BudgetFactoryFragment.OnBudgetFactoryListener {
 
     private static final String TAG_BUDGET_FACTORY_FRAGMENT = "tag_budget_factory_fragment";
-    private TripModel mTrip;
-    private BudgetModel mBudget;
-    private BudgetFactoryFragment mBudgetFactoryFragment;
 
+    private BudgetFactoryFragment mBudgetFactoryFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRootReference;
@@ -60,16 +58,16 @@ public class BudgetFactoryActivity extends AppCompatActivity
                 return;
             }
 
-            mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+            TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
 
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 // BudgetModel already exists
-                mBudget = intent.getParcelableExtra(Constants.Extra.EXTRA_BUDGET);
-                mBudgetFactoryFragment = BudgetFactoryFragment.newInstance(mTrip, mBudget);
+                BudgetModel budget = intent.getParcelableExtra(Constants.Extra.EXTRA_BUDGET);
+                mBudgetFactoryFragment = BudgetFactoryFragment.newInstance(trip, budget);
 
             } else {
                 // New budget
-                mBudgetFactoryFragment = BudgetFactoryFragment.newInstance(mTrip, null);
+                mBudgetFactoryFragment = BudgetFactoryFragment.newInstance(trip, null);
             }
 
             getSupportFragmentManager().beginTransaction()
@@ -99,20 +97,20 @@ public class BudgetFactoryActivity extends AppCompatActivity
             final DatabaseReference expenseReference
                     = mRootReference.child("expenses").child(mCurrentUser.getUid());
             if (isEditMode && !TextUtils.isEmpty(budget.getId())) {
-                DatabaseReference databaseReference = budgetReference.child(mTrip.getId())
+                DatabaseReference databaseReference = budgetReference.child(trip.getId())
                         .child(budget.getId());
                 databaseReference.setValue(budget);
 
                 // Update budget by adding applicable expenses
-                updateBudgetForCurrentExpenses(expenseReference, budgetReference, budget);
+                updateBudgetForCurrentExpenses(expenseReference, trip, budgetReference, budget);
 
             } else if (!isEditMode){
-                DatabaseReference databaseReference = budgetReference.child(mTrip.getId()).push();
+                DatabaseReference databaseReference = budgetReference.child(trip.getId()).push();
                 budget.setId(databaseReference.getKey());
                 databaseReference.setValue(budget);
 
                 // Update budget by updating it with applicable expenses
-                updateBudgetForCurrentExpenses(expenseReference, budgetReference, budget);
+                updateBudgetForCurrentExpenses(expenseReference, trip, budgetReference, budget);
             } else {
                 Toast.makeText(this, getString(R.string.budget_updated_error), Toast.LENGTH_SHORT)
                         .show();
@@ -126,9 +124,10 @@ public class BudgetFactoryActivity extends AppCompatActivity
 
     // Iterates through all expenses and add them to the created/updated budget if applicable
     private void updateBudgetForCurrentExpenses(final DatabaseReference expenseReference,
+                                                final TripModel trip,
                                                 final DatabaseReference budgetReference, final
                                                 BudgetModel budget) {
-        expenseReference.child(mTrip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+        expenseReference.child(trip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Timber.d("onDataChange");
@@ -154,7 +153,7 @@ public class BudgetFactoryActivity extends AppCompatActivity
                     }
 
                     budget.updateExpensesAmount();
-                    budgetReference.child(mTrip.getId()).child(budget.getId()).setValue(budget);
+                    budgetReference.child(trip.getId()).child(budget.getId()).setValue(budget);
                 }
             }
 
@@ -173,7 +172,7 @@ public class BudgetFactoryActivity extends AppCompatActivity
 
             final DatabaseReference expenseReference
                     = mRootReference.child("expenses").child(mCurrentUser.getUid());
-            budgetReference.child(mTrip.getId()).child(budget.getId()).removeValue();
+            budgetReference.child(trip.getId()).child(budget.getId()).removeValue();
 
             // No need to update expenses here. Just delete the budget.
         } else {

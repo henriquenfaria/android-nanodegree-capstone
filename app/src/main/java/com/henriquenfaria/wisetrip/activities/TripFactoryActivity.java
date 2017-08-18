@@ -22,7 +22,6 @@ public class TripFactoryActivity extends AppCompatActivity
 
     private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
 
-    private TripModel mTrip;
     private TripFactoryFragment mTripFactoryFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
@@ -45,8 +44,8 @@ public class TripFactoryActivity extends AppCompatActivity
             Intent intent = getIntent();
             if (intent != null && intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 // TripModel already exists
-                mTrip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
-                mTripFactoryFragment = TripFactoryFragment.newInstance(mTrip);
+                TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);
+                mTripFactoryFragment = TripFactoryFragment.newInstance(trip);
 
             } else {
                 // New trip
