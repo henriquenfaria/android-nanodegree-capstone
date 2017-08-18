@@ -208,7 +208,7 @@ public class TripFactoryFragment extends BaseFragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_trip_factory_menu, menu);
+        inflater.inflate(R.menu.fragment_factory_menu, menu);
     }
 
     @Override

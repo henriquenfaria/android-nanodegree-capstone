@@ -402,7 +402,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
     public void startPlaceDetails(PlaceModel place) {
         Intent intent = new Intent(TripDetailsActivity.this,
-                PlaceFactoryActivity.class);
+                PlaceDetailsActivity.class);
         intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
         if (place != null) {
             intent.putExtra(Constants.Extra.EXTRA_PLACE, (Parcelable) place);
