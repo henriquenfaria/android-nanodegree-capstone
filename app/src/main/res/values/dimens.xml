@@ -36,5 +36,6 @@
     <dimen name="budget_item_text_size">15sp</dimen>
     <dimen name="budget_title_text_size">17sp</dimen>
     <dimen name="trip_detail_empty_list_view_margin_bottom">140dp</dimen>
+    <dimen name="place_details_map_height">210dp</dimen>
     <dimen name="divider_height">1dp</dimen>
 </resources>

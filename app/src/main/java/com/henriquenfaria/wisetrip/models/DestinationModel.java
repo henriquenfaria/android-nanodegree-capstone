@@ -3,7 +3,6 @@ package com.henriquenfaria.wisetrip.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.places.Place;
 
@@ -21,7 +20,6 @@ public class DestinationModel implements Parcelable, Serializable {
     private Double rating;
     private LatLngModel latLng;
     private LatLngBoundsModel latLngBounds;
-
 
     public DestinationModel() {
         // Required by Firebase
@@ -62,6 +60,54 @@ public class DestinationModel implements Parcelable, Serializable {
         this.name = name;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAttributions() {
+        return attributions;
+    }
+
+    public void setAttributions(String attributions) {
+        this.attributions = attributions;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getWebsiteUri() {
+        return websiteUri;
+    }
+
+    public void setWebsiteUri(String websiteUri) {
+        this.websiteUri = websiteUri;
+    }
+
+    public Long getPriceLevel() {
+        return priceLevel;
+    }
+
+    public void setPriceLevel(Long priceLevel) {
+        this.priceLevel = priceLevel;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
     public LatLngModel getLatLng() {
         return latLng;
     }
@@ -70,22 +116,12 @@ public class DestinationModel implements Parcelable, Serializable {
         this.latLng = latLng;
     }
 
-    @Nullable
     public LatLngBoundsModel getLatLngBounds() {
         return latLngBounds;
     }
 
     public void setLatLngBounds(LatLngBoundsModel latLngBounds) {
         this.latLngBounds = latLngBounds;
-    }
-
-    @Nullable
-    public String getAttributions() {
-        return attributions;
-    }
-
-    public void setAttributions(String attributions) {
-        this.attributions = attributions;
     }
 
     @Override

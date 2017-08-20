@@ -2,20 +2,37 @@ package com.henriquenfaria.wisetrip.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.models.DestinationModel;
+import com.henriquenfaria.wisetrip.models.LatLngModel;
 import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
+import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
 import org.joda.time.DateTime;
@@ -23,7 +40,7 @@ import org.joda.time.DateTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PlaceDetailsFragment extends BaseFragment {
+public class PlaceDetailsFragment extends BaseFragment implements OnMapReadyCallback {
 
     private static final String ARG_PLACE = "arg_place";
     private static final String ARG_TRIP = "arg_trip";
@@ -32,17 +49,27 @@ public class PlaceDetailsFragment extends BaseFragment {
     private static final String SAVE_PLACE = "save_place";
     private static final String SAVE_IS_EDIT_MODE = "save_is_edit_mode";
 
+    @BindView(R.id.address_container)
+    protected LinearLayout mAddressContainer;
+    @BindView(R.id.website_container)
+    protected LinearLayout mWebsiteContainer;
+    @BindView(R.id.phone_container)
+    protected LinearLayout mPhoneContainer;
+
     @BindView(R.id.destination_text)
     protected TextView mDestinationTextView;
-
     @BindView(R.id.date_text)
     protected TextView mDateTextView;
+    @BindView(R.id.address_text)
+    protected TextView mAddressTextView;
+    @BindView(R.id.website_text)
+    protected TextView mWebsiteTextView;
+    @BindView(R.id.phone_text)
+    protected TextView mPhoneTextView;
 
     private TripModel mTrip;
     private PlaceModel mPlace;
     private boolean mIsEditMode;
-    private DatePickerDialogFragment mDatePickerFragment;
-    private AlertDialogFragment mAlertDialogFragment;
 
     private OnPlaceDetailsListener mOnPlaceDetailsListener;
 
@@ -59,7 +86,6 @@ public class PlaceDetailsFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -143,39 +169,85 @@ public class PlaceDetailsFragment extends BaseFragment {
             mOnPlaceDetailsListener.changeActionBarTitle(getString(R.string.place_details));
         }
 
-        populateFormFields();
+        populateDetailsFields();
+
+        initializeMap();
 
         return rootView;
     }
 
-    private void populateFormFields() {
+    private void populateDetailsFields() {
         mDateTextView.setText(Utils.getFormattedDateText(mPlace.getDate()));
 
-        if (mPlace.getDestination() != null) {
-            mDestinationTextView.setText(mPlace.getDestination().getName());
+        final DestinationModel destination = mPlace.getDestination();
+        if (destination != null) {
+            if (!TextUtils.isEmpty(destination.getName())) {
+                mDestinationTextView.setText(destination.getName());
+            }
+
+            if (!TextUtils.isEmpty(destination.getAddress())) {
+                // Set hyperlink appearance
+                SpannableStringBuilder ssb = new SpannableStringBuilder();
+                ssb.append(destination.getAddress());
+                ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                mAddressTextView.setText(ssb, TextView.BufferType.SPANNABLE);
+                
+                mAddressContainer.setVisibility(View.VISIBLE);
+                mAddressTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Utils.getDestinationMapUri(destination));
+                        startActivity(i);
+                    }
+                });
+            }
+
+            if (!TextUtils.isEmpty(destination.getWebsiteUri())) {
+                mWebsiteTextView.setText(destination.getWebsiteUri());
+                mWebsiteContainer.setVisibility(View.VISIBLE);
+            }
+            if (!TextUtils.isEmpty(destination.getPhoneNumber())) {
+                mPhoneTextView.setText(destination.getPhoneNumber());
+                mPhoneContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 
-    private boolean isValidFormFields() {
-        boolean isValid = true;
-
-        if (mPlace.getDate() <= 0) {
-            mDateTextView.setError(getString(R.string.mandatory_field));
-            isValid = false;
+    private void initializeMap() {
+        // Initialize detail map
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.place_details_map);
+        if (mPlace.getDestination() != null && (mPlace.getDestination().getLatLng() != null)) {
+            // Add Maps fragment if place location exists
+            mapFragment.getMapAsync(this);
+        } else {
+            // Hide map fragment if there is no location for this place
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.hide(mapFragment).commit();
         }
-
-        if (mPlace.getDestination() == null) {
-            mDestinationTextView.setError(getString(R.string.mandatory_field));
-            isValid = false;
-        }
-
-        return isValid;
     }
-
 
     public interface OnPlaceDetailsListener {
         void changeActionBarTitle(String newTitle);
 
         void onPlaceEditMenu(TripModel trip, PlaceModel place);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        if (mPlace.getDestination() != null && mPlace.getDestination().getLatLng() != null) {
+            LatLngModel latLngModel = mPlace.getDestination().getLatLng();
+            LatLng location = new LatLng(latLngModel.getLatitude(), latLngModel.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(location)
+                    .title(mPlace.getDestination().getName()));
+            // .setSnippet(Utils.formatPrice(getContext(), mRealtyItem.getPrice()));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(location).zoom(Constants.General.DETAIL_MAP_ZOOM_LEVEL).build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+            googleMap.moveCamera(cameraUpdate);
+
+        }
     }
 }

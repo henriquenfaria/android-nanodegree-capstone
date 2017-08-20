@@ -5,11 +5,13 @@ import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.henriquenfaria.wisetrip.models.BudgetModel;
+import com.henriquenfaria.wisetrip.models.DestinationModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.squareup.picasso.Picasso;
@@ -17,6 +19,8 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Currency;
@@ -267,5 +271,21 @@ public class Utils {
     public static boolean isBudgetExpense(@NonNull BudgetModel budget, @NonNull ExpenseModel expense) {
         return TextUtils.equals(budget.getCurrency(), expense.getCurrency())
                 && TextUtils.equals(budget.getCountry(), expense.getCountry());
+    }
+
+    public static Uri getDestinationMapUri(DestinationModel destination){
+        String encodedQuery = "";
+
+        try {
+            encodedQuery = URLEncoder.encode(destination.getName(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return Uri.parse("https://www.google.com/maps/search/?api=1")
+                .buildUpon()
+                .appendQueryParameter("query", encodedQuery)
+                .appendQueryParameter("query_place_id", destination.getId())
+                .build();
     }
 }

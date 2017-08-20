@@ -5,12 +5,16 @@ package com.henriquenfaria.wisetrip.utils;
 public class Constants {
     // General constants
     public static class General {
+
         // Max TripModel destinations
         public static final int MAX_DESTINATIONS = 10;
+
         // Max TripModel travelers
         public static final int MAX_TRAVELERS = 10;
+
         // Internal Storage directory for destination photos
         public static final String DESTINATION_PHOTO_DIR = "destinations";
+
         // 24 hours in milliseconds
         public static final long DAY_IN_MILLIS = 86400000L;
 
@@ -22,12 +26,15 @@ public class Constants {
         public static final String DEFAULT_COUNTRY = "US";
         public static final String DEFAULT_CURRENCY = "USD";
 
+        // Place details map zoom level
+        public static final float DETAIL_MAP_ZOOM_LEVEL = 15.0f;
+
         public static final int DEFAULT_BUDGET_NOTIFICATION_MAX = 99;
         public static final int DEFAULT_BUDGET_NOTIFICATION = 20;
     }
 
+    // Prefixes for dynamic shared transition elements
     public static class Transition {
-        // Prefixes for dynamic shared transition elements
         public static final String PREFIX_TRIP_TITLE = "prefix_trip_title_";
         public static final String PREFIX_TRIP_PHOTO = "prefix_trip_photo_";
         public static final String PREFIX_TRIP_PHOTO_PROTECTION = "prefix_trip_photo_protection_";
