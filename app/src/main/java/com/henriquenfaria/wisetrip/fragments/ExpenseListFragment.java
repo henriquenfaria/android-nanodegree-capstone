@@ -96,7 +96,6 @@ public class ExpenseListFragment extends BaseFragment implements
                 .child("expenses")
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
-
     }
 
     @Override

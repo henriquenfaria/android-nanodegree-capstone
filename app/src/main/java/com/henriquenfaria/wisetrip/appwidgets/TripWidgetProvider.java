@@ -1,24 +1,33 @@
 package com.henriquenfaria.wisetrip.appwidgets;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.RemoteViews;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
 import timber.log.Timber;
 
 public class TripWidgetProvider extends AppWidgetProvider {
-    // log tag
-    private static final String TAG = "TripWidgetProvider";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Timber.d("onUpdate");
-
         for (int i = 0; i < appWidgetIds.length; i++) {
             int appWidgetId = appWidgetIds[i];
             String tripId = Utils.getStringFromSharedPrefs(context,
@@ -65,12 +74,49 @@ public class TripWidgetProvider extends AppWidgetProvider {
                 PackageManager.DONT_KILL_APP);*/
     }
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, String tripId) {
+    static void updateAppWidget(Context context, final AppWidgetManager appWidgetManager,
+                                final int appWidgetId, final String tripId) {
         Timber.d("updateAppWidget appWidgetId=" + appWidgetId + " tripId=" + tripId);
 
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-        views.setTextViewText(R.id.text, tripId);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        if (!TextUtils.isEmpty(tripId)) {
+            final RemoteViews views = new RemoteViews(context.getPackageName(),
+                    R.layout.widget_layout);
+
+            // Set widget config Intent
+            Intent configIntent = new Intent(context, TripWidgetConfigurationActivity.class);
+            configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            PendingIntent configPendingIntent = PendingIntent.getActivity(context, appWidgetId,
+                    configIntent, 0);
+            views.setOnClickPendingIntent(R.id.settings_button, configPendingIntent);
+
+            // Set Database References and Listeners
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            DatabaseReference tripReference = firebaseDatabase.getReference()
+                    .child("trips")
+                    .child(currentUser.getUid())
+                    .child(tripId);
+            tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Timber.d("onDataChange");
+
+                    TripModel trip = dataSnapshot.getValue(TripModel.class);
+                    if (trip != null && !TextUtils.isEmpty(trip.getId())) {
+                        views.setTextViewText(R.id.text, trip.getTitle());
+                        appWidgetManager.updateAppWidget(appWidgetId, views);
+                        views.setViewVisibility(R.id.select_trip, View.GONE);
+                    } else {
+                        views.setViewVisibility(R.id.select_trip, View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Timber.d("onCancelled", databaseError.getMessage());
+                }
+            });
+        }
     }
 }
