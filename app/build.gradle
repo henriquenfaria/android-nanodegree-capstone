@@ -13,9 +13,32 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [google_geo_api_manifest_key: google_geo_api_manifest_key]
     }
+
+    signingConfigs {
+        release {
+            storeFile file("${project.rootDir}/keys/temp_key_release.jks")
+            keyAlias 'alias_release'
+            keyPassword 'password_release'
+            storePassword 'password_release'
+        }
+        debug {
+            storeFile file("${project.rootDir}/keys/temp_key_debug.jks")
+            keyAlias 'alias_debug'
+            keyPassword 'password_debug'
+            storePassword 'password_debug'
+        }
+    }
     buildTypes {
         release {
+            debuggable false
             minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
