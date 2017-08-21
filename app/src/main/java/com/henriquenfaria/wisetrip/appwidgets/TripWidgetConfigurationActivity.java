@@ -56,7 +56,6 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
-        //TODO: Order by trip name
         mTripsQuery = mFirebaseDatabase.getReference()
                 .child("trips")
                 .child(mCurrentUser.getUid())

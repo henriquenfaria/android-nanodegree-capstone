@@ -16,6 +16,11 @@ import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.squareup.picasso.Picasso;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Selector;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -287,5 +292,18 @@ public class Utils {
                 .appendQueryParameter("query", encodedQuery)
                 .appendQueryParameter("query_place_id", destination.getId())
                 .build();
+    }
+
+    public static String getUrlFromHtml(String html){
+        String url = "";
+        try {
+            Document doc  = Jsoup.parse(html);
+            Element link = doc.select("a").first();
+            url = link.attr("abs:href");
+        } catch (Selector.SelectorParseException e) {
+            e.printStackTrace();
+        }
+
+        return url;
     }
 }

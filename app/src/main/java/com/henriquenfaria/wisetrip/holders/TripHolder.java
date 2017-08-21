@@ -188,7 +188,6 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     }
                 });
             } else {
-                //mAttributionContainer.setVisibility(View.GONE);
                 mAttributionPrefix.setVisibility(View.GONE);
                 mAttributionContent.setVisibility(View.GONE);
             }
