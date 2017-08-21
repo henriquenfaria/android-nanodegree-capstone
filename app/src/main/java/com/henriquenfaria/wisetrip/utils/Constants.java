@@ -66,6 +66,8 @@ public class Constants {
         public static final String PREFERENCE_LAST_USED_CURRENCY = "preference_last_used_currency";
         public static final String PREFERENCE_LAST_BUDGET_NOTIFICATION_ID
                 = "preference_last_budget_notification_id";
+        public static final String PREFERENCE_WIDGET_TRIP_ID_PREFIX
+                = "preference_widget_trip_id_prefix_";
     }
 
 }

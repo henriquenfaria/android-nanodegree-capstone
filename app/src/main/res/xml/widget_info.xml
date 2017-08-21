@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="com.henriquenfaria.wisetrip.appwidgets.TripWidgetConfigurationActivity"
+    android:initialLayout="@layout/widget_layout"
+    android:minHeight="@dimen/widget_size"
+    android:minResizeHeight="@dimen/widget_size"
+    android:minResizeWidth="@dimen/widget_size"
+    android:minWidth="@dimen/widget_size"
+    android:resizeMode="vertical"
+    android:updatePeriodMillis="3600000">
+</appwidget-provider>

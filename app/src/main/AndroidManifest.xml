@@ -78,6 +78,27 @@
                 android:value=".activities.TripFactoryActivity"/>
         </activity>
 
+        <activity
+            android:name=".appwidgets.TripWidgetConfigurationActivity"
+            android:label="@string/select_trip">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".appwidgets.TripWidgetProvider"
+            android:icon="@drawable/ic_website"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info"/>
+        </receiver>
+
         <service
             android:name=".services.PlacePhotoIntentService"
             android:exported="false">

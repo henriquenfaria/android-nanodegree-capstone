@@ -58,10 +58,8 @@ public class TripHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.edit_button)
     protected ImageView mEditButton;
 
-
     private OnTripItemClickListener mOnTripItemClickListener;
     private OnEditTripClickListener mOnEditTripClickListener;
-
 
     public TripHolder(View itemView) {
         super(itemView);
@@ -92,6 +90,10 @@ public class TripHolder extends RecyclerView.ViewHolder {
 
     public void setTripDate(String tripDate) {
         mTripDate.setText(tripDate);
+    }
+
+    public void hideEdit() {
+        mEditButton.setVisibility(View.GONE);
     }
 
     public void setTransitionNames(String tripId) {
