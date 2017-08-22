@@ -31,13 +31,15 @@ android {
     buildTypes {
         release {
             debuggable false
-            minifyEnabled false
+            minifyEnabled true
+            zipAlignEnabled true
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             debuggable true
             minifyEnabled false
+            zipAlignEnabled false
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

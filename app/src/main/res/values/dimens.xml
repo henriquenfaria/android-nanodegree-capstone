@@ -39,5 +39,6 @@
     <dimen name="place_details_map_height">210dp</dimen>
     <dimen name="widget_settings_button_padding">8dp</dimen>
     <dimen name="divider_height">1dp</dimen>
-    <dimen name="widget_size">180dp</dimen>
+    <dimen name="widget_height">110dp</dimen>
+    <dimen name="widget_width">180dp</dimen>
 </resources>

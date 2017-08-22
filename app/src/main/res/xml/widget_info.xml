@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:configure="com.henriquenfaria.wisetrip.appwidgets.TripWidgetConfigurationActivity"
     android:initialLayout="@layout/widget_layout"
-    android:minHeight="@dimen/widget_size"
-    android:minResizeHeight="@dimen/widget_size"
-    android:minResizeWidth="@dimen/widget_size"
-    android:minWidth="@dimen/widget_size"
-    android:resizeMode="vertical"
-    android:updatePeriodMillis="3600000">
+    android:minHeight="@dimen/widget_height"
+    android:minResizeHeight="@dimen/widget_height"
+    android:minResizeWidth="@dimen/widget_width"
+    android:minWidth="@dimen/widget_width"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="10800000">
 </appwidget-provider>

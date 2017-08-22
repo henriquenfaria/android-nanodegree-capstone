@@ -170,6 +170,7 @@ public class AuthUiActivity extends AppCompatActivity {
     }
 
     private void onSignInInitialize() {
+        // Nothing to initialize yet
     }
 
     private void onSignOutCleanup() {
