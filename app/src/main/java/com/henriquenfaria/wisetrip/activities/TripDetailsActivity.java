@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.fragments.BudgetListFragment;
 import com.henriquenfaria.wisetrip.fragments.ExpenseListFragment;
 import com.henriquenfaria.wisetrip.fragments.PlaceListFragment;
@@ -332,7 +333,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference attributionsReference = firebaseDatabase
                         .getReference()
-                        .child("attributions")
+                        .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
                         .child(currentUser.getUid())
                         .child(tripId);
 

@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.fragments.ExpenseFactoryFragment;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
@@ -97,9 +98,11 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     public void saveExpense(TripModel trip, ExpenseModel expense, boolean isEditMode) {
         if (expense != null) {
             final DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Expenses.PATH_EXPENSES)
+                    .child(mCurrentUser.getUid());
             final DatabaseReference budgetReference
-                    = mRootReference.child("budgets").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Budgets.PATH_BUDGETS)
+                    .child(mCurrentUser.getUid());
 
             if (isEditMode && !TextUtils.isEmpty(expense.getId())) {
                 DatabaseReference databaseReference = expenseReference.child(trip.getId())
@@ -174,10 +177,12 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     public void deleteExpense(TripModel trip, ExpenseModel expense) {
         if (expense != null && !TextUtils.isEmpty(expense.getId())) {
             final DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Expenses.PATH_EXPENSES)
+                    .child(mCurrentUser.getUid());
 
             final DatabaseReference budgetReference
-                    = mRootReference.child("budgets").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Budgets.PATH_BUDGETS)
+                    .child(mCurrentUser.getUid());
 
             expenseReference.child(trip.getId()).child(expense.getId()).removeValue();
 

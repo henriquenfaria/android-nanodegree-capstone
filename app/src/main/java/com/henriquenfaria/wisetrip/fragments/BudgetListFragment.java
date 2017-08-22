@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.flexibles.BudgetItem;
 import com.henriquenfaria.wisetrip.listeners.OnBudgetInteractionListener;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
@@ -88,7 +89,7 @@ public class BudgetListFragment extends BaseFragment implements
         mCurrentUser = mFirebaseAuth.getCurrentUser();
         //TODO: Need to order by child?
         mBudgetReference = mFirebaseDatabase.getReference()
-                .child("budgets")
+                .child(FirebaseDbContract.Budgets.PATH_BUDGETS)
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
     }

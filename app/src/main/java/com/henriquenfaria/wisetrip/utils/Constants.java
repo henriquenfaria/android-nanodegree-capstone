@@ -4,7 +4,7 @@ package com.henriquenfaria.wisetrip.utils;
 // Class that holds all app's public constants
 public class Constants {
     // General constants
-    public static class General {
+    public static final class General {
 
         // Max TripModel destinations
         public static final int MAX_DESTINATIONS = 10;
@@ -34,7 +34,7 @@ public class Constants {
     }
 
     // Prefixes for dynamic shared transition elements
-    public static class Transition {
+    public static final class Transition {
         public static final String PREFIX_TRIP_TITLE = "prefix_trip_title_";
         public static final String PREFIX_TRIP_PHOTO = "prefix_trip_photo_";
         public static final String PREFIX_TRIP_PHOTO_PROTECTION = "prefix_trip_photo_protection_";
@@ -42,7 +42,7 @@ public class Constants {
     }
 
     // Intent extras
-    public static class Extra {
+    public static final class Extra {
         public static final String EXTRA_TRIP = "extra_trip";
         public static final String EXTRA_TRIP_ID = "extra_trip_id";
         public static final String EXTRA_TRAVELER = "extra_traveler";
@@ -54,7 +54,7 @@ public class Constants {
     }
 
     // Intent actions
-    public static class Action {
+    public static final class Action {
         public static final String ACTION_ADD_PHOTO = "action_add_photo";
         public static final String ACTION_CHANGE_PHOTO = "action_change_photo";
         public static final String ACTION_REMOVE_PHOTO = "action_remove_photo";
@@ -69,7 +69,7 @@ public class Constants {
     }
 
     // Shared Preferences
-    public static class Preference {
+    public static final class Preference {
         public static final String PREFERENCE_LAST_USED_COUNTRY = "preference_last_used_country";
         public static final String PREFERENCE_LAST_USED_CURRENCY = "preference_last_used_currency";
         public static final String PREFERENCE_LAST_BUDGET_NOTIFICATION_ID

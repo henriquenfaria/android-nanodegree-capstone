@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.fragments.TripFactoryFragment;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -73,7 +74,8 @@ public class TripFactoryActivity extends AppCompatActivity
     public void saveTrip(TripModel trip, boolean isEditMode) {
         if (trip != null) {
             final DatabaseReference tripReference
-                    = mFirebaseDatabase.getReference().child("trips").child(mCurrentUser.getUid());
+                    = mFirebaseDatabase.getReference().child(FirebaseDbContract.Trips.PATH_TRIPS)
+                    .child(mCurrentUser.getUid());
 
             if (isEditMode && !TextUtils.isEmpty(trip.getId())) {
                 DatabaseReference databaseReference = tripReference.child(trip.getId());
@@ -97,7 +99,8 @@ public class TripFactoryActivity extends AppCompatActivity
     @Override
     public void deleteTrip(TripModel trip) {
         final DatabaseReference tripReference
-                = mFirebaseDatabase.getReference().child("trips").child(mCurrentUser.getUid());
+                = mFirebaseDatabase.getReference().child(FirebaseDbContract.Trips.PATH_TRIPS)
+                .child(mCurrentUser.getUid());
 
         if (trip != null) {
             tripReference.child(trip.getId()).removeValue();
@@ -114,28 +117,28 @@ public class TripFactoryActivity extends AppCompatActivity
     private void removeOtherTripData(TripModel trip) {
         // Remove Trip attributions
         final DatabaseReference attributionsReference = mFirebaseDatabase.getReference()
-                .child("attributions")
+                .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
                 .child(mCurrentUser.getUid())
                 .child(trip.getId());
         attributionsReference.removeValue();
 
         // Remove Trip expenses
         final DatabaseReference expensesReference = mFirebaseDatabase.getReference()
-                .child("expenses")
+                .child(FirebaseDbContract.Expenses.PATH_EXPENSES)
                 .child(mCurrentUser.getUid())
                 .child(trip.getId());
         expensesReference.removeValue();
 
         // Remove Trip budgets
         final DatabaseReference budgetsReference = mFirebaseDatabase.getReference()
-                .child("budgets")
+                .child(FirebaseDbContract.Budgets.PATH_BUDGETS)
                 .child(mCurrentUser.getUid())
                 .child(trip.getId());
         budgetsReference.removeValue();
 
         // Remove Trip places
         final DatabaseReference placesReference = mFirebaseDatabase.getReference()
-                .child("places")
+                .child(FirebaseDbContract.Places.PATH_PLACES)
                 .child(mCurrentUser.getUid())
                 .child(trip.getId());
         placesReference.removeValue();

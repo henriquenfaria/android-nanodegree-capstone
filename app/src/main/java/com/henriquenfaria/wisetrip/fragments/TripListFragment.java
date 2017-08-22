@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.TripListSection;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.models.DestinationModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
@@ -157,10 +158,8 @@ public class TripListFragment extends BaseFragment {
         mCurrentUser = mFirebaseAuth.getCurrentUser();
         //TODO: Need to order by child?
         mTripsReference = mFirebaseDatabase.getReference()
-                .child("trips")
+                .child(FirebaseDbContract.Trips.PATH_TRIPS)
                 .child(mCurrentUser.getUid());
-
-
     }
 
     @Override

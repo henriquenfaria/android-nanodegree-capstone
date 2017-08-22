@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.squareup.picasso.Callback;
@@ -151,7 +152,7 @@ public class TripHolder extends RecyclerView.ViewHolder {
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference attributionsReference = firebaseDatabase
                         .getReference()
-                        .child("attributions")
+                        .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
                         .child(currentUser.getUid())
                         .child(tripId);
 

@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.holders.TripHolder;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -66,9 +67,9 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mTripsQuery = mFirebaseDatabase.getReference()
-                .child("trips")
+                .child(FirebaseDbContract.Trips.PATH_TRIPS)
                 .child(mCurrentUser.getUid())
-                .orderByChild("title");
+                .orderByChild(FirebaseDbContract.Trips.PATH_TITLE);
 
         // Find the widget id from the intent.
         Intent intent = getIntent();

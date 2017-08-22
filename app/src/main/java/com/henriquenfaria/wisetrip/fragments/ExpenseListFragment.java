@@ -23,11 +23,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.flexibles.ExpenseHeader;
 import com.henriquenfaria.wisetrip.flexibles.ExpenseItem;
 import com.henriquenfaria.wisetrip.listeners.OnExpenseInteractionListener;
-import com.henriquenfaria.wisetrip.models.HeaderModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
+import com.henriquenfaria.wisetrip.models.HeaderModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 
 import org.joda.time.DateTime;
@@ -93,7 +94,7 @@ public class ExpenseListFragment extends BaseFragment implements
         mCurrentUser = mFirebaseAuth.getCurrentUser();
 
         mExpensesReference = mFirebaseDatabase.getReference()
-                .child("expenses")
+                .child(FirebaseDbContract.Expenses.PATH_EXPENSES)
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
     }

@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.fragments.PlaceFactoryFragment;
 import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
@@ -88,7 +89,7 @@ public class PlaceFactoryActivity extends AppCompatActivity
     public void savePlace(TripModel trip, PlaceModel place, boolean isEditMode) {
         if (place != null) {
             final DatabaseReference placeReference
-                    = mRootReference.child("places").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Places.PATH_PLACES).child(mCurrentUser.getUid());
 
             if (isEditMode && !TextUtils.isEmpty(place.getId())) {
                 DatabaseReference databaseReference = placeReference.child(trip.getId())
@@ -117,7 +118,8 @@ public class PlaceFactoryActivity extends AppCompatActivity
     public void deletePlace(TripModel trip, PlaceModel place) {
         if (place != null) {
             final DatabaseReference placeReference
-                    = mRootReference.child("places").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Places.PATH_PLACES)
+                    .child(mCurrentUser.getUid());
 
             placeReference.child(trip.getId()).child(place.getId()).removeValue();
             setResult(RESULT_PLACE_DELETED);

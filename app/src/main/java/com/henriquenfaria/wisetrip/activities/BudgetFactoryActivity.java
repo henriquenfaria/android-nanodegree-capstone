@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.fragments.BudgetFactoryFragment;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
@@ -92,10 +93,11 @@ public class BudgetFactoryActivity extends AppCompatActivity
     public void saveBudget(TripModel trip, BudgetModel budget, boolean isEditMode) {
         if (budget != null) {
             final DatabaseReference budgetReference
-                    = mRootReference.child("budgets").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Budgets.PATH_BUDGETS).child(mCurrentUser.getUid());
 
             final DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Expenses.PATH_EXPENSES)
+                    .child(mCurrentUser.getUid());
             if (isEditMode && !TextUtils.isEmpty(budget.getId())) {
                 DatabaseReference databaseReference = budgetReference.child(trip.getId())
                         .child(budget.getId());
@@ -168,10 +170,9 @@ public class BudgetFactoryActivity extends AppCompatActivity
     public void deleteBudget(TripModel trip, BudgetModel budget) {
         if (budget != null && !TextUtils.isEmpty(budget.getId())) {
             final DatabaseReference budgetReference
-                    = mRootReference.child("budgets").child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Budgets.PATH_BUDGETS)
+                    .child(mCurrentUser.getUid());
 
-            final DatabaseReference expenseReference
-                    = mRootReference.child("expenses").child(mCurrentUser.getUid());
             budgetReference.child(trip.getId()).child(budget.getId()).removeValue();
 
             // No need to update expenses here. Just delete the budget.

@@ -39,6 +39,7 @@ import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.ExpenseFactoryActivity;
 import com.henriquenfaria.wisetrip.activities.MainActivity;
 import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -148,7 +149,7 @@ public class TripWidgetProvider extends AppWidgetProvider {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
             DatabaseReference tripReference = firebaseDatabase.getReference()
-                    .child("trips")
+                    .child(FirebaseDbContract.Trips.PATH_TRIPS)
                     .child(currentUser.getUid())
                     .child(tripId);
             tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -319,7 +320,7 @@ public class TripWidgetProvider extends AppWidgetProvider {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
             DatabaseReference attributionsReference = firebaseDatabase
                     .getReference()
-                    .child("attributions")
+                    .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
                     .child(currentUser.getUid())
                     .child(tripId);
 

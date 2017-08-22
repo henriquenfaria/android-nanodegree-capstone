@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.flexibles.PlaceHeader;
 import com.henriquenfaria.wisetrip.flexibles.PlaceItem;
 import com.henriquenfaria.wisetrip.listeners.OnPlaceInteractionListener;
@@ -94,7 +95,7 @@ public class PlaceListFragment extends BaseFragment implements
         mCurrentUser = mFirebaseAuth.getCurrentUser();
 
         mPlacesReference = mFirebaseDatabase.getReference()
-                .child("places")
+                .child(FirebaseDbContract.Places.PATH_PLACES)
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
     }

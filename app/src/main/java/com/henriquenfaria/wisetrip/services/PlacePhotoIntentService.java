@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -139,7 +140,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference attributionsReference = firebaseDatabase.getReference()
-                .child("attributions")
+                .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
                 .child(currentUser.getUid())
                 .child(trip.getId());
 
