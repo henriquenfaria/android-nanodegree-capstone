@@ -183,8 +183,8 @@ public class TripListFragment extends BaseFragment {
         mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(mFragmentActivity));
         mTripListRecyclerView.setHasFixedSize(false);
         mTripAdapter = new SectionedRecyclerViewAdapter();
-        mTripListRecyclerView.setAdapter(mTripAdapter);
         mTripListRecyclerView.setEmptyView(mEmptyTripListText);
+        mTripListRecyclerView.setAdapter(mTripAdapter);
         mPlacePhotoReceiver = new PlacePhotoReceiver();
 
         // TODO: Move to onCreate()?
