@@ -2,6 +2,7 @@ package com.henriquenfaria.wisetrip.utils;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,13 +39,28 @@ import timber.log.Timber;
 /* Utility class with static common helper methods */
 public class Utils {
 
-    public static String getFormattedFullTripDateText(long startDateMillis, long endDateMillis) {
+    public static String getFormattedStartEndTripDateText(long startDateMillis, long
+            endDateMillis) {
         Calendar startDateCalendar = Calendar.getInstance(Locale.getDefault());
         startDateCalendar.setTimeInMillis(startDateMillis);
         Calendar endDateCalendar = Calendar.getInstance(Locale.getDefault());
         endDateCalendar.setTimeInMillis(endDateMillis);
 
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
+
+        return dateFormat.format(startDateCalendar.getTime()) +
+                " ~ " +
+                dateFormat.format(endDateCalendar.getTime());
+    }
+
+    public static String getFormattedStartEndShortTripDateText(long startDateMillis,
+                                                               long endDateMillis) {
+        Calendar startDateCalendar = Calendar.getInstance(Locale.getDefault());
+        startDateCalendar.setTimeInMillis(startDateMillis);
+        Calendar endDateCalendar = Calendar.getInstance(Locale.getDefault());
+        endDateCalendar.setTimeInMillis(endDateMillis);
+
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
 
         return dateFormat.format(startDateCalendar.getTime()) +
                 " ~ " +
@@ -165,7 +181,8 @@ public class Utils {
         return file.exists();
     }
 
-    public static void saveBooleanToSharedPrefs(Context context, String key, boolean value, boolean isImmediate) {
+    public static void saveBooleanToSharedPrefs(Context context, String key, boolean value,
+                                                boolean isImmediate) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(key, value);
@@ -193,7 +210,8 @@ public class Utils {
         return sharedPrefs.getBoolean(key, defaultValue);
     }
 
-    public static void saveStringToSharedPrefs(Context context, String key, String value, boolean isImmediate) {
+    public static void saveStringToSharedPrefs(Context context, String key, String value, boolean
+            isImmediate) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
@@ -204,12 +222,14 @@ public class Utils {
         }
     }
 
-    public static String getStringFromSharedPrefs(Context context, String key, String defaultValue) {
+    public static String getStringFromSharedPrefs(Context context, String key, String
+            defaultValue) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPrefs.getString(key, defaultValue);
     }
 
-    public static void saveIntToSharedPrefs(Context context, String key, int value, boolean isImmediate) {
+    public static void saveIntToSharedPrefs(Context context, String key, int value, boolean
+            isImmediate) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
@@ -272,13 +292,15 @@ public class Utils {
     }
 
     // Helper method that returns if an specific expense should be part of a specific budget
-    // This method can grow to include other validations, such as: payment method, label, category, etc
-    public static boolean isBudgetExpense(@NonNull BudgetModel budget, @NonNull ExpenseModel expense) {
+    // This method can grow to include other validations, such as: payment method, label,
+    // category, etc
+    public static boolean isBudgetExpense(@NonNull BudgetModel budget, @NonNull ExpenseModel
+            expense) {
         return TextUtils.equals(budget.getCurrency(), expense.getCurrency())
                 && TextUtils.equals(budget.getCountry(), expense.getCountry());
     }
 
-    public static Uri getDestinationMapUri(DestinationModel destination){
+    public static Uri getDestinationMapUri(DestinationModel destination) {
         String encodedQuery = "";
 
         try {
@@ -294,10 +316,10 @@ public class Utils {
                 .build();
     }
 
-    public static String getUrlFromHtml(String html){
+    public static String getUrlFromHtml(String html) {
         String url = "";
         try {
-            Document doc  = Jsoup.parse(html);
+            Document doc = Jsoup.parse(html);
             Element link = doc.select("a").first();
             url = link.attr("abs:href");
         } catch (Selector.SelectorParseException e) {
@@ -305,5 +327,32 @@ public class Utils {
         }
 
         return url;
+    }
+
+    public static void updateAppWidgets(Context context, String tripId, boolean isDeleted) {
+        Intent updateWidgetsIntent = new Intent(isDeleted
+                ? Constants.Action.ACTION_APPWIDGET_TRIP_DELETED
+                : Constants.Action.ACTION_APPWIDGET_TRIP_UPDATED)
+                .setPackage(context.getPackageName());
+        updateWidgetsIntent.putExtra(Constants.Extra.EXTRA_TRIP_ID, tripId);
+        context.sendBroadcast(updateWidgetsIntent);
+    }
+
+    public static void updateAppWidget(Context context, String tripId, int appWidgetId,
+                                       boolean isDeleted) {
+        Intent updateWidgetIntent = new Intent(isDeleted
+                ? Constants.Action.ACTION_APPWIDGET_TRIP_DELETED
+                : Constants.Action.ACTION_APPWIDGET_TRIP_UPDATED)
+                .setPackage(context.getPackageName());
+
+        updateWidgetIntent.putExtra(Constants.Extra.EXTRA_TRIP_ID, tripId);
+        updateWidgetIntent.putExtra(Constants.Extra.EXTRA_APPWIDGET_ID, appWidgetId);
+        context.sendBroadcast(updateWidgetIntent);
+    }
+
+    public static void signOutAppWidgets(Context context) {
+        Intent updateWidgetIntent = new Intent(Constants.Action.ACTION_APPWIDGET_SIGN_OUT)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(updateWidgetIntent);
     }
 }

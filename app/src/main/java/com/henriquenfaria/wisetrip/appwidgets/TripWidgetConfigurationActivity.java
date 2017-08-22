@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,13 +50,21 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         // out of the widget placement if they press the back button.
         setResult(RESULT_CANCELED);
 
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mFirebaseAuth.getCurrentUser();
+
+        // Not signed in, finish Configuration
+        if (mCurrentUser == null){
+            Toast.makeText(this, R.string.must_sign_in_first, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         // Set the view layout resource to use.
         setContentView(R.layout.activity_expenses_widget_configuration);
         ButterKnife.bind(this);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
         mTripsQuery = mFirebaseDatabase.getReference()
                 .child("trips")
                 .child(mCurrentUser.getUid())
@@ -91,7 +100,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
                                            final TripModel trip, final int position) {
                 if (trip != null && !TextUtils.isEmpty(trip.getId())){
                     holder.setTripTitle(trip.getTitle());
-                    holder.setTripDate(Utils.getFormattedFullTripDateText(trip
+                    holder.setTripDate(Utils.getFormattedStartEndTripDateText(trip
                             .getStartDate(), trip.getEndDate()));
                     holder.setTripPhoto(trip.getId());
                     holder.hideEdit();
@@ -103,10 +112,8 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
                                     Constants.Preference.PREFERENCE_WIDGET_TRIP_ID_PREFIX
                                             + mAppWidgetId, trip.getId(), true);
 
-                            AppWidgetManager appWidgetManager = AppWidgetManager
-                                    .getInstance(TripWidgetConfigurationActivity.this);
-                            TripWidgetProvider.updateAppWidget(TripWidgetConfigurationActivity.this,
-                                    appWidgetManager, mAppWidgetId, trip.getId());
+                            Utils.updateAppWidget(TripWidgetConfigurationActivity.this,
+                                    trip.getId(), mAppWidgetId, false);
 
                             Intent resultValue = new Intent();
                             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);

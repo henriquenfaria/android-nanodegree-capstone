@@ -44,11 +44,13 @@ public class Constants {
     // Intent extras
     public static class Extra {
         public static final String EXTRA_TRIP = "extra_trip";
+        public static final String EXTRA_TRIP_ID = "extra_trip_id";
         public static final String EXTRA_TRAVELER = "extra_traveler";
         public static final String EXTRA_EXPENSE = "extra_expense";
         public static final String EXTRA_BUDGET = "extra_budget";
         public static final String EXTRA_PLACE = "extra_place";
         public static final String EXTRA_TRIP_DETAILS_TAB_INDEX = "extra_trip_details_tab_index";
+        public static final String EXTRA_APPWIDGET_ID = "extra_appwidget_id";
     }
 
     // Intent actions
@@ -58,6 +60,12 @@ public class Constants {
         public static final String ACTION_REMOVE_PHOTO = "action_remove_photo";
         public static final String ACTION_SIGN_OUT_CLEAN_UP = "action_sign_out_clean_up";
         public static final String ACTION_UPDATE_TRIP_LIST = "action_update_trip_list";
+        public static final String ACTION_APPWIDGET_TRIP_UPDATED
+                = "com.henriquenfaria.wisetrip.ACTION_APPWIDGET_TRIP_UPDATED";
+        public static final String ACTION_APPWIDGET_TRIP_DELETED
+                = "com.henriquenfaria.wisetrip.ACTION_APPWIDGET_TRIP_DELETED";
+        public static final String ACTION_APPWIDGET_SIGN_OUT
+                = "com.henriquenfaria.wisetrip.ACTION_APPWIDGET_SIGN_OUT";
     }
 
     // Shared Preferences

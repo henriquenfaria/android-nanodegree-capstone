@@ -29,6 +29,7 @@ import com.henriquenfaria.wisetrip.models.DestinationModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Utils;
 import com.henriquenfaria.wisetrip.views.SizeAwareRecyclerView;
 
 import org.joda.time.DateTime;
@@ -245,6 +246,8 @@ public class TripListFragment extends BaseFragment {
                         placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)
                                 trip);
                         mFragmentActivity.startService(placePhotoIntentService);
+
+                        Utils.updateAppWidgets(mFragmentActivity, trip.getId(), false);
                     }
                 }
 
@@ -278,6 +281,8 @@ public class TripListFragment extends BaseFragment {
                         placePhotoIntentService.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable)
                                 trip);
                         mFragmentActivity.startService(placePhotoIntentService);
+
+                        Utils.updateAppWidgets(mFragmentActivity, trip.getId(), true);
                     }
                 }
 

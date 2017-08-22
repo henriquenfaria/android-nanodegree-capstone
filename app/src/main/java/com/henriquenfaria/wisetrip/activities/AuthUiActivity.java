@@ -19,6 +19,7 @@ import com.henriquenfaria.wisetrip.BuildConfig;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
+import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.Arrays;
 
@@ -176,5 +177,8 @@ public class AuthUiActivity extends AppCompatActivity {
         Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
         placePhotoIntentService.setAction(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP);
         startService(placePhotoIntentService);
+
+        // Sign out all widgets
+        Utils.signOutAppWidgets(this);
     }
 }

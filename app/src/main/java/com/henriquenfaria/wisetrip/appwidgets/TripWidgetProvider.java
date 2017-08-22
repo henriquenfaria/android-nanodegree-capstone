@@ -3,13 +3,16 @@ package com.henriquenfaria.wisetrip.appwidgets;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -21,6 +24,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.AppWidgetTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +35,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.GlideRequest;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.activities.ExpenseFactoryActivity;
+import com.henriquenfaria.wisetrip.activities.MainActivity;
+import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -42,59 +49,218 @@ import timber.log.Timber;
 
 public class TripWidgetProvider extends AppWidgetProvider {
 
-    // TODO: Static or not static? Move to not static if using broadcasts
-    static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager,
-                                final int appWidgetId, final String tripId) {
-        Timber.d("updateAppWidget appWidgetId=" + appWidgetId + " tripId=" + tripId);
-
-        if (!TextUtils.isEmpty(tripId)) {
-            final RemoteViews views = new RemoteViews(context.getPackageName(),
-                    R.layout.widget_layout);
-
-            // Set widget config Intent
-            final Intent configIntent = new Intent(context, TripWidgetConfigurationActivity.class);
-            configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            final PendingIntent configPendingIntent = PendingIntent.getActivity(context,
-                    appWidgetId, configIntent, 0);
-            views.setOnClickPendingIntent(R.id.settings_button, configPendingIntent);
-
-            // Set Database References and Listeners
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            DatabaseReference tripReference = firebaseDatabase.getReference()
-                    .child("trips")
-                    .child(currentUser.getUid())
-                    .child(tripId);
-            tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Timber.d("onDataChange");
-
-                    TripModel trip = dataSnapshot.getValue(TripModel.class);
-                    if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                        views.setTextViewText(R.id.trip_title, trip.getTitle());
-                        views.setViewVisibility(R.id.select_trip, View.GONE);
-                        loadTripPhoto(context, appWidgetManager, views, tripId, appWidgetId);
-                    } else {
-                        views.setViewVisibility(R.id.select_trip, View.VISIBLE);
-                        views.setOnClickPendingIntent(R.id.widget_container, configPendingIntent);
-                        appWidgetManager.updateAppWidget(appWidgetId, views);
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled", databaseError.getMessage());
-                }
-            });
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Timber.d("onUpdate");
+        for (int appWidgetId : appWidgetIds) {
+            String tripId = Utils.getStringFromSharedPrefs(context,
+                    Constants.Preference.PREFERENCE_WIDGET_TRIP_ID_PREFIX + appWidgetId, "");
+            updateAppWidgets(context, appWidgetManager, new int[]{appWidgetId}, tripId);
         }
     }
 
-    private static void loadTripPhoto(final Context context, final AppWidgetManager appWidgetManager,
-                                      final RemoteViews views, final String tripId,
-                                      final int appWidgetId) {
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        Timber.d("onDeleted");
+        // When the user deletes widgets, delete the preference associated with it.
+        removeTripFromSharedPrefs(context, appWidgetIds);
+    }
+
+    @Override
+    public void onEnabled(Context context) {
+        Timber.d("onEnabled");
+    }
+
+    @Override
+    public void onDisabled(Context context) {
+        Timber.d("onDisabled");
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        if (intent != null) {
+            String action = intent.getAction();
+            if (TextUtils.equals(Constants.Action.ACTION_APPWIDGET_TRIP_UPDATED, action) ||
+                    TextUtils.equals(Constants.Action.ACTION_APPWIDGET_TRIP_DELETED, action)) {
+
+                if (intent.hasExtra(Constants.Extra.EXTRA_TRIP_ID)) {
+                    String tripId = intent.getStringExtra(Constants.Extra.EXTRA_TRIP_ID);
+
+                    int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+                    if (intent.hasExtra(Constants.Extra.EXTRA_APPWIDGET_ID)) {
+                        appWidgetId = intent.getIntExtra(Constants.Extra.EXTRA_APPWIDGET_ID,
+                                AppWidgetManager.INVALID_APPWIDGET_ID);
+                    }
+
+                    ComponentName thisWidget = new ComponentName(context.getApplicationContext(),
+                            TripWidgetProvider.class);
+                    AppWidgetManager appWidgetManager = AppWidgetManager
+                            .getInstance(context.getApplicationContext());
+                    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+
+
+                    // Remove Trip reference from SharedPrefs
+                    if (TextUtils.equals(Constants.Action.ACTION_APPWIDGET_TRIP_DELETED, action)) {
+                        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                            removeTripFromSharedPrefs(context, new int[]{appWidgetId});
+                        } else {
+                            removeTripFromSharedPrefs(context, appWidgetIds);
+                        }
+                    }
+
+                    if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                        updateAppWidgets(context, appWidgetManager, new int[]{appWidgetId}, tripId);
+                    } else {
+                        updateAppWidgets(context, appWidgetManager, appWidgetIds, tripId);
+                    }
+                }
+            } else if (TextUtils.equals(Constants.Action.ACTION_APPWIDGET_SIGN_OUT, action)) {
+                ComponentName thisWidget = new ComponentName(context.getApplicationContext(),
+                        TripWidgetProvider.class);
+                AppWidgetManager appWidgetManager = AppWidgetManager
+                        .getInstance(context.getApplicationContext());
+                int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+                signOutAppWidgets(context, appWidgetManager, appWidgetIds);
+            }
+        }
+    }
+
+    private void updateAppWidgets(final Context context, final AppWidgetManager appWidgetManager,
+                                  final int[] appWidgetIds, final String tripId) {
+
+        for (final int appWidgetId : appWidgetIds) {
+            Timber.d("updateAppWidgets appWidgetId=" + appWidgetId + " tripId=" + tripId);
+
+            if (!TextUtils.isEmpty(tripId)) {
+                final RemoteViews views = new RemoteViews(context.getPackageName(),
+                        R.layout.widget_layout);
+
+                final PendingIntent configPendingIntent = getConfigPendingIntent(context,
+                        appWidgetId);
+                views.setOnClickPendingIntent(R.id.settings_button, configPendingIntent);
+
+                // Set Database References and Listeners
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                DatabaseReference tripReference = firebaseDatabase.getReference()
+                        .child("trips")
+                        .child(currentUser.getUid())
+                        .child(tripId);
+                tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Timber.d("onDataChange");
+
+                        TripModel trip = dataSnapshot.getValue(TripModel.class);
+                        if (trip != null && !TextUtils.isEmpty(trip.getId())) {
+                            views.setViewVisibility(R.id.select_trip, View.GONE);
+                            views.setViewVisibility(R.id.trip_title, View.VISIBLE);
+                            views.setViewVisibility(R.id.trip_date, View.VISIBLE);
+                            views.setViewVisibility(R.id.trip_photo, View.VISIBLE);
+
+                            views.setTextViewText(R.id.trip_title, trip.getTitle());
+                            views.setTextViewText(R.id.trip_date,
+                                    Utils.getFormattedStartEndShortTripDateText(trip.getStartDate(),
+                                            trip.getEndDate()));
+                            views.setOnClickPendingIntent(R.id.widget_container,
+                                    getAddExpensePendingIntent(context, trip, appWidgetId));
+                            loadTripPhotoData(context, appWidgetManager, views, tripId,
+                                    appWidgetId);
+
+                        } else {
+                            views.setViewVisibility(R.id.select_trip, View.VISIBLE);
+                            views.setViewVisibility(R.id.trip_title, View.GONE);
+                            views.setViewVisibility(R.id.trip_date, View.GONE);
+                            views.setViewVisibility(R.id.trip_photo, View.GONE);
+
+                            views.setOnClickPendingIntent(R.id.widget_container,
+                                    configPendingIntent);
+                            loadTripPhotoData(context, appWidgetManager, views, tripId,
+                                    appWidgetId);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Timber.d("onCancelled", databaseError.getMessage());
+                        views.setViewVisibility(R.id.select_trip, View.VISIBLE);
+                        views.setViewVisibility(R.id.trip_title, View.GONE);
+                        views.setViewVisibility(R.id.trip_date, View.GONE);
+                        views.setViewVisibility(R.id.trip_photo, View.GONE);
+
+                        views.setOnClickPendingIntent(R.id.widget_container, configPendingIntent);
+                        loadTripPhotoData(context, appWidgetManager, views, tripId, appWidgetId);
+                    }
+                });
+            }
+        }
+    }
+
+    private void signOutAppWidgets(Context context, AppWidgetManager appWidgetManager,
+                                   int[] appWidgetIds) {
+
+        for (int appWidgetId : appWidgetIds) {
+            Timber.d("signOutAppWidgets appWidgetId=" + appWidgetId);
+
+            final RemoteViews views = new RemoteViews(context.getPackageName(),
+                    R.layout.widget_layout);
+
+            views.setViewVisibility(R.id.select_trip, View.VISIBLE);
+            views.setTextViewText(R.id.select_trip, context.getString(R.string.not_signed_in));
+            views.setViewVisibility(R.id.trip_title, View.GONE);
+            views.setViewVisibility(R.id.trip_date, View.GONE);
+            views.setViewVisibility(R.id.trip_photo, View.GONE);
+            views.setViewVisibility(R.id.attribution_prefix, View.GONE);
+            views.setViewVisibility(R.id.attribution_content, View.GONE);
+
+            final PendingIntent configPendingIntent = getConfigPendingIntent(context, appWidgetId);
+            views.setOnClickPendingIntent(R.id.settings_button, configPendingIntent);
+
+            final PendingIntent appPendingIntent = getAppPendingIntent(context, appWidgetId);
+            views.setOnClickPendingIntent(R.id.widget_container, appPendingIntent);
+
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
+    }
+
+    private PendingIntent getAddExpensePendingIntent(Context context, TripModel trip,
+                                                     int appWidgetId) {
+
+        Intent tripDetailsActivityIntent = new Intent(context, TripDetailsActivity.class);
+        tripDetailsActivityIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
+        Intent addExpense = new Intent(context, ExpenseFactoryActivity.class);
+        addExpense.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
+
+        PendingIntent pendingIntent =
+                TaskStackBuilder.create(context)
+                        .addNextIntentWithParentStack(tripDetailsActivityIntent)
+                        .addNextIntent(addExpense)
+                        .getPendingIntent(appWidgetId, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
+    }
+
+    private PendingIntent getConfigPendingIntent(Context context, int appWidgetId) {
+        final Intent configIntent = new Intent(context, TripWidgetConfigurationActivity.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        final PendingIntent configPendingIntent = PendingIntent.getActivity(context,
+                appWidgetId, configIntent, 0);
+        return configPendingIntent;
+    }
+
+    private PendingIntent getAppPendingIntent(Context context, int appWidgetId) {
+        final Intent configIntent = new Intent(context, MainActivity.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        final PendingIntent configPendingIntent = PendingIntent.getActivity(context,
+                appWidgetId, configIntent, 0);
+        return configPendingIntent;
+    }
+
+    private void loadTripPhotoData(final Context context,
+                                   final AppWidgetManager appWidgetManager,
+                                   final RemoteViews views, final String tripId,
+                                   final int appWidgetId) {
         if (!TextUtils.isEmpty(tripId)) {
             ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
             File directoryFile = cw.getDir(Constants.General.DESTINATION_PHOTO_DIR,
@@ -109,18 +275,27 @@ public class TripWidgetProvider extends AppWidgetProvider {
             glideRequest
                     .load(photoFile)
                     .centerCrop()
-                    .placeholder(R.drawable.ic_default_traveler_photo)
+                    .signature(new ObjectKey(photoFile.lastModified()))
+                    //.skipMemoryCache(true)
+                    // .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .error(R.drawable.ic_default_traveler_photo)
                     .listener(new RequestListener<Bitmap>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                            displayPhotoAttribution(context, appWidgetManager, appWidgetId, views, tripId, false);
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Bitmap> target,
+                                                    boolean isFirstResource) {
+                            displayPhotoAttribution(context, appWidgetManager, appWidgetId,
+                                    views, tripId, false);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                            displayPhotoAttribution(context, appWidgetManager, appWidgetId, views, tripId, true);
+                        public boolean onResourceReady(Bitmap resource, Object model,
+                                                       Target<Bitmap> target, DataSource
+                                                               dataSource, boolean
+                                                               isFirstResource) {
+                            displayPhotoAttribution(context, appWidgetManager, appWidgetId,
+                                    views, tripId, true);
                             return false;
                         }
                     })
@@ -128,11 +303,11 @@ public class TripWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    private static void displayPhotoAttribution(final Context context,
-                                                final AppWidgetManager appWidgetManager,
-                                                final int appWidgetId,
-                                                final RemoteViews views,
-                                                String tripId, boolean shouldDisplay) {
+    private void displayPhotoAttribution(final Context context,
+                                         final AppWidgetManager appWidgetManager,
+                                         final int appWidgetId,
+                                         final RemoteViews views,
+                                         String tripId, boolean shouldDisplay) {
 
         if (shouldDisplay) {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -164,11 +339,13 @@ public class TripWidgetProvider extends AppWidgetProvider {
                         // Set url pending intent
                         String extractedUrl = Utils.getUrlFromHtml(attribution.getText());
                         if (!TextUtils.isEmpty(extractedUrl)) {
-                            Intent attrIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(extractedUrl));
+                            Intent attrIntent = new Intent(Intent.ACTION_VIEW, Uri.parse
+                                    (extractedUrl));
                             attrIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             PendingIntent configPendingIntent = PendingIntent.getActivity(context,
                                     appWidgetId, attrIntent, 0);
-                            views.setOnClickPendingIntent(R.id.attribution_content, configPendingIntent);
+                            views.setOnClickPendingIntent(R.id.attribution_content,
+                                    configPendingIntent);
                         }
 
                         views.setViewVisibility(R.id.attribution_prefix, View.VISIBLE);
@@ -176,7 +353,6 @@ public class TripWidgetProvider extends AppWidgetProvider {
 
                         appWidgetManager.updateAppWidget(appWidgetId, views);
                     }
-
                 }
 
                 @Override
@@ -193,52 +369,10 @@ public class TripWidgetProvider extends AppWidgetProvider {
 
     }
 
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Timber.d("onUpdate");
-        for (int i = 0; i < appWidgetIds.length; i++) {
-            int appWidgetId = appWidgetIds[i];
-            String tripId = Utils.getStringFromSharedPrefs(context,
-                    Constants.Preference.PREFERENCE_WIDGET_TRIP_ID_PREFIX + appWidgetId, "");
-            updateAppWidget(context, appWidgetManager, appWidgetId, tripId);
-        }
-    }
-
-    @Override
-    public void onDeleted(Context context, int[] appWidgetIds) {
-        Timber.d("onDeleted");
-        // When the user deletes the widget, delete the preference associated with it.
-        for (int i = 0; i < appWidgetIds.length; i++) {
+    private void removeTripFromSharedPrefs(Context context, int[] appWidgetIds) {
+        for (int appWidgetId : appWidgetIds) {
             Utils.deleteSharedPrefs(context, Constants.Preference.PREFERENCE_WIDGET_TRIP_ID_PREFIX
-                    + appWidgetIds[i], true);
+                    + appWidgetId, true);
         }
-    }
-
-    // TODO: Remove unused method
-    @Override
-    public void onEnabled(Context context) {
-        Timber.d("onEnabled");
-        // When the first widget is created, register for the TIMEZONE_CHANGED and TIME_CHANGED
-        // broadcasts.  We don't want to be listening for these if nobody has our widget active.
-        // This setting is sticky across reboots, but that doesn't matter, because this will
-        // be called after boot if there is a widget instance for this provider.
-      /* PackageManager pm = context.getPackageManager();
-        pm.setComponentEnabledSetting(
-                new ComponentName("io.appium.android.apis", ".appwidget.ExampleBroadcastReceiver"),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);*/
-    }
-
-    // TODO: Remove unused method
-    @Override
-    public void onDisabled(Context context) {
-        // When the first widget is created, stop listening for the TIMEZONE_CHANGED and
-        // TIME_CHANGED broadcasts.
-        Timber.d("onDisabled");
-       /* PackageManager pm = context.getPackageManager();
-        pm.setComponentEnabledSetting(
-                new ComponentName("io.appium.android.apis", ".appwidget.ExampleBroadcastReceiver"),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);*/
     }
 }

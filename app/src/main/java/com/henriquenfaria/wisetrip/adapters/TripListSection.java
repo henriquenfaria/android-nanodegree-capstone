@@ -55,7 +55,7 @@ public class TripListSection extends StatelessSection {
         final TripHolder tripHolder = (TripHolder) holder;
 
         tripHolder.setTripTitle(mTripList.get(position).getTitle());
-        tripHolder.setTripDate(Utils.getFormattedFullTripDateText(mTripList.get(position)
+        tripHolder.setTripDate(Utils.getFormattedStartEndTripDateText(mTripList.get(position)
                 .getStartDate(), mTripList.get(position).getEndDate()));
         tripHolder.setTripPhoto(mTripList.get(position).getId());
         tripHolder.setTransitionNames(mTripList.get(position).getId());

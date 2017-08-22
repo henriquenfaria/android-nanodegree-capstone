@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Wise Trip</string>
     <string name="date_separator" translatable="false">~</string>
+    <string name="appwidget_add_expense_name">Wise Trip: Expenses</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="sign_out_error">Sign out error</string>
@@ -79,7 +80,10 @@
     <string name="contacts_permission_denied">Contacts permission denied</string>
     <string name="select_trip">Select a Trip</string>
     <string name="select_trip_inside_widget_settings">Click to select a Trip</string>
+    <string name="add_expense">Add Expense</string>
     <string name="place_details">Place details</string>
+    <string name="must_sign_in_first">Must sign in the app first!</string>
+    <string name="not_signed_in">Not signed in</string>
     <plurals name="traveler_selected">
         <item quantity="other">%d selected</item>
     </plurals>

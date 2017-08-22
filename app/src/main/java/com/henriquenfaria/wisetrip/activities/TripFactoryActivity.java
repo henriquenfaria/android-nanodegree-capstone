@@ -86,7 +86,6 @@ public class TripFactoryActivity extends AppCompatActivity
                 Toast.makeText(this, getString(R.string.trip_updated_error),
                         Toast.LENGTH_SHORT).show();
             }
-
         } else {
             Toast.makeText(this, getString(R.string.trip_updated_error),
                     Toast.LENGTH_SHORT).show();

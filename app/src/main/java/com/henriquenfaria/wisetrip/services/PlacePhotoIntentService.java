@@ -99,7 +99,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                         .getPlacePhotos(googleApiClient, trip.getDestinations().get(0).getId())
                         .await();
 
-                if (result != null && result.getStatus().isSuccess()) {
+                if (result.getStatus().isSuccess()) {
                     PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
                     if (photoMetadataBuffer != null && photoMetadataBuffer.getCount() > 0) {
                         PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
@@ -118,6 +118,9 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
                             Picasso.with(getApplicationContext()).invalidate(photoFile);
 
                             addDestinationPhotoAttribution(trip, attribution);
+
+                            // Update widget photos and attributions
+                            Utils.updateAppWidgets(getApplicationContext(), trip.getId(), false);
 
                             if (updateTripList) {
                                 sendUpdateTripListBroadcast(trip);
@@ -164,5 +167,4 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
-
 }
