@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -32,7 +33,9 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/* Main Activity that lists all user's trips */
+/**
+ * Main Activity that lists all user's trips
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -83,9 +86,6 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = ButterKnife.findById(this, R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         /*TODO: Gonna use master-detail pattern?
          Seems this is not useful for users, since they will not be constantly switching trips */
         if (ButterKnife.findById(this, R.id.detail_fragment_container) != null) {
@@ -102,7 +102,19 @@ public class MainActivity extends AppCompatActivity
             mFragment = getSupportFragmentManager().findFragmentByTag(TAG_MAIN_FRAGMENT);
         }
 
+        configureNavDrawer();
+    }
+
+    private void configureNavDrawer() {
+        NavigationView navigationView = ButterKnife.findById(this, R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_your_trips);
+
+        View header = navigationView.getHeaderView(0);
+        TextView userName = ButterKnife.findById(header, R.id.nav_user_name);
+        userName.setText(mCurrentUser.getDisplayName());
+        TextView userEmail = ButterKnife.findById(header, R.id.nav_user_email);
+        userEmail.setText(mCurrentUser.getEmail());
     }
 
     private void startTripFactory() {
@@ -122,7 +134,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         displaySelectedScreen(item.getItemId());
         return true;
     }
@@ -130,8 +142,6 @@ public class MainActivity extends AppCompatActivity
     private void displaySelectedScreen(int itemId) {
         if (itemId == R.id.nav_your_trips) {
             mFragment = new TripListFragment();
-        } else if (itemId == R.id.nav_settings) {
-            // TODO: Implement Settings navigation
         } else if (itemId == R.id.nav_sign_out) {
             // Sign out
             AuthUI.getInstance()

@@ -9,7 +9,9 @@ import android.view.View;
 
 // Based on https://stackoverflow.com/questions/31092787/floating-action-button-in-an-activity
 // -how-to-anchor-to-a-recyclerview-in-a-fra
-
+/**
+ * Custom FloatingActionButton that is aware of the scroll position
+ */
 public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
         super();

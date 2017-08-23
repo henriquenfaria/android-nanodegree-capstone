@@ -18,6 +18,9 @@ import com.henriquenfaria.wisetrip.fragments.TripFactoryFragment;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
+/**
+ * Activity that holds the trip form fragment
+ */
 public class TripFactoryActivity extends AppCompatActivity
         implements TripFactoryFragment.OnTripFactoryListener {
 

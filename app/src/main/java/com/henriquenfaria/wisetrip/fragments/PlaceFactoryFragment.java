@@ -36,6 +36,9 @@ import timber.log.Timber;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Factory fragment that holds the place creating form
+ */
 public class PlaceFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
         AlertDialogFragment.OnAlertListener {
@@ -228,7 +231,7 @@ public class PlaceFactoryFragment extends BaseFragment implements
                         Toast.LENGTH_SHORT).show();
                 Timber.i(status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
+                // The user canceled the operation. Nothing to do here.
             }
         }
     }

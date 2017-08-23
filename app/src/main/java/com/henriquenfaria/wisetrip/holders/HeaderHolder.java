@@ -10,7 +10,9 @@ import com.henriquenfaria.wisetrip.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+/**
+ * Header holder for trip list sections
+ */
 public class HeaderHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.header_title)
     protected TextView mHeaderTitle;

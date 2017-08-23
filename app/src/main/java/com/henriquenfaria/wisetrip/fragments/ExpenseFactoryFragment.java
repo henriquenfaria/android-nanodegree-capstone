@@ -34,6 +34,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
+/**
+ * Factory fragment that holds the expense creating form
+ */
 public class ExpenseFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
         AlertDialogFragment.OnAlertListener,

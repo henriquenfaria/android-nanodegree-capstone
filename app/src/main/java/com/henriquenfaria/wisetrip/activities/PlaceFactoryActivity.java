@@ -19,6 +19,9 @@ import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
+/**
+ * Activity that holds the place form fragment
+ */
 public class PlaceFactoryActivity extends AppCompatActivity
         implements PlaceFactoryFragment.OnPlaceFactoryListener {
 

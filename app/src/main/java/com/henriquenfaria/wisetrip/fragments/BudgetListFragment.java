@@ -40,6 +40,9 @@ import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.IFlexible;
 import timber.log.Timber;
 
+/**
+ * Fragment that displays a budget list
+ */
 public class BudgetListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {

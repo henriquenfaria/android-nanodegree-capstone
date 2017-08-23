@@ -42,6 +42,9 @@ import butterknife.ButterKnife;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import timber.log.Timber;
 
+/**
+ * Fragment that displays a budget list
+ */
 public class TripListFragment extends BaseFragment {
 
 

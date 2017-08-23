@@ -45,6 +45,9 @@ import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
 import timber.log.Timber;
 
+/**
+ * Fragment that displays a place list
+ */
 public class PlaceListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {

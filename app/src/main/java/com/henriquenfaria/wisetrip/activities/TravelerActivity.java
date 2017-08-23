@@ -29,6 +29,11 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
+/**
+ * Activity that holds a list of user's contacts.
+ * User can select multiple contacts to be included in the trip.
+ */
 public class TravelerActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         TravelerAdapter.OnTravelerAdapter,

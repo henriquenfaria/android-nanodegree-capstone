@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
+            android:contentDescription="@string/add_trip"
             app:layout_anchor="@+id/main_fragment_container"
             app:layout_anchorGravity="bottom|right|end"
             app:layout_behavior="com.henriquenfaria.wisetrip.views.ScrollAwareFABBehavior"

@@ -3,13 +3,16 @@ package com.henriquenfaria.wisetrip.fragments;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
 import java.util.Date;
 
-// DialogFragment implementation for DatePickerDialog
+/**
+ * DialogFragment implementation for DatePickerDialog
+ */
 public class DatePickerDialogFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
@@ -34,6 +37,7 @@ public class DatePickerDialogFragment extends DialogFragment
         outState.putLong(SAVE_MAXIMUM_DATE, mMaximumDate);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {

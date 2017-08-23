@@ -17,6 +17,9 @@ import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
+/**
+ * Flexible for Place item
+ */
 public class PlaceItem extends AbstractSectionableItem<PlaceItem.ItemViewHolder, PlaceHeader>
         implements IFilterable, IHolder<PlaceModel> {
 

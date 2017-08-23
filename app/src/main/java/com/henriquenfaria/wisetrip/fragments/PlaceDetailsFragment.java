@@ -40,6 +40,9 @@ import org.joda.time.DateTime;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Fragment that displays all the details of a Place
+ */
 public class PlaceDetailsFragment extends BaseFragment implements OnMapReadyCallback {
 
     private static final String ARG_PLACE = "arg_place";

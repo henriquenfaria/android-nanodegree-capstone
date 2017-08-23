@@ -15,7 +15,9 @@ import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 
-/* Utility class with static helper methods for notifications */
+/**
+ * Helper class with static helper methods for notifications
+ */
 public class NotificationUtils {
 
     public static final int BUDGET_LIMIT_EXCEEDED_NOTIFICATION_START_ID = 1;

@@ -29,6 +29,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
                 android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+                android:contentDescription="@string/title_icon"
                 android:src="@drawable/ic_label"/>
 
             <EditText
@@ -57,7 +58,8 @@
                 android:layout_height="@dimen/factory_form_currency_image_size"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
-                android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"/>
+                android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+                android:contentDescription="@string/currency_icon"/>
 
             <TextView
                 android:id="@+id/currency_text"
@@ -80,6 +82,7 @@
                 android:layout_marginLeft="@dimen/factory_form_icon_margin_horizontal"
                 android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
                 android:layout_marginStart="@dimen/factory_form_icon_margin_horizontal"
+                android:contentDescription="@string/amount_icon"
                 android:src="@drawable/ic_amount"/>
 
             <EditText

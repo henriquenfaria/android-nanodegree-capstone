@@ -21,6 +21,9 @@ import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
 import timber.log.Timber;
 
+/**
+ * Flexible for Expense item
+ */
 public class ExpenseItem extends AbstractSectionableItem<ExpenseItem.ItemViewHolder, ExpenseHeader>
         implements IFilterable, IHolder<ExpenseModel> {
 

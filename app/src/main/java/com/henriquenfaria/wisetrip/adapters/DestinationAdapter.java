@@ -18,7 +18,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-
+/**
+ * Adapter for Destination items inside trip factory
+ */
 public class DestinationAdapter extends
         RecyclerView.Adapter<DestinationAdapter.DestinationHolder> {
 

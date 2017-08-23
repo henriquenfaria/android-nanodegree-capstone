@@ -49,6 +49,9 @@ import timber.log.Timber;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * Factory fragment that holds the trip creating form
+ */
 public class TripFactoryFragment extends BaseFragment implements
         DatePickerDialogFragment.OnDateSetListener,
         DestinationAdapter.OnDestinationClickListener,
@@ -401,7 +404,7 @@ public class TripFactoryFragment extends BaseFragment implements
                         Toast.LENGTH_SHORT).show();
                 Timber.i(status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
+                // The user canceled the operation. Nothing to do here.
             }
             // Response from Place Autocomplete, we'll add a new destination
         } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_ADD) {
@@ -420,7 +423,7 @@ public class TripFactoryFragment extends BaseFragment implements
                         Toast.LENGTH_SHORT).show();
                 Timber.i(status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
+                // The user canceled the operation. Nothing to do here.
             }
         }
     }

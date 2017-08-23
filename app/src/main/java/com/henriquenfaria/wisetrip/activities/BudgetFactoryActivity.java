@@ -26,6 +26,9 @@ import com.henriquenfaria.wisetrip.utils.Utils;
 
 import timber.log.Timber;
 
+/**
+ * Activity that holds the budget form fragment
+ */
 public class BudgetFactoryActivity extends AppCompatActivity
         implements BudgetFactoryFragment.OnBudgetFactoryListener {
 
@@ -138,9 +141,9 @@ public class BudgetFactoryActivity extends AppCompatActivity
                     boolean budgetChangedProcessed = false;
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        final ExpenseModel expense = snapshot.getValue(ExpenseModel.class);
-                        final boolean isBudgetExpense = Utils.isBudgetExpense(budget, expense);
+                        ExpenseModel expense = snapshot.getValue(ExpenseModel.class);
                         if (expense != null) {
+                            boolean isBudgetExpense = Utils.isBudgetExpense(budget, expense);
                             if (!budgetChangedProcessed) {
                                 if (!isBudgetExpense) {
                                     budget.getExpenses().clear();

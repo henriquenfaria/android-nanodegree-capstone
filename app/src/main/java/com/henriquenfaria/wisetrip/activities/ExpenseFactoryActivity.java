@@ -26,6 +26,9 @@ import com.henriquenfaria.wisetrip.utils.Utils;
 
 import timber.log.Timber;
 
+/**
+ * Activity that holds the expense form fragment
+ */
 public class ExpenseFactoryActivity extends AppCompatActivity
         implements ExpenseFactoryFragment.OnExpenseFactoryListener {
 
@@ -142,9 +145,9 @@ public class ExpenseFactoryActivity extends AppCompatActivity
                 Timber.d("onDataChange");
                 if (dataSnapshot != null) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        final BudgetModel budget = snapshot.getValue(BudgetModel.class);
-                        final boolean isBudgetExpense = Utils.isBudgetExpense(budget, expense);
+                        BudgetModel budget = snapshot.getValue(BudgetModel.class);
                         if (budget != null) {
+                            boolean isBudgetExpense = Utils.isBudgetExpense(budget, expense);
                             if (result == RESULT_EXPENSE_REMOVED
                                     && isBudgetExpense) {
                                 budget.getExpenses().remove(expense.getId());

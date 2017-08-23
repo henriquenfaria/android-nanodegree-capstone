@@ -64,18 +64,19 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 
-/* Activity to display all related data of a specific TripModel */
+/**
+ * Activity which holds the fragment that displays Trips' details
+ */
 public class TripDetailsActivity extends AppCompatActivity implements
         OnExpenseInteractionListener,
         OnBudgetInteractionListener,
         OnPlaceInteractionListener {
 
-    private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
-            "save_is_shared_element_transition";
     public static final int TAB_EXPENSES_POSITION = 0;
     public static final int TAB_BUDGETS_POSITION = 1;
     public static final int TAB_PLACES_POSITION = 2;
-
+    private static final String SAVE_IS_SHARED_ELEMENT_TRANSITION =
+            "save_is_shared_element_transition";
     @BindView(R.id.attribution_container)
     protected LinearLayout mAttributionContainer;
     @BindView(R.id.trip_photo)
@@ -149,6 +150,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
 
     private void setupFab() {
         mFab.setImageResource(getFabImageResource());
+        mFab.setContentDescription(getFabContentDescription(this));
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,6 +214,19 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 return R.drawable.ic_fab_place;
             default:
                 return R.drawable.ic_fab_plus;
+        }
+    }
+
+    private String getFabContentDescription(Context context) {
+        switch (mTabLayout.getSelectedTabPosition()) {
+            case TAB_EXPENSES_POSITION:
+                return context.getString(R.string.add_expense);
+            case TAB_BUDGETS_POSITION:
+                return context.getString(R.string.add_budget);
+            case TAB_PLACES_POSITION:
+                return context.getString(R.string.add_place);
+            default:
+                return context.getString(R.string.add_expense);
         }
     }
 

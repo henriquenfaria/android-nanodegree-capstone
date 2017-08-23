@@ -3,12 +3,15 @@ package com.henriquenfaria.wisetrip.fragments;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import com.henriquenfaria.wisetrip.R;
 
-// DialogFragment implementation for OK/Cancel dialog
+/**
+ * DialogFragment implementation for OK/Cancel dialog
+ */
 public class AlertDialogFragment extends DialogFragment {
 
     private static final String SAVE_TITLE = "save_title";
@@ -25,6 +28,7 @@ public class AlertDialogFragment extends DialogFragment {
         outState.putInt(SAVE_MESSAGE, mMessage);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {

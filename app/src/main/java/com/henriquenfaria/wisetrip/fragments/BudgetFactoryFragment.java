@@ -33,6 +33,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
+/**
+ * Factory fragment that holds the budget creating form
+ */
 public class BudgetFactoryFragment extends BaseFragment implements
         AlertDialogFragment.OnAlertListener,
         CountryPickerListener {

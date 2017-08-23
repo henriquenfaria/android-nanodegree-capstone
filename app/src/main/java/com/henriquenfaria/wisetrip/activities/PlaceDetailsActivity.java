@@ -13,6 +13,10 @@ import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
+
+/**
+ * Activity which holds the fragment that displays Places' details
+ */
 public class PlaceDetailsActivity extends AppCompatActivity
         implements PlaceDetailsFragment.OnPlaceDetailsListener {
 

@@ -35,6 +35,7 @@
             android:layout_marginRight="@dimen/factory_form_remove_destination_button_margin_end"
             android:background="@drawable/ic_remove"
             android:clickable="true"
+            android:contentDescription="@string/remove_destination"
             android:cropToPadding="true"
             android:padding="@dimen/factory_form_remove_destination_button_padding"
             android:scaleType="centerInside"/>
@@ -51,6 +52,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
             android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+            android:contentDescription="@string/destination_icon"
             android:src="@drawable/ic_destination"/>
 
         <TextView

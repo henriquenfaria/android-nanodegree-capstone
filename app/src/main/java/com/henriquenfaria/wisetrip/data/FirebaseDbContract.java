@@ -1,8 +1,10 @@
 package com.henriquenfaria.wisetrip.data;
 
-/* Helper class to organize the db schema*/
+/**
+ * Helper class to organize the Firebase db schema
+ */
 public class FirebaseDbContract {
-    
+
     public static final class Trips {
         public final static String PATH_TRIPS = "trips";
         public final static String PATH_TITLE = "title";

@@ -35,7 +35,9 @@ import java.util.Map;
 import timber.log.Timber;
 
 
-/* Utility class with static common helper methods */
+/**
+ * Helper class with static common helper methods
+ */
 public class Utils {
 
     public static String getFormattedStartEndTripDateText(long startDateMillis, long
@@ -249,7 +251,7 @@ public class Utils {
         char t;
         while (i < max) {
             t = str.charAt(i);
-            if (t != '.' && after == false) {
+            if (t != '.' && !after) {
                 up++;
                 if (up > max_digits_before_point) return rFinal;
             } else if (t == '.') {
@@ -267,7 +269,7 @@ public class Utils {
 
     public static String getCurrencySymbol(String countryCode) {
         String currencySymbol = "";
-        Locale locale = null;
+        Locale locale;
         Currency currency = null;
         try {
             locale = new Locale("", countryCode);
@@ -312,8 +314,13 @@ public class Utils {
         String url = "";
         try {
             Document doc = Jsoup.parse(html);
-            Element link = doc.select("a").first();
-            url = link.attr("abs:href");
+            Element link = null;
+            if (doc != null) {
+                link = doc.select("a").first();
+            }
+            if (link != null) {
+                url = link.attr("abs:href");
+            }
         } catch (Selector.SelectorParseException e) {
             e.printStackTrace();
         }

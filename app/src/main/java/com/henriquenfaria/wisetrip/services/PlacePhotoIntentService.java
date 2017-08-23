@@ -31,7 +31,10 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-
+/**
+ * IntentService implementation that handles Places API communication in the background.
+ * It is responsible to fetch, store, update and delete trip photos from the device local storage.
+ */
 public class PlacePhotoIntentService extends IntentService implements GoogleApiClient
         .OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
@@ -41,6 +44,10 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        if (intent == null || TextUtils.isEmpty(intent.getAction())){
+            return;
+        }
+
         if (TextUtils.equals(intent.getAction(), Constants.Action.ACTION_ADD_PHOTO)) {
             if (intent.hasExtra(Constants.Extra.EXTRA_TRIP)) {
                 TripModel trip = intent.getParcelableExtra(Constants.Extra.EXTRA_TRIP);

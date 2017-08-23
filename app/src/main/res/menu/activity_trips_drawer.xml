@@ -5,7 +5,7 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_your_trips"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_my_trips"
             android:title="@string/your_trips"/>
     </group>
 
@@ -13,13 +13,8 @@
         android:id="@+id/menu_bottom"
         android:checkableBehavior="none">
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/settings"/>
-
-        <item
             android:id="@+id/nav_sign_out"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_menu_sign_out"
             android:title="@string/sign_out"/>
     </group>
 </menu>

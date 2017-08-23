@@ -16,6 +16,9 @@ import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
+/**
+ * Place for Expense items
+ */
 public class PlaceHeader extends AbstractHeaderItem<PlaceHeader.HeaderViewHolder>
         implements IFilterable, IHolder<HeaderModel> {
 

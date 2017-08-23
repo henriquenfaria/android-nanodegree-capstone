@@ -45,6 +45,9 @@ import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
 import timber.log.Timber;
 
+/**
+ * Fragment that displays an expense list
+ */
 public class ExpenseListFragment extends BaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {

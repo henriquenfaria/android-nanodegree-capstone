@@ -42,7 +42,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-
+/**
+ * Item holder for trip list items
+ */
 public class TripHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.trip_card)

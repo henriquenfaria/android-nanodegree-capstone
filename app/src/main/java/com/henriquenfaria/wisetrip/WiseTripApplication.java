@@ -6,6 +6,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import timber.log.Timber;
 
+/**
+ * General application settings
+ */
 public class WiseTripApplication extends Application {
 
     @Override

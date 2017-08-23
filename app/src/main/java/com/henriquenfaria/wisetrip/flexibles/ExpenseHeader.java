@@ -16,6 +16,9 @@ import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
+/**
+ * Header for Expense items
+ */
 public class ExpenseHeader extends AbstractHeaderItem<ExpenseHeader.HeaderViewHolder>
         implements IFilterable, IHolder<HeaderModel> {
 

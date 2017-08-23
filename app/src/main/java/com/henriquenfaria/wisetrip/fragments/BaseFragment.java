@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-// Base Fragment for all Fragments in this app
+/**
+ * Base Fragment for all Fragments in the app
+ */
 public class BaseFragment extends Fragment {
 
     protected FragmentActivity mFragmentActivity;

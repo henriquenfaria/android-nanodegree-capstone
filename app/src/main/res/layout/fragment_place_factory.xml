@@ -28,6 +28,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
                 android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+                android:contentDescription="@string/destination_icon"
                 android:src="@drawable/ic_destination"/>
 
             <TextView
@@ -56,6 +57,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/factory_form_icon_margin_horizontal"
                 android:layout_marginRight="@dimen/factory_form_icon_margin_horizontal"
+                android:contentDescription="@string/date_icon"
                 android:src="@drawable/ic_calendar"/>
 
             <TextView

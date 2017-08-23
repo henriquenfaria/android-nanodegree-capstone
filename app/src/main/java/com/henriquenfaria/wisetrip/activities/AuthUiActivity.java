@@ -1,7 +1,6 @@
 package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -18,7 +17,6 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.henriquenfaria.wisetrip.BuildConfig;
-import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -30,7 +28,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-/* Activity to handle user authentication */
+/**
+ * Activity to handle user authentication
+ */
 public class AuthUiActivity extends AppCompatActivity {
 
     // Request code for auth sign in, this is an arbitrary value

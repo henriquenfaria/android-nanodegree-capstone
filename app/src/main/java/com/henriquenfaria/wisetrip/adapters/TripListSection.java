@@ -28,6 +28,10 @@ import com.henriquenfaria.wisetrip.utils.Utils;
 import butterknife.ButterKnife;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
+
+/**
+ * Trip list sections to logically organize the list (UPCOMING, CURRENT, PAST)
+ */
 public class TripListSection extends StatelessSection {
 
     private String mTitle;

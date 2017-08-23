@@ -22,6 +22,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Adapter for Traveler items inside trip factory
+ */
 public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.TravelerHolder> {
 
     private Cursor mCursor;

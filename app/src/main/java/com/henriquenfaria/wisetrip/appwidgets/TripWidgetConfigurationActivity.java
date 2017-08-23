@@ -26,18 +26,21 @@ import com.henriquenfaria.wisetrip.views.SizeAwareRecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Configuration Activity for Trip appwidget.
+ * User can select a trip to be displayed in the homescreen widget.
+ */
 public class TripWidgetConfigurationActivity extends AppCompatActivity {
 
-    private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    @BindView(R.id.trip_list)
+    protected SizeAwareRecyclerView mTripListRecyclerView;
 
+    private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private Query mTripsQuery;
     private FirebaseUser mCurrentUser;
     private FirebaseRecyclerAdapter<TripModel, TripHolder> mAdapter;
-
-    @BindView(R.id.trip_list)
-    protected SizeAwareRecyclerView mTripListRecyclerView;
 
     public TripWidgetConfigurationActivity() {
         super();
@@ -56,7 +59,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         mCurrentUser = mFirebaseAuth.getCurrentUser();
 
         // Not signed in, finish Configuration
-        if (mCurrentUser == null){
+        if (mCurrentUser == null) {
             Toast.makeText(this, R.string.must_sign_in_first, Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -99,7 +102,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
             @Override
             public void populateViewHolder(final TripHolder holder,
                                            final TripModel trip, final int position) {
-                if (trip != null && !TextUtils.isEmpty(trip.getId())){
+                if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     holder.setTripTitle(trip.getTitle());
                     holder.setTripDate(Utils.getFormattedStartEndTripDateText(trip
                             .getStartDate(), trip.getEndDate()));

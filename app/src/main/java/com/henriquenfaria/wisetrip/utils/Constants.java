@@ -1,7 +1,9 @@
 package com.henriquenfaria.wisetrip.utils;
 
 
-// Class that holds all app's public constants
+/**
+ * Class that holds all app's public constants
+ */
 public class Constants {
     // General constants
     public static final class General {

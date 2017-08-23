@@ -19,6 +19,7 @@
             android:id="@+id/trip_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/trip_photo"
             android:scaleType="centerCrop"/>
 
         <View
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:contentDescription="@string/edit"
                 android:padding="@dimen/trip_card_view_edit_button_padding"
                 android:src="@drawable/ic_mode_edit"/>
 

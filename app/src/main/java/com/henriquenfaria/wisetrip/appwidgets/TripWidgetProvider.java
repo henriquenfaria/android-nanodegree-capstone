@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.AppWidgetTarget;
@@ -49,6 +48,11 @@ import java.io.File;
 
 import timber.log.Timber;
 
+/**
+ * AppWidgetProvider for Trip homescreen widget.
+ * The homescreen widget shows the trip name, dates and photos,
+ * allowing users to quickly add new expenses for that particular trip.
+ */
 public class TripWidgetProvider extends AppWidgetProvider {
 
     @Override

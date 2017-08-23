@@ -23,6 +23,9 @@ import eu.davidea.flexibleadapter.items.IHolder;
 import eu.davidea.viewholders.FlexibleViewHolder;
 import timber.log.Timber;
 
+/**
+ * Flexible for Budget item
+ */
 public class BudgetItem extends AbstractFlexibleItem<BudgetItem.ItemViewHolder>
         implements IFilterable, IHolder<BudgetModel> {
 
