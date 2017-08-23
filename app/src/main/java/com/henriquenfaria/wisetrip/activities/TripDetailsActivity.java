@@ -4,9 +4,11 @@ package com.henriquenfaria.wisetrip.activities;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -25,6 +27,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.adapters.ViewPagerAdapter;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
@@ -48,9 +56,6 @@ import com.henriquenfaria.wisetrip.models.PlaceModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Features;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -268,36 +273,42 @@ public class TripDetailsActivity extends AppCompatActivity implements
         final File photoFile = new File(directoryFile, tripId);
 
         ImageView tripPhotoBackdrop = ButterKnife.findById(this, R.id.trip_photo);
-        Picasso.with(this)
-                .load(photoFile)
-                .networkPolicy(
-                        NetworkPolicy.NO_CACHE,
-                        NetworkPolicy.NO_STORE,
-                        NetworkPolicy.OFFLINE)
-                .noFade()
-                .noPlaceholder()
-                .error(R.drawable.trip_photo_default)
-                .into(tripPhotoBackdrop, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        displayPhotoAttribution(mTrip.getId(), true);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            startPostponedEnterTransition();
-                        } else {
-                            supportStartPostponedEnterTransition();
-                        }
-                    }
 
+        GlideApp
+                .with(this)
+                .load(photoFile)
+                .dontAnimate()
+                .signature(new ObjectKey(photoFile.lastModified()))
+                .error(R.drawable.trip_photo_default)
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public void onError() {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                Target<Drawable> target,
+                                                boolean isFirstResource) {
                         displayPhotoAttribution(mTrip.getId(), false);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             startPostponedEnterTransition();
                         } else {
                             supportStartPostponedEnterTransition();
                         }
+                        return false;
                     }
-                });
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model,
+                                                   Target<Drawable> target,
+                                                   DataSource dataSource,
+                                                   boolean isFirstResource) {
+                        displayPhotoAttribution(mTrip.getId(), true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            startPostponedEnterTransition();
+                        } else {
+                            supportStartPostponedEnterTransition();
+                        }
+                        return false;
+                    }
+                })
+                .into(tripPhotoBackdrop);
     }
 
     @Override

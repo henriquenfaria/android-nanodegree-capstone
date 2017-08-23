@@ -282,8 +282,8 @@ public class TripWidgetProvider extends AppWidgetProvider {
                 .load(photoFile)
                 .centerCrop()
                 .signature(new ObjectKey(photoFile.lastModified()))
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.skipMemoryCache(true)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.trip_photo_default)
                 .listener(new RequestListener<Bitmap>() {
                     @Override

@@ -1,6 +1,7 @@
 package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -10,12 +11,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.henriquenfaria.wisetrip.BuildConfig;
+import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.services.PlacePhotoIntentService;
 import com.henriquenfaria.wisetrip.utils.Constants;
@@ -174,12 +177,15 @@ public class AuthUiActivity extends AppCompatActivity {
     }
 
     private void onSignOutCleanup() {
-        // Start photo's clean up task
+        // Sign out all widgets
+        Utils.signOutAppWidgets(this);
+
+        // Glide's clearDiskCache must be called in the UI thread
+        Glide.get(getApplicationContext()).clearMemory();
+
+        // Start photo's background clean up task
         Intent placePhotoIntentService = new Intent(this, PlacePhotoIntentService.class);
         placePhotoIntentService.setAction(Constants.Action.ACTION_SIGN_OUT_CLEAN_UP);
         startService(placePhotoIntentService);
-
-        // Sign out all widgets
-        Utils.signOutAppWidgets(this);
     }
 }

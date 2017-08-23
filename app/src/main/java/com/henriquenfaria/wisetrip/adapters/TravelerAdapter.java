@@ -10,10 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.models.TravelerModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -92,12 +93,13 @@ public class TravelerAdapter extends RecyclerView.Adapter<TravelerAdapter.Travel
 
         holder.travelerName.setText(traveler.getName());
 
-        Picasso.with(mContext)
+        GlideApp
+                .with(mContext)
                 .load(traveler.getPhotoUri())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.ic_default_traveler_photo)
                 .error(R.drawable.ic_default_traveler_photo)
                 .into(holder.travelerPhoto);
-
     }
 
     @Override

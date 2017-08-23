@@ -3,7 +3,9 @@ package com.henriquenfaria.wisetrip.holders;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,13 +30,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.models.AttributionModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -113,26 +118,31 @@ public class TripHolder extends RecyclerView.ViewHolder {
                     Context.MODE_PRIVATE);
             final File photoFile = new File(directoryFile, tripId);
 
-            Picasso.with(mTripPhoto.getContext())
+            GlideApp
+                    .with(mTripPhoto.getContext())
                     .load(photoFile)
-                    .networkPolicy(
-                            NetworkPolicy.NO_CACHE,
-                            NetworkPolicy.NO_STORE,
-                            NetworkPolicy.OFFLINE)
-                    //.noFade()
                     .placeholder(R.color.tripCardPlaceholderBackground)
+                    .signature(new ObjectKey(photoFile.lastModified()))
                     .error(R.drawable.trip_photo_default)
-                    .into(mTripPhoto, new Callback() {
+                    .listener(new RequestListener<Drawable>() {
                         @Override
-                        public void onSuccess() {
-                            displayPhotoAttribution(tripId, true);
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target,
+                                                    boolean isFirstResource) {
+                            displayPhotoAttribution(tripId, false);
+                            return false;
                         }
 
                         @Override
-                        public void onError() {
-                            displayPhotoAttribution(tripId, false);
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target,
+                                                       DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            displayPhotoAttribution(tripId, true);
+                            return false;
                         }
-                    });
+                    })
+                    .into(mTripPhoto);
         }
     }
 

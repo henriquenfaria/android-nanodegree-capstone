@@ -15,7 +15,6 @@ import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.DestinationModel;
 import com.henriquenfaria.wisetrip.models.ExpenseModel;
 import com.henriquenfaria.wisetrip.models.TravelerModel;
-import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -137,8 +136,7 @@ public class Utils {
     }
 
     public static boolean deleteFileFromInternalStorage(Context context, String directory,
-                                                        String fileName, boolean
-                                                                clearPicassoCache) {
+                                                        String fileName) {
         ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         File file = new File(directoryFile, fileName);
@@ -146,9 +144,6 @@ public class Utils {
 
         try {
             isDeleted = file.delete();
-            if (isDeleted && clearPicassoCache) {
-                Picasso.with(context).invalidate(file);
-            }
         } catch (SecurityException e) {
             Timber.e("SecurityException while deleting bitmap from internal storage");
             e.printStackTrace();
@@ -157,18 +152,15 @@ public class Utils {
         return isDeleted;
     }
 
-    public static boolean deleteFolderFromInternalStorage(Context context, String directory,
-                                                          boolean clearPicassoCache) {
+    public static boolean deleteFolderFromInternalStorage(Context context, String directory) {
         ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);
         if (directoryFile.isDirectory()) {
+            boolean isDeleted = false;
             for (File childFiled : directoryFile.listFiles()) {
-                boolean isDeleted = childFiled.delete();
-                if (isDeleted && clearPicassoCache) {
-                    Picasso.with(context).invalidate(childFiled);
-                }
+                isDeleted = childFiled.delete();
             }
-            return true;
+            return isDeleted;
         } else {
             return false;
         }
