@@ -186,7 +186,8 @@ public class BudgetListFragment extends BaseFragment implements
                             && mBudgetAdapter != null) {
                         budgetAdded(budget);
 
-                        Utils.saveBooleanToSharedPrefs(mFragmentActivity, budget.getId(), false, true);
+                        Utils.saveBooleanToSharedPrefs(mFragmentActivity, budget.getId(), false,
+                                true);
                     }
                 }
 
@@ -200,9 +201,12 @@ public class BudgetListFragment extends BaseFragment implements
                         budgetChanged(budget);
 
                         if (budget.isBudgetExceeded()
-                                && !Utils.getBooleanFromSharedPrefs(mFragmentActivity, budget.getId(), false)) {
-                            NotificationUtils.notifyBudgetLimitExceeded(mFragmentActivity, budget, mTrip);
-                            Utils.saveBooleanToSharedPrefs(mFragmentActivity, budget.getId(), true, true);
+                                && !Utils.getBooleanFromSharedPrefs(mFragmentActivity, budget
+                                .getId(), false)) {
+                            NotificationUtils.notifyBudgetLimitExceeded(mFragmentActivity,
+                                    budget, mTrip);
+                            Utils.saveBooleanToSharedPrefs(mFragmentActivity, budget.getId(),
+                                    true, true);
                         }
                     }
                 }

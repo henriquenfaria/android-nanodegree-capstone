@@ -123,9 +123,9 @@ public class TripHolder extends RecyclerView.ViewHolder {
             GlideApp
                     .with(mTripPhoto.getContext())
                     .load(photoFile)
-                    .placeholder(R.color.tripCardPlaceholderBackground)
                     .signature(new ObjectKey(photoFile.lastModified()))
                     .error(R.drawable.trip_photo_default)
+                    .placeholder(R.color.tripCardPlaceholderBackground)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model,

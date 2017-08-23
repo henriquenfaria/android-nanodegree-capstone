@@ -194,7 +194,7 @@ public class PlaceDetailsFragment extends BaseFragment implements OnMapReadyCall
                 ssb.append(destination.getAddress());
                 ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 mAddressTextView.setText(ssb, TextView.BufferType.SPANNABLE);
-                
+
                 mAddressContainer.setVisibility(View.VISIBLE);
                 mAddressTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -231,12 +231,6 @@ public class PlaceDetailsFragment extends BaseFragment implements OnMapReadyCall
         }
     }
 
-    public interface OnPlaceDetailsListener {
-        void changeActionBarTitle(String newTitle);
-
-        void onPlaceEditMenu(TripModel trip, PlaceModel place);
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if (mPlace.getDestination() != null && mPlace.getDestination().getLatLng() != null) {
@@ -252,5 +246,11 @@ public class PlaceDetailsFragment extends BaseFragment implements OnMapReadyCall
             googleMap.moveCamera(cameraUpdate);
 
         }
+    }
+
+    public interface OnPlaceDetailsListener {
+        void changeActionBarTitle(String newTitle);
+
+        void onPlaceEditMenu(TripModel trip, PlaceModel place);
     }
 }

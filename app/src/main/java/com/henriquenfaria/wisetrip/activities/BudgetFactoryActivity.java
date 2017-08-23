@@ -96,7 +96,8 @@ public class BudgetFactoryActivity extends AppCompatActivity
     public void saveBudget(TripModel trip, BudgetModel budget, boolean isEditMode) {
         if (budget != null) {
             final DatabaseReference budgetReference
-                    = mRootReference.child(FirebaseDbContract.Budgets.PATH_BUDGETS).child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Budgets.PATH_BUDGETS).child
+                    (mCurrentUser.getUid());
 
             final DatabaseReference expenseReference
                     = mRootReference.child(FirebaseDbContract.Expenses.PATH_EXPENSES)
@@ -109,7 +110,7 @@ public class BudgetFactoryActivity extends AppCompatActivity
                 // Update budget by adding applicable expenses
                 updateBudgetForCurrentExpenses(expenseReference, trip, budgetReference, budget);
 
-            } else if (!isEditMode){
+            } else if (!isEditMode) {
                 DatabaseReference databaseReference = budgetReference.child(trip.getId()).push();
                 budget.setId(databaseReference.getKey());
                 databaseReference.setValue(budget);

@@ -8,9 +8,31 @@ import java.io.Serializable;
 
 public class PlaceModel implements Parcelable, Serializable {
 
+    public static final Creator<PlaceModel> CREATOR = new Creator<PlaceModel>() {
+        @Override
+        public PlaceModel createFromParcel(Parcel source) {
+            return new PlaceModel(source);
+        }
+
+        @Override
+        public PlaceModel[] newArray(int size) {
+            return new PlaceModel[size];
+        }
+    };
     private String id;
     private Long date;
     private DestinationModel destination;
+
+    public PlaceModel() {
+        id = "";
+        date = -1L;
+    }
+
+    protected PlaceModel(Parcel in) {
+        this.id = in.readString();
+        this.date = (Long) in.readValue(Long.class.getClassLoader());
+        this.destination = in.readParcelable(DestinationModel.class.getClassLoader());
+    }
 
     public String getId() {
         return id;
@@ -34,11 +56,6 @@ public class PlaceModel implements Parcelable, Serializable {
 
     public void setDestination(DestinationModel destination) {
         this.destination = destination;
-    }
-
-    public PlaceModel() {
-        id = "";
-        date = -1L;
     }
 
     @Override
@@ -66,22 +83,4 @@ public class PlaceModel implements Parcelable, Serializable {
         dest.writeValue(this.date);
         dest.writeParcelable(this.destination, flags);
     }
-
-    protected PlaceModel(Parcel in) {
-        this.id = in.readString();
-        this.date = (Long) in.readValue(Long.class.getClassLoader());
-        this.destination = in.readParcelable(DestinationModel.class.getClassLoader());
-    }
-
-    public static final Creator<PlaceModel> CREATOR = new Creator<PlaceModel>() {
-        @Override
-        public PlaceModel createFromParcel(Parcel source) {
-            return new PlaceModel(source);
-        }
-
-        @Override
-        public PlaceModel[] newArray(int size) {
-            return new PlaceModel[size];
-        }
-    };
 }

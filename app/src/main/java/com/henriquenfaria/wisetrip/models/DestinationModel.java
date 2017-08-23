@@ -10,6 +10,17 @@ import java.io.Serializable;
 
 public class DestinationModel implements Parcelable, Serializable {
 
+    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
+        @Override
+        public DestinationModel createFromParcel(Parcel source) {
+            return new DestinationModel(source);
+        }
+
+        @Override
+        public DestinationModel[] newArray(int size) {
+            return new DestinationModel[size];
+        }
+    };
     private String id;
     private String name;
     private String address;
@@ -42,6 +53,19 @@ public class DestinationModel implements Parcelable, Serializable {
         if (place.getViewport() != null) {
             latLngBounds = new LatLngBoundsModel((place.getViewport()));
         }
+    }
+
+    protected DestinationModel(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.address = in.readString();
+        this.phoneNumber = in.readString();
+        this.priceLevel = (Long) in.readValue(Long.class.getClassLoader());
+        this.rating = (Double) in.readValue(Double.class.getClassLoader());
+        this.websiteUri = in.readString();
+        this.latLng = in.readParcelable(LatLngModel.class.getClassLoader());
+        this.latLngBounds = in.readParcelable(LatLngBoundsModel.class.getClassLoader());
+        this.attributions = in.readString();
     }
 
     public String getId() {
@@ -142,29 +166,4 @@ public class DestinationModel implements Parcelable, Serializable {
         dest.writeParcelable(this.latLngBounds, flags);
         dest.writeString(this.attributions);
     }
-
-    protected DestinationModel(Parcel in) {
-        this.id = in.readString();
-        this.name = in.readString();
-        this.address = in.readString();
-        this.phoneNumber = in.readString();
-        this.priceLevel = (Long) in.readValue(Long.class.getClassLoader());
-        this.rating = (Double) in.readValue(Double.class.getClassLoader());
-        this.websiteUri = in.readString();
-        this.latLng = in.readParcelable(LatLngModel.class.getClassLoader());
-        this.latLngBounds = in.readParcelable(LatLngBoundsModel.class.getClassLoader());
-        this.attributions = in.readString();
-    }
-
-    public static final Creator<DestinationModel> CREATOR = new Creator<DestinationModel>() {
-        @Override
-        public DestinationModel createFromParcel(Parcel source) {
-            return new DestinationModel(source);
-        }
-
-        @Override
-        public DestinationModel[] newArray(int size) {
-            return new DestinationModel[size];
-        }
-    };
 }

@@ -21,8 +21,8 @@ public class PlaceDetailsActivity extends AppCompatActivity
         implements PlaceDetailsFragment.OnPlaceDetailsListener {
 
     private static final String TAG_PLACE_DETAILS_FRAGMENT = "tag_place_details_fragment";
-    private PlaceDetailsFragment mPlaceDetailsFragment;
     private static final int REQUEST_PLACE_DETAILS = 1;
+    private PlaceDetailsFragment mPlaceDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

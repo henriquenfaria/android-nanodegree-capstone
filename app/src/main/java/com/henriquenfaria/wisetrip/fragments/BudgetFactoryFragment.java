@@ -96,11 +96,13 @@ public class BudgetFactoryFragment extends BaseFragment implements
         }
     };
 
-    private SeekBar.OnSeekBarChangeListener mOnSeekbarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private SeekBar.OnSeekBarChangeListener mOnSeekbarChangeListener = new SeekBar
+            .OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mBudget.setNotificationAt((double) progress);
-            mNotificationPercentageText.setText(String.format(getString(R.string.notification_percentage), progress));
+            mNotificationPercentageText.setText(String.format(getString(R.string
+                    .notification_percentage), progress));
         }
 
         @Override
@@ -296,7 +298,8 @@ public class BudgetFactoryFragment extends BaseFragment implements
         country.loadFlagByCode(mFragmentActivity);
         mCurrencyIcon.setImageResource(country.getFlag());
         mCurrencyTextView.setText(mBudget.getCurrency());
-        mNotificationPercentageText.setText(String.format(getString(R.string.notification_percentage),
+        mNotificationPercentageText.setText(String.format(getString(R.string
+                        .notification_percentage),
                 mBudget.getNotificationAt().intValue()));
         mAmountEditText.setText(String.format(Locale.US, "%.2f", mBudget.getBudgetAmount()));
     }

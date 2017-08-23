@@ -292,9 +292,9 @@ public class TripDetailsActivity extends AppCompatActivity implements
         GlideApp
                 .with(this)
                 .load(photoFile)
-                .dontAnimate()
                 .signature(new ObjectKey(photoFile.lastModified()))
                 .error(R.drawable.trip_photo_default)
+                .placeholder(R.color.tripCardPlaceholderBackground)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model,

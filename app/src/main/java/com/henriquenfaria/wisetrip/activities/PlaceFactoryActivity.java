@@ -92,7 +92,8 @@ public class PlaceFactoryActivity extends AppCompatActivity
     public void savePlace(TripModel trip, PlaceModel place, boolean isEditMode) {
         if (place != null) {
             final DatabaseReference placeReference
-                    = mRootReference.child(FirebaseDbContract.Places.PATH_PLACES).child(mCurrentUser.getUid());
+                    = mRootReference.child(FirebaseDbContract.Places.PATH_PLACES).child
+                    (mCurrentUser.getUid());
 
             if (isEditMode && !TextUtils.isEmpty(place.getId())) {
                 DatabaseReference databaseReference = placeReference.child(trip.getId())

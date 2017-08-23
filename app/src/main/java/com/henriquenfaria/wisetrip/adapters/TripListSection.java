@@ -71,7 +71,8 @@ public class TripListSection extends StatelessSection {
                 tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList
                         .get(position));
                 if (Features.TRIP_LIST_SHARED_ELEMENT_TRANSITION_ENABLED) {
-                    ActivityCompat.startActivity(context, tripDetails, createTransitionOptions(view));
+                    ActivityCompat.startActivity(context, tripDetails, createTransitionOptions
+                            (view));
                 } else {
                     context.startActivity(tripDetails);
                 }

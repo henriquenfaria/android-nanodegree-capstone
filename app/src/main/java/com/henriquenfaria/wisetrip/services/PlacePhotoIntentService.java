@@ -44,7 +44,7 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent == null || TextUtils.isEmpty(intent.getAction())){
+        if (intent == null || TextUtils.isEmpty(intent.getAction())) {
             return;
         }
 

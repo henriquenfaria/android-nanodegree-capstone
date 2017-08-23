@@ -7,6 +7,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 public class LatLngBoundsModel implements Parcelable {
+    public static final Parcelable.Creator<LatLngBoundsModel> CREATOR = new Parcelable
+            .Creator<LatLngBoundsModel>() {
+        @Override
+        public LatLngBoundsModel createFromParcel(Parcel source) {
+            return new LatLngBoundsModel(source);
+        }
+
+        @Override
+        public LatLngBoundsModel[] newArray(int size) {
+            return new LatLngBoundsModel[size];
+        }
+    };
     private LatLngModel southwest;
     private LatLngModel northeast;
 
@@ -22,6 +34,11 @@ public class LatLngBoundsModel implements Parcelable {
     public LatLngBoundsModel(LatLng southwest, LatLng northeast) {
         this.southwest = new LatLngModel(southwest);
         this.northeast = new LatLngModel(northeast);
+    }
+
+    protected LatLngBoundsModel(Parcel in) {
+        this.southwest = in.readParcelable(LatLng.class.getClassLoader());
+        this.northeast = in.readParcelable(LatLng.class.getClassLoader());
     }
 
     public LatLngModel getSouthwest() {
@@ -50,22 +67,4 @@ public class LatLngBoundsModel implements Parcelable {
         dest.writeParcelable(this.southwest, flags);
         dest.writeParcelable(this.northeast, flags);
     }
-
-    protected LatLngBoundsModel(Parcel in) {
-        this.southwest = in.readParcelable(LatLng.class.getClassLoader());
-        this.northeast = in.readParcelable(LatLng.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<LatLngBoundsModel> CREATOR = new Parcelable
-            .Creator<LatLngBoundsModel>() {
-        @Override
-        public LatLngBoundsModel createFromParcel(Parcel source) {
-            return new LatLngBoundsModel(source);
-        }
-
-        @Override
-        public LatLngBoundsModel[] newArray(int size) {
-            return new LatLngBoundsModel[size];
-        }
-    };
 }

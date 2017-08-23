@@ -28,10 +28,10 @@
 
             <ImageView
                 android:id="@+id/trip_photo"
-                android:contentDescription="@string/trip_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/trip_photo_default"
+                android:contentDescription="@string/trip_photo"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:transitionName="trip_photo"

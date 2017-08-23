@@ -8,6 +8,18 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class LatLngModel implements Parcelable {
 
+    public static final Parcelable.Creator<LatLngModel> CREATOR = new Parcelable
+            .Creator<LatLngModel>() {
+        @Override
+        public LatLngModel createFromParcel(Parcel source) {
+            return new LatLngModel(source);
+        }
+
+        @Override
+        public LatLngModel[] newArray(int size) {
+            return new LatLngModel[size];
+        }
+    };
     private Double latitude;
     private Double longitude;
 
@@ -23,6 +35,11 @@ public class LatLngModel implements Parcelable {
     public LatLngModel(LatLng latLng) {
         this.latitude = latLng.latitude;
         this.longitude = latLng.longitude;
+    }
+
+    protected LatLngModel(Parcel in) {
+        this.latitude = (Double) in.readValue(Double.class.getClassLoader());
+        this.longitude = (Double) in.readValue(Double.class.getClassLoader());
     }
 
     public Double getLatitude() {
@@ -41,7 +58,6 @@ public class LatLngModel implements Parcelable {
         this.longitude = longitude;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -52,22 +68,4 @@ public class LatLngModel implements Parcelable {
         dest.writeValue(this.latitude);
         dest.writeValue(this.longitude);
     }
-
-    protected LatLngModel(Parcel in) {
-        this.latitude = (Double) in.readValue(Double.class.getClassLoader());
-        this.longitude = (Double) in.readValue(Double.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<LatLngModel> CREATOR = new Parcelable
-            .Creator<LatLngModel>() {
-        @Override
-        public LatLngModel createFromParcel(Parcel source) {
-            return new LatLngModel(source);
-        }
-
-        @Override
-        public LatLngModel[] newArray(int size) {
-            return new LatLngModel[size];
-        }
-    };
 }

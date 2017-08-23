@@ -139,7 +139,8 @@ public class ExpenseFactoryActivity extends AppCompatActivity
     private void updateExpenseForCurrentBudgets(final int result, final TripModel trip,
                                                 final DatabaseReference budgetReference,
                                                 final ExpenseModel expense) {
-        budgetReference.child(trip.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+        budgetReference.child(trip.getId()).addListenerForSingleValueEvent(new ValueEventListener
+                () {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Timber.d("onDataChange");
