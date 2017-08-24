@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG_MAIN_FRAGMENT = "tag_main_fragment";
     @BindView(R.id.fab)
     protected FloatingActionButton mFab;
-    private boolean mIsTwoPane;
     private Fragment mFragment;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mCurrentUser;
@@ -82,19 +81,8 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
-        //TODO: Deprecated
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        /*TODO: Gonna use master-detail pattern?
-         Seems this is not useful for users, since they will not be constantly switching trips */
-        if (ButterKnife.findById(this, R.id.detail_fragment_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mIsTwoPane = true;
-        }
 
         if (savedInstanceState == null) {
             displaySelectedScreen(R.id.nav_your_trips);

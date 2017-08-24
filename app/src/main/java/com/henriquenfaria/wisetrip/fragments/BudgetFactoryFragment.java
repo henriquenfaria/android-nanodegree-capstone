@@ -307,7 +307,6 @@ public class BudgetFactoryFragment extends BaseFragment implements
     private boolean isValidFormFields() {
         boolean isValid = true;
 
-        //TODO: Is title mandatory?
         if (TextUtils.isEmpty(mBudget.getTitle())) {
             mBudgetTitleEditText.setError(getString(R.string.mandatory_field));
             isValid = false;

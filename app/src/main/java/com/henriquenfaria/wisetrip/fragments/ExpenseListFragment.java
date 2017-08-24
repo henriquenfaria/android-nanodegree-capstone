@@ -109,7 +109,7 @@ public class ExpenseListFragment extends BaseFragment implements
         View rootView = inflater.inflate(R.layout.fragment_expense_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        // TODO: If date is properly indexed, use:
+        // TODO: Use it when date is indexed:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
        /* new FirebaseIndexRecyclerAdapter<mExpenseAdapter, TripFirebaseHolder>(mExpenseAdapter
        .class,
@@ -134,7 +134,7 @@ public class ExpenseListFragment extends BaseFragment implements
         mExpenseListRecyclerView.setAdapter(mExpenseAdapter);
 
 
-        //TODO: Must uncomment fastScroller logic
+        //TODO: Implement fastScroller logic later
       /*  FastScroller fastScroller = getView().findViewById(R.id.fast_scroller);
         fastScroller.addOnScrollStateChangeListener((MainActivity) getActivity());
         mExpenseAdapter.setFastScroller(fastScroller);*/
@@ -194,7 +194,6 @@ public class ExpenseListFragment extends BaseFragment implements
         return null;
     }
 
-    // TODO: Move attach/detach to onResume and on onPause.
     // Preserve listener instances (Serializable) to avoid getting items again on orientation change
     private void attachDatabaseReadListener() {
         if (mChildEventListener == null) {
@@ -235,7 +234,6 @@ public class ExpenseListFragment extends BaseFragment implements
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildMoved");
-                    //TODO: Implementation needed?
                 }
 
                 @Override

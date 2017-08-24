@@ -303,7 +303,6 @@ public class ExpenseFactoryFragment extends BaseFragment implements
     private boolean isValidFormFields() {
         boolean isValid = true;
 
-        //TODO: Is title mandatory?
         if (TextUtils.isEmpty(mExpense.getTitle())) {
             mExpenseTitleEditText.setError(getString(R.string.mandatory_field));
             isValid = false;

@@ -90,7 +90,6 @@ public class BudgetListFragment extends BaseFragment implements
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUser = mFirebaseAuth.getCurrentUser();
-        //TODO: Need to order by child?
         mBudgetReference = mFirebaseDatabase.getReference()
                 .child(FirebaseDbContract.Budgets.PATH_BUDGETS)
                 .child(mCurrentUser.getUid())
@@ -104,7 +103,7 @@ public class BudgetListFragment extends BaseFragment implements
         View rootView = inflater.inflate(R.layout.fragment_budget_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        // TODO: If date is properly indexed, use:
+        // TODO: Use it when date is indexed:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
        /* new FirebaseIndexRecyclerAdapter<mBudgetAdapter, TripFirebaseHolder>(mBudgetAdapter
        .class,
@@ -129,8 +128,8 @@ public class BudgetListFragment extends BaseFragment implements
         mBudgetListRecyclerView.setAdapter(mBudgetAdapter);
 
 
-        //TODO: Must uncomment fastScroller logic
-      /*  FastScroller fastScroller = getView().findViewById(R.id.fast_scroller);
+        //TODO: Implement fastScroller logic later
+       /*FastScroller fastScroller = getView().findViewById(R.id.fast_scroller);
         fastScroller.addOnScrollStateChangeListener((MainActivity) getActivity());
         mBudgetAdapter.setFastScroller(fastScroller);*/
 
@@ -172,7 +171,6 @@ public class BudgetListFragment extends BaseFragment implements
         return false;
     }
 
-    // TODO: Move attach/detach to onResume and on onPause.
     // Preserve listener instances (Serializable) to avoid getting items again on orientation change
     private void attachDatabaseReadListener() {
         if (mChildEventListener == null) {
@@ -227,7 +225,6 @@ public class BudgetListFragment extends BaseFragment implements
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildMoved");
-                    //TODO: Implementation needed?
                 }
 
                 @Override
@@ -312,50 +309,10 @@ public class BudgetListFragment extends BaseFragment implements
         public int compare(IFlexible v1, IFlexible v2) {
             int result = 0;
             if (v1 instanceof BudgetItem && v2 instanceof BudgetItem) {
-               /* result = ((BudgetItem) v2).getHeader().getModel().getId().compareTo((
-                        (BudgetItem) v1).getHeader().getModel().getId());*/
-
-                // TODO: Add a modified timestamp for the expense and use it in the comparison
-                // Current logic below it not ok for updated objects,
-                // since they are put in the middle of section
-                // Update timestamp only on add or on update where the expense date was changed
-                //if (result == 0) {
                 result = ((BudgetItem) v1).getModel().getTitle().compareTo(((BudgetItem) v2)
                         .getModel().getTitle());
-                // }
             }
 
-
-            /*if (v1 instanceof ExpenseHeader && v2 instanceof ExpenseHeader) {
-                result = ((ExpenseHeader) v2).getModel().getId().compareTo(((ExpenseHeader) v1)
-                        .getModel().getId());
-            if (v1 instanceof ExpenseItem && v2 instanceof ExpenseItem) {
-                result = ((ExpenseItem) v2).getHeader().getModel().getId().compareTo((
-                        (ExpenseItem) v1).getHeader().getModel().getId());
-
-                // TODO: Add a modified timestamp for the expense and use it in the comparison
-                // Current logic below it not ok for updated objects,
-                // since they are put in the middle of section
-                // Update timestamp only on add or on update where the expense date was changed
-                if (result == 0) {
-                    result = ((ExpenseItem) v2).getModel().getId().compareTo(((ExpenseItem) v1)
-                            .getModel().getId());
-                }
-            } else if (v1 instanceof ExpenseItem && v2 instanceof ExpenseHeader) {
-
-                result = ((ExpenseHeader) v2).getModel().getId().compareTo(((ExpenseItem) v1)
-                        .getHeader().getModel().getId());
-                if (result == 0) {
-                    result--;
-                }
-            } else if (v1 instanceof ExpenseHeader && v2 instanceof ExpenseItem) {
-
-                result = ((ExpenseItem) v2).getHeader().getModel().getId().compareTo((
-                        (ExpenseHeader) v1).getModel().getId());
-                if (result == 0) {
-                    result--;
-                }
-            }*/
             return result;
         }
     }

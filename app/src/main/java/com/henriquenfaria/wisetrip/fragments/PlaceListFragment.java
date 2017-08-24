@@ -110,7 +110,7 @@ public class PlaceListFragment extends BaseFragment implements
         View rootView = inflater.inflate(R.layout.fragment_place_list, container, false);
         ButterKnife.bind(this, rootView);
 
-        // TODO: If date is properly indexed, use:
+        // TODO: Use it when date is indexed:
         // https://github.com/firebase/FirebaseUI-Android/blob/master/database/README.md
        /* new FirebaseIndexRecyclerAdapter<mPlacesAdapter, TripFirebaseHolder>(mPlacesAdapter
        .class,
@@ -134,8 +134,7 @@ public class PlaceListFragment extends BaseFragment implements
         mPlaceListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mPlaceListRecyclerView.setAdapter(mPlacesAdapter);
 
-
-        //TODO: Must uncomment fastScroller logic
+        //TODO: Implement fastScroller logic later
       /*  FastScroller fastScroller = getView().findViewById(R.id.fast_scroller);
         fastScroller.addOnScrollStateChangeListener((MainActivity) getActivity());
         mPlacesAdapter.setFastScroller(fastScroller);*/
@@ -178,7 +177,7 @@ public class PlaceListFragment extends BaseFragment implements
         return false;
     }
 
-    // TODO: Optimize with binary search?
+    // TODO: Optimize ith with binary search?
     private PlaceHeader getHeaderForPlace(PlaceModel places) {
         List<IHeader> headerList = mPlacesAdapter.getHeaderItems();
         if (!headerList.isEmpty()) {
@@ -195,7 +194,6 @@ public class PlaceListFragment extends BaseFragment implements
         return null;
     }
 
-    // TODO: Move attach/detach to onResume and on onPause.
     // Preserve listener instances (Serializable) to avoid getting items again on orientation change
     private void attachDatabaseReadListener() {
         if (mChildEventListener == null) {

@@ -388,10 +388,8 @@ public class TripFactoryFragment extends BaseFragment implements
             // Response from Place Autocomplete, we'll update a previously set destination
         } else if (requestCode == REQUEST_PLACE_AUTOCOMPLETE_UPDATE) {
             if (resultCode == RESULT_OK) {
-                // TODO: Replace all getActivity instances for mFragmentActivity?
                 Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 if (place != null) {
-                    //TODO: Must save and use place.getAttributions()
                     DestinationModel destination = new DestinationModel(place);
                     mTrip.getDestinations().set(mDestinationAdapterClickedPosition, destination);
                     mIsDisplayDestinationFooterError = false;
@@ -452,7 +450,6 @@ public class TripFactoryFragment extends BaseFragment implements
         startPlaceAutocomplete(REQUEST_PLACE_AUTOCOMPLETE_ADD);
     }
 
-    // TODO: Move startActivityForResult call to TripFactoryActivity?
     private void startPlaceAutocomplete(int requestId) {
         try {
             AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()

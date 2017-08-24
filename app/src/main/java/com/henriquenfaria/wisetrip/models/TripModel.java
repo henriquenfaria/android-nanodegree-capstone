@@ -35,7 +35,6 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
     private Long endDate;
     private Map<String, TravelerModel> travelers;
 
-    //TODO: Replace it with a Map?
     private List<DestinationModel> destinations;
 
     public TripModel() {

@@ -236,7 +236,6 @@ public class PlaceFactoryFragment extends BaseFragment implements
         }
     }
 
-    // TODO: Move startActivityForResult call to TripFactoryActivity?
     private void startPlaceAutocomplete(int requestId) {
         try {
             //TODO: Set up place filters?
