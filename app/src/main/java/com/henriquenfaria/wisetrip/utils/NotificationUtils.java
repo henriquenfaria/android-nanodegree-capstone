@@ -6,14 +6,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat;
 
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.MainActivity;
 import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
+
+//import android.support.v7.app.NotificationCompat;
 
 /**
  * Helper class with static helper methods for notifications
@@ -24,6 +26,7 @@ public class NotificationUtils {
 
     public static void notifyBudgetLimitExceeded(Context context, BudgetModel budget,
                                                  TripModel trip) {
+        // TODO: Fix deprecation
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context);
 

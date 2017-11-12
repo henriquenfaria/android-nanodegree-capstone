@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
@@ -93,15 +96,25 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         mTripListRecyclerView.setAdapter(mAdapter);
     }
 
+    private FirebaseRecyclerOptions<TripModel> options =
+            new FirebaseRecyclerOptions.Builder<TripModel>()
+                    .setQuery(mTripsQuery, TripModel.class)
+                    .build();
+
+    // TODO: Fix me! Check documentation
     private FirebaseRecyclerAdapter<TripModel, TripHolder> getAdapter() {
-        return new FirebaseRecyclerAdapter<TripModel, TripHolder>(
-                TripModel.class,
-                R.layout.trip_item,
-                TripHolder.class,
-                mTripsQuery) {
+        return new FirebaseRecyclerAdapter<TripModel, TripHolder>(options) {
+
+
             @Override
-            public void populateViewHolder(final TripHolder holder,
-                                           final TripModel trip, final int position) {
+            public TripHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View itemView = LayoutInflater.from(TripWidgetConfigurationActivity.this)
+                        .inflate(R.layout.trip_item, parent, false);
+                return new TripHolder(itemView);
+            }
+
+            @Override
+            protected void onBindViewHolder(TripHolder holder, int position, final TripModel trip) {
                 if (trip != null && !TextUtils.isEmpty(trip.getId())) {
                     holder.setTripTitle(trip.getTitle());
                     holder.setTripDate(Utils.getFormattedStartEndTripDateText(trip
@@ -133,8 +146,8 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mAdapter != null) {
+        /*if (mAdapter != null) {
             mAdapter.cleanup();
-        }
+        }*/
     }
 }
