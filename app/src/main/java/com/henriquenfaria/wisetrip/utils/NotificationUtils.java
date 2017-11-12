@@ -15,20 +15,20 @@ import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.models.BudgetModel;
 import com.henriquenfaria.wisetrip.models.TripModel;
 
-//import android.support.v7.app.NotificationCompat;
 
 /**
  * Helper class with static helper methods for notifications
  */
 public class NotificationUtils {
 
-    public static final int BUDGET_LIMIT_EXCEEDED_NOTIFICATION_START_ID = 1;
+    private static final int BUDGET_LIMIT_EXCEEDED_NOTIFICATION_START_ID = 1;
+    private static final String DEFAUKT_NOTIFICATION_CHANNEL = "DEFAUKT_NOTIFICATION_CHANNEL";
 
     public static void notifyBudgetLimitExceeded(Context context, BudgetModel budget,
                                                  TripModel trip) {
-        // TODO: Fix deprecation
+
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context);
+                new NotificationCompat.Builder(context, DEFAUKT_NOTIFICATION_CHANNEL);
 
         Intent tripDetails = new Intent(context, TripDetailsActivity.class);
         tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
