@@ -44,6 +44,10 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
     private Query mTripsQuery;
     private FirebaseUser mCurrentUser;
     private FirebaseRecyclerAdapter<TripModel, TripHolder> mAdapter;
+    private FirebaseRecyclerOptions<TripModel> options =
+            new FirebaseRecyclerOptions.Builder<TripModel>()
+                    .setQuery(mTripsQuery, TripModel.class)
+                    .build();
 
     public TripWidgetConfigurationActivity() {
         super();
@@ -95,11 +99,6 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mTripListRecyclerView.setAdapter(mAdapter);
     }
-
-    private FirebaseRecyclerOptions<TripModel> options =
-            new FirebaseRecyclerOptions.Builder<TripModel>()
-                    .setQuery(mTripsQuery, TripModel.class)
-                    .build();
 
     // TODO: Fix me! Check documentation
     private FirebaseRecyclerAdapter<TripModel, TripHolder> getAdapter() {
