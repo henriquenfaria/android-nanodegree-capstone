@@ -275,6 +275,7 @@ public class TripWidgetProvider extends AppWidgetProvider {
         ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
         File directoryFile = cw.getDir(Constants.General.DESTINATION_PHOTO_DIR,
                 Context.MODE_PRIVATE);
+
         final File photoFile = new File(directoryFile, tripId);
 
         AppWidgetTarget appWidgetTarget =
@@ -302,8 +303,7 @@ public class TripWidgetProvider extends AppWidgetProvider {
                     @Override
                     public boolean onResourceReady(Bitmap resource, Object model,
                                                    Target<Bitmap> target, DataSource
-                                                           dataSource, boolean
-                                                           isFirstResource) {
+                                                           dataSource, boolean isFirstResource) {
                         displayPhotoAttribution(context, appWidgetManager, appWidgetId,
                                 views, tripId, true);
                         return false;

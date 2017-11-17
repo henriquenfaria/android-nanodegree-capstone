@@ -40,8 +40,8 @@ import timber.log.Timber;
  */
 public class Utils {
 
-    public static String getFormattedStartEndTripDateText(long startDateMillis, long
-            endDateMillis) {
+    public static String getFormattedStartEndTripDateText(long startDateMillis,
+                                                          long endDateMillis) {
         Calendar startDateCalendar = Calendar.getInstance(Locale.getDefault());
         startDateCalendar.setTimeInMillis(startDateMillis);
         Calendar endDateCalendar = Calendar.getInstance(Locale.getDefault());
@@ -99,8 +99,8 @@ public class Utils {
         return travelersString.toString();
     }
 
-    public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage, String
-            directory, String fileName) {
+    public static void saveBitmapToInternalStorage(Context context, Bitmap bitmapImage,
+                                                   String directory, String fileName) {
         FileOutputStream fos = null;
         ContextWrapper cw = new ContextWrapper(context);
         File directoryFile = cw.getDir(directory, Context.MODE_PRIVATE);

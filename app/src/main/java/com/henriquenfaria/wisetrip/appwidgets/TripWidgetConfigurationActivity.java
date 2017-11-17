@@ -44,10 +44,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
     private Query mTripsQuery;
     private FirebaseUser mCurrentUser;
     private FirebaseRecyclerAdapter<TripModel, TripHolder> mAdapter;
-    private FirebaseRecyclerOptions<TripModel> options =
-            new FirebaseRecyclerOptions.Builder<TripModel>()
-                    .setQuery(mTripsQuery, TripModel.class)
-                    .build();
+    private FirebaseRecyclerOptions<TripModel> mOptions;
 
     public TripWidgetConfigurationActivity() {
         super();
@@ -81,6 +78,11 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
                 .child(mCurrentUser.getUid())
                 .orderByChild(FirebaseDbContract.Trips.PATH_TITLE);
 
+        mOptions = new FirebaseRecyclerOptions.Builder<TripModel>()
+                .setQuery(mTripsQuery, TripModel.class)
+                .build();
+
+
         // Find the widget id from the intent.
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -102,9 +104,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
 
     // TODO: Fix me! Check documentation
     private FirebaseRecyclerAdapter<TripModel, TripHolder> getAdapter() {
-        return new FirebaseRecyclerAdapter<TripModel, TripHolder>(options) {
-
-
+        return new FirebaseRecyclerAdapter<TripModel, TripHolder>(mOptions) {
             @Override
             public TripHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View itemView = LayoutInflater.from(TripWidgetConfigurationActivity.this)
@@ -143,10 +143,18 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        /*if (mAdapter != null) {
-            mAdapter.cleanup();
-        }*/
+    protected void onStart() {
+        super.onStart();
+        if (mAdapter != null) {
+            mAdapter.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAdapter != null) {
+            mAdapter.stopListening();
+        }
     }
 }
