@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "com.henriquenfaria.wisetrip"
         minSdkVersion 16
@@ -53,16 +53,17 @@ dependencies {
     })
 
     // Support
-    implementation 'com.android.support:appcompat-v7:27.0.0'
-    implementation 'com.android.support:customtabs:27.0.0'
-    implementation 'com.android.support:cardview-v7:27.0.0'
-    implementation 'com.android.support:support-v4:27.0.0'
-    implementation 'com.android.support:design:27.0.0'
+    implementation 'com.android.support:appcompat-v7:27.0.1'
+    implementation 'com.android.support:customtabs:27.0.1'
+    implementation 'com.android.support:cardview-v7:27.0.1'
+    implementation 'com.android.support:support-v4:27.0.1'
+    implementation 'com.android.support:design:27.0.1'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:11.4.2'
-    implementation 'com.google.firebase:firebase-database:11.4.2'
-    implementation 'com.google.firebase:firebase-auth:11.4.2'
+    implementation 'com.google.firebase:firebase-core:11.6.0'
+    implementation 'com.google.firebase:firebase-database:11.6.0'
+    implementation 'com.google.firebase:firebase-auth:11.6.0'
+    implementation 'com.google.android.gms:play-services-auth:11.6.0'
     implementation 'com.firebaseui:firebase-ui-auth:3.1.0'
     implementation 'com.firebaseui:firebase-ui-database:3.1.0'
 
@@ -100,7 +101,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 
     // Google Play Services - Places
-    implementation 'com.google.android.gms:play-services-places:11.4.2'
+    implementation 'com.google.android.gms:play-services-places:11.6.0'
 
     // EasyPermissions library for runtime permissions
     implementation 'pub.devrel:easypermissions:0.4.3'
