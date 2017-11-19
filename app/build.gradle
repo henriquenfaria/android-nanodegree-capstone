@@ -59,6 +59,9 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.1'
     implementation 'com.android.support:design:27.0.1'
 
+    // Google Play Services - Places
+    implementation 'com.google.android.gms:play-services-places:11.6.0'
+
     // Firebase
     implementation 'com.google.firebase:firebase-core:11.6.0'
     implementation 'com.google.firebase:firebase-database:11.6.0'
@@ -72,7 +75,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 
     // Country Picker Android
-    implementation 'com.github.mukeshsolanki:country-picker-android:1.1.9'
+    implementation 'com.github.mukeshsolanki:country-picker-android:1.2.0'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.5.1'
@@ -100,11 +103,8 @@ dependencies {
     // Interceptor
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 
-    // Google Play Services - Places
-    implementation 'com.google.android.gms:play-services-places:11.6.0'
-
     // EasyPermissions library for runtime permissions
-    implementation 'pub.devrel:easypermissions:0.4.3'
+    implementation 'pub.devrel:easypermissions:1.0.1'
 
     testImplementation 'junit:junit:4.12'
 }
