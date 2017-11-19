@@ -91,11 +91,9 @@ dependencies {
     implementation 'joda-time:joda-time:2.9.9'
 
     // FlexibleAdapter
-    implementation 'eu.davidea:flexible-adapter:5.0.0-rc2'
-    implementation 'eu.davidea:flexible-adapter-databinding:1.0.0-b1@aar'
-
-    // SectionedRecyclerViewAdapter
-    implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.0.5'
+    implementation 'eu.davidea:flexible-adapter:5.0.0-rc3'
+    implementation 'eu.davidea:flexible-adapter-livedata:1.0.0-b1'
+    implementation 'eu.davidea:flexible-adapter-databinding:1.0.0-b2'
 
     // CircleImageView for traveler photos
     implementation 'de.hdodenhof:circleimageview:2.1.0'

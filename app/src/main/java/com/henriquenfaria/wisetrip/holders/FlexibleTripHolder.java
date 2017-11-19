@@ -1,5 +1,6 @@
 package com.henriquenfaria.wisetrip.holders;
 
+
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.drawable.Drawable;
@@ -7,7 +8,6 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -39,13 +39,14 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.viewholders.FlexibleViewHolder;
 import timber.log.Timber;
 
-// TODO: This TripHolder shares 99,9% of the FlexibleTripHolder code. Actually, the only
-// difference is the construction.
-// Must figure out a way to not repease code like this. This holder is used by the
-// TripWidgetConfigurationActivity.
-public class TripHolder extends RecyclerView.ViewHolder {
+/**
+ * Item holder for trip list items
+ */
+public class FlexibleTripHolder extends FlexibleViewHolder {
 
     @BindView(R.id.trip_card)
     protected CardView mTripCard;
@@ -69,8 +70,8 @@ public class TripHolder extends RecyclerView.ViewHolder {
     private OnTripItemClickListener mOnTripItemClickListener;
     private OnEditTripClickListener mOnEditTripClickListener;
 
-    public TripHolder(View itemView) {
-        super(itemView);
+    public FlexibleTripHolder(View itemView, FlexibleAdapter adapter) {
+        super(itemView, adapter);
         ButterKnife.bind(this, itemView);
 
         mTripCard.setOnClickListener(new View.OnClickListener() {
@@ -148,11 +149,13 @@ public class TripHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setOnTripItemClickListener(TripHolder.OnTripItemClickListener clickListener) {
+    public void setOnTripItemClickListener(FlexibleTripHolder.OnTripItemClickListener
+                                                   clickListener) {
         mOnTripItemClickListener = clickListener;
     }
 
-    public void setOnEditTripClickListener(TripHolder.OnEditTripClickListener clickListener) {
+    public void setOnEditTripClickListener(FlexibleTripHolder.OnEditTripClickListener
+                                                   clickListener) {
         mOnEditTripClickListener = clickListener;
     }
 

@@ -1,4 +1,4 @@
-package com.henriquenfaria.wisetrip.adapters;
+package com.henriquenfaria.wisetrip.flexibles;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,8 +9,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.util.SortedList;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -18,58 +16,84 @@ import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.activities.MainActivity;
 import com.henriquenfaria.wisetrip.activities.TripDetailsActivity;
 import com.henriquenfaria.wisetrip.activities.TripFactoryActivity;
-import com.henriquenfaria.wisetrip.holders.HeaderHolder;
-import com.henriquenfaria.wisetrip.holders.TripHolder;
+import com.henriquenfaria.wisetrip.holders.FlexibleTripHolder;
 import com.henriquenfaria.wisetrip.models.TripModel;
 import com.henriquenfaria.wisetrip.utils.Constants;
 import com.henriquenfaria.wisetrip.utils.Features;
 import com.henriquenfaria.wisetrip.utils.Utils;
 
-import butterknife.ButterKnife;
-import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
+import java.util.List;
 
+import butterknife.ButterKnife;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
+import eu.davidea.flexibleadapter.items.IFilterable;
+import eu.davidea.flexibleadapter.items.IHolder;
 
 /**
- * Trip list sections to logically organize the list (UPCOMING, CURRENT, PAST)
+ * Flexible for Trip item
  */
-public class TripListSection extends StatelessSection {
+public class TripItem extends AbstractSectionableItem<FlexibleTripHolder, TripHeader>
+        implements IFilterable, IHolder<TripModel> {
 
-    private String mTitle;
-    private SortedList<TripModel> mTripList;
+    private TripModel mTrip;
 
-    public TripListSection(String title, SortedList<TripModel> tripList) {
-        super(R.layout.trip_header_item, R.layout.trip_item);
-        mTitle = title;
-        mTripList = tripList;
+    public TripItem(TripModel trip, TripHeader header) {
+        super(header);
+        this.mTrip = trip;
     }
 
     @Override
-    public int getContentItemsTotal() {
-        return mTripList.size();
+    public boolean equals(Object o) {
+        if (o instanceof TripItem) {
+            TripItem inItem = (TripItem) o;
+            return mTrip.equals(inItem.getModel());
+        }
+        return false;
     }
 
     @Override
-    public RecyclerView.ViewHolder getItemViewHolder(View view) {
-        return new TripHolder(view);
+    public int hashCode() {
+        return mTrip.hashCode();
     }
 
 
-    @Override
-    public void onBindItemViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final TripHolder tripHolder = (TripHolder) holder;
+    public TripModel getModel() {
+        return mTrip;
+    }
 
-        tripHolder.setTripTitle(mTripList.get(position).getTitle());
-        tripHolder.setTripDate(Utils.getFormattedStartEndTripDateText(mTripList.get(position)
-                .getStartDate(), mTripList.get(position).getEndDate()));
-        tripHolder.setTripPhoto(mTripList.get(position).getId());
-        tripHolder.setTransitionNames(mTripList.get(position).getId());
-        tripHolder.setOnTripItemClickListener(new TripHolder.OnTripItemClickListener() {
+    @Override
+    public boolean filter(String constraint) {
+        return mTrip.getTitle() != null
+                && mTrip.getTitle().toLowerCase().trim().contains(constraint);
+    }
+
+    @Override
+    public int getLayoutRes() {
+        return R.layout.trip_item;
+    }
+
+    @Override
+    public FlexibleTripHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new FlexibleTripHolder(view, adapter);
+    }
+
+    @Override
+    public void bindViewHolder(final FlexibleAdapter adapter, FlexibleTripHolder flexibleTripHolder,
+                               int position, List payloads) {
+
+        flexibleTripHolder.setTripTitle(mTrip.getTitle());
+        flexibleTripHolder.setTripDate(Utils.getFormattedStartEndTripDateText(mTrip
+                .getStartDate(), mTrip.getEndDate()));
+        flexibleTripHolder.setTripPhoto(mTrip.getId());
+        flexibleTripHolder.setTransitionNames(mTrip.getId());
+        flexibleTripHolder.setOnTripItemClickListener(new FlexibleTripHolder
+                .OnTripItemClickListener() {
             @Override
             public void onTripItemClick(View view) {
                 Context context = view.getContext();
                 Intent tripDetails = new Intent(context, TripDetailsActivity.class);
-                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList
-                        .get(position));
+                tripDetails.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
                 if (Features.TRIP_LIST_SHARED_ELEMENT_TRANSITION_ENABLED) {
                     ActivityCompat.startActivity(context, tripDetails, createTransitionOptions
                             (view));
@@ -80,16 +104,18 @@ public class TripListSection extends StatelessSection {
             }
         });
 
-        tripHolder.setOnEditTripClickListener(new TripHolder.OnEditTripClickListener() {
+        flexibleTripHolder.setOnEditTripClickListener(new FlexibleTripHolder
+                .OnEditTripClickListener() {
             @Override
             public void onEditTripClick(View view) {
                 MainActivity context = (MainActivity) view.getContext();
                 Intent intent = new Intent(context, TripFactoryActivity.class);
-                intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTripList.get(position));
+                intent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) mTrip);
                 context.startActivity(intent);
             }
         });
     }
+
 
     private Bundle createTransitionOptions(View view) {
         View tripPhoto = ButterKnife.findById(view, R.id.trip_photo);
@@ -120,16 +146,4 @@ public class TripListSection extends StatelessSection {
 
         return options.toBundle();
     }
-
-    @Override
-    public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
-        return new HeaderHolder(view);
-    }
-
-    @Override
-    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder) {
-        HeaderHolder headerHolder = (HeaderHolder) holder;
-        headerHolder.setHeaderTitle(mTitle);
-    }
-
 }

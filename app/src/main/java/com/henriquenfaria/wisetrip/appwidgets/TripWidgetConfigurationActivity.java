@@ -102,7 +102,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         mTripListRecyclerView.setAdapter(mAdapter);
     }
 
-    // TODO: Fix me! Check documentation
+
     private FirebaseRecyclerAdapter<TripModel, TripHolder> getAdapter() {
         return new FirebaseRecyclerAdapter<TripModel, TripHolder>(mOptions) {
             @Override

@@ -1,11 +1,13 @@
 package com.henriquenfaria.wisetrip.models;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.utils.Constants;
 
 import java.io.Serializable;
@@ -129,6 +131,17 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
         }
     }
 
+    public String getStateName(Context context, long currentMillis) {
+        if (currentMillis >= this.startDate && currentMillis <= (this.endDate + Constants.General
+                .DAY_IN_MILLIS)) {
+            return context.getString(R.string.current);
+        } else if (this.endDate < currentMillis) {
+            return context.getString(R.string.past);
+        } else {
+            return context.getString(R.string.upcoming);
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -173,7 +186,7 @@ public class TripModel implements Parcelable, Serializable, Comparable<TripModel
     }
 
     public enum State {
-        CURRENT, UPCOMING, PAST
+        PAST, UPCOMING, CURRENT
     }
 }
 

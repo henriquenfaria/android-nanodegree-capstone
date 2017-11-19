@@ -69,20 +69,6 @@ public class PlaceItem extends AbstractSectionableItem<PlaceItem.ItemViewHolder,
     public void bindViewHolder(final FlexibleAdapter adapter, ItemViewHolder holder,
                                int position, List payloads) {
         holder.mTitle.setText(mPlace.getDestination().getName());
-
-       /* Currency currency;
-        try {
-            currency = Currency.getInstance(mPlace.getCurrency());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            Timber.e("Exception while getting Currency instance");
-            e.printStackTrace();
-            currency = Currency.getInstance(Constants.General.DEFAULT_CURRENCY);
-        }
-
-        DecimalFormat decimalFormat = new DecimalFormat("¤ ###,###,###.00");
-        decimalFormat.setCurrency(currency);
-        String formattedAmount = decimalFormat.format(mPlace.getAmount());
-        holder.mAmount.setText(formattedAmount);*/
     }
 
     static class ItemViewHolder extends FlexibleViewHolder {
