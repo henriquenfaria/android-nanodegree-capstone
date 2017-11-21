@@ -138,9 +138,9 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = ButterKnife.findById(TripDetailsActivity.this, R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        TextView title = ButterKnife.findById(toolbar, R.id.trip_title);
+        TextView title = toolbar.findViewById(R.id.trip_title);
         title.setText(mTrip.getTitle());
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -170,8 +170,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
     private void setupAppBarLayout() {
-        AppBarLayout appbarLayout = ButterKnife.findById(TripDetailsActivity.this, R.id
-                .appbarlayout);
+        AppBarLayout appbarLayout = findViewById(R.id.appbarlayout);
 
         if (Features.TRIP_LIST_SHARED_ELEMENT_TRANSITION_ENABLED) {
             appbarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
@@ -247,7 +246,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
     }
 
     private void setupViewPager(int defaultTabIndex) {
-        ViewPager viewPager = ButterKnife.findById(TripDetailsActivity.this, R.id.viewpager);
+        ViewPager viewPager = findViewById(R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         adapter.addFragment(ExpenseListFragment.newInstance(mTrip), getString(R.string.expenses));
@@ -287,7 +286,7 @@ public class TripDetailsActivity extends AppCompatActivity implements
                 Context.MODE_PRIVATE);
         final File photoFile = new File(directoryFile, tripId);
 
-        ImageView tripPhotoBackdrop = ButterKnife.findById(this, R.id.trip_photo);
+        ImageView tripPhotoBackdrop = findViewById(R.id.trip_photo);
 
         GlideApp
                 .with(this)

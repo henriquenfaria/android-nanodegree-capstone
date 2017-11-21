@@ -97,7 +97,7 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         }
 
         mAdapter = getAdapter();
-        mTripListRecyclerView.setEmptyView(ButterKnife.findById(this, R.id.empty_view));
+        mTripListRecyclerView.setEmptyView(findViewById(R.id.empty_view));
         mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mTripListRecyclerView.setAdapter(mAdapter);
     }

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         setDefaultCurrencyPreferences(this);
 
-        Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
@@ -94,14 +94,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void configureNavDrawer() {
-        NavigationView navigationView = ButterKnife.findById(this, R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_your_trips);
 
         View header = navigationView.getHeaderView(0);
-        TextView userName = ButterKnife.findById(header, R.id.nav_user_name);
+        TextView userName = header.findViewById(R.id.nav_user_name);
         userName.setText(mCurrentUser.getDisplayName());
-        TextView userEmail = ButterKnife.findById(header, R.id.nav_user_email);
+        TextView userEmail = header.findViewById(R.id.nav_user_email);
         userEmail.setText(mCurrentUser.getEmail());
     }
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = ButterKnife.findById(this, R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 

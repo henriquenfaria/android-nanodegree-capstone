@@ -24,7 +24,6 @@ import com.henriquenfaria.wisetrip.utils.Utils;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
 import eu.davidea.flexibleadapter.items.IFilterable;
@@ -118,10 +117,10 @@ public class TripItem extends AbstractSectionableItem<FlexibleTripHolder, TripHe
 
 
     private Bundle createTransitionOptions(View view) {
-        View tripPhoto = ButterKnife.findById(view, R.id.trip_photo);
-        View tripPhotoProtection = ButterKnife.findById(view, R.id.trip_photo_protection);
-        View tripTitle = ButterKnife.findById(view, R.id.trip_title);
-        View attributionContainer = ButterKnife.findById(view, R.id.attribution_container);
+        View tripPhoto = view.findViewById(R.id.trip_photo);
+        View tripPhotoProtection = view.findViewById(R.id.trip_photo_protection);
+        View tripTitle = view.findViewById(R.id.trip_title);
+        View attributionContainer = view.findViewById(R.id.attribution_container);
 
         String tripPhotoTransition = ViewCompat.getTransitionName(tripPhoto);
         String tripPhotoProtectionTransition = ViewCompat.getTransitionName(tripPhotoProtection);
