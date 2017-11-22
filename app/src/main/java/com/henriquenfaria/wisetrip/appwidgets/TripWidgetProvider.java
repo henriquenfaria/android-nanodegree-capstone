@@ -152,32 +152,51 @@ public class TripWidgetProvider extends AppWidgetProvider {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            DatabaseReference tripReference = firebaseDatabase.getReference()
-                    .child(FirebaseDbContract.Trips.PATH_TRIPS)
-                    .child(currentUser.getUid())
-                    .child(tripId);
-            tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Timber.d("onDataChange");
 
-                    TripModel trip = dataSnapshot.getValue(TripModel.class);
-                    if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                        views.setViewVisibility(R.id.select_trip, View.GONE);
-                        views.setViewVisibility(R.id.trip_title, View.VISIBLE);
-                        views.setViewVisibility(R.id.trip_date, View.VISIBLE);
-                        views.setViewVisibility(R.id.trip_photo, View.VISIBLE);
+            if (currentUser != null) {
+                DatabaseReference tripReference = firebaseDatabase.getReference()
+                        .child(FirebaseDbContract.Trips.PATH_TRIPS)
+                        .child(currentUser.getUid())
+                        .child(tripId);
+                tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Timber.d("onDataChange");
 
-                        views.setTextViewText(R.id.trip_title, trip.getTitle());
-                        views.setTextViewText(R.id.trip_date,
-                                Utils.getFormattedStartEndShortTripDateText(trip.getStartDate(),
-                                        trip.getEndDate()));
-                        views.setOnClickPendingIntent(R.id.widget_container,
-                                getAddExpensePendingIntent(context, trip, appWidgetId));
-                        loadTripPhotoData(context, appWidgetManager, views, tripId,
-                                appWidgetId);
+                        TripModel trip = dataSnapshot.getValue(TripModel.class);
+                        if (trip != null && !TextUtils.isEmpty(trip.getId())) {
+                            views.setViewVisibility(R.id.select_trip, View.GONE);
+                            views.setViewVisibility(R.id.trip_title, View.VISIBLE);
+                            views.setViewVisibility(R.id.trip_date, View.VISIBLE);
+                            views.setViewVisibility(R.id.trip_photo, View.VISIBLE);
 
-                    } else {
+                            views.setTextViewText(R.id.trip_title, trip.getTitle());
+                            views.setTextViewText(R.id.trip_date,
+                                    Utils.getFormattedStartEndShortTripDateText(trip.getStartDate(),
+                                            trip.getEndDate()));
+                            views.setOnClickPendingIntent(R.id.widget_container,
+                                    getAddExpensePendingIntent(context, trip, appWidgetId));
+                            loadTripPhotoData(context, appWidgetManager, views, tripId,
+                                    appWidgetId);
+
+                        } else {
+                            views.setViewVisibility(R.id.select_trip, View.VISIBLE);
+                            views.setTextViewText(R.id.select_trip,
+                                    context.getString(R.string.select_trip_inside_widget_settings));
+                            views.setViewVisibility(R.id.trip_title, View.GONE);
+                            views.setViewVisibility(R.id.trip_date, View.GONE);
+                            views.setViewVisibility(R.id.trip_photo, View.GONE);
+
+                            views.setOnClickPendingIntent(R.id.widget_container,
+                                    configPendingIntent);
+                            loadTripPhotoData(context, appWidgetManager, views, tripId,
+                                    appWidgetId);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Timber.d("onCancelled", databaseError.getMessage());
                         views.setViewVisibility(R.id.select_trip, View.VISIBLE);
                         views.setTextViewText(R.id.select_trip,
                                 context.getString(R.string.select_trip_inside_widget_settings));
@@ -185,27 +204,11 @@ public class TripWidgetProvider extends AppWidgetProvider {
                         views.setViewVisibility(R.id.trip_date, View.GONE);
                         views.setViewVisibility(R.id.trip_photo, View.GONE);
 
-                        views.setOnClickPendingIntent(R.id.widget_container,
-                                configPendingIntent);
-                        loadTripPhotoData(context, appWidgetManager, views, tripId,
-                                appWidgetId);
+                        views.setOnClickPendingIntent(R.id.widget_container, configPendingIntent);
+                        loadTripPhotoData(context, appWidgetManager, views, tripId, appWidgetId);
                     }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled", databaseError.getMessage());
-                    views.setViewVisibility(R.id.select_trip, View.VISIBLE);
-                    views.setTextViewText(R.id.select_trip,
-                            context.getString(R.string.select_trip_inside_widget_settings));
-                    views.setViewVisibility(R.id.trip_title, View.GONE);
-                    views.setViewVisibility(R.id.trip_date, View.GONE);
-                    views.setViewVisibility(R.id.trip_photo, View.GONE);
-
-                    views.setOnClickPendingIntent(R.id.widget_container, configPendingIntent);
-                    loadTripPhotoData(context, appWidgetManager, views, tripId, appWidgetId);
-                }
-            });
+                });
+            }
         }
     }
 
@@ -321,61 +324,64 @@ public class TripWidgetProvider extends AppWidgetProvider {
         if (shouldDisplay) {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference attributionsReference = firebaseDatabase
-                    .getReference()
-                    .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
-                    .child(currentUser.getUid())
-                    .child(tripId);
 
-            attributionsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Timber.d("onDataChange");
-                    AttributionModel attribution = dataSnapshot.getValue(AttributionModel
-                            .class);
-                    if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
-                        Spanned result;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            result = Html.fromHtml(attribution.getText(),
-                                    Html.FROM_HTML_MODE_LEGACY);
-                        } else {
-                            result = Html.fromHtml(attribution.getText());
+            if (currentUser != null) {
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference attributionsReference = firebaseDatabase
+                        .getReference()
+                        .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
+                        .child(currentUser.getUid())
+                        .child(tripId);
+
+                attributionsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Timber.d("onDataChange");
+                        AttributionModel attribution = dataSnapshot.getValue(AttributionModel
+                                .class);
+                        if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
+                            Spanned result;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                result = Html.fromHtml(attribution.getText(),
+                                        Html.FROM_HTML_MODE_LEGACY);
+                            } else {
+                                result = Html.fromHtml(attribution.getText());
+                            }
+
+                            views.setTextViewText(R.id.attribution_content, result);
+
+                            // Set url pending intent
+                            String extractedUrl = Utils.getUrlFromHtml(attribution.getText());
+                            if (!TextUtils.isEmpty(extractedUrl)) {
+                                Intent attrIntent = new Intent(Intent.ACTION_VIEW, Uri.parse
+                                        (extractedUrl));
+                                attrIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                PendingIntent configPendingIntent = PendingIntent.getActivity
+                                        (context,
+                                        appWidgetId, attrIntent, 0);
+                                views.setOnClickPendingIntent(R.id.attribution_content,
+                                        configPendingIntent);
+                            }
+
+                            views.setViewVisibility(R.id.attribution_prefix, View.VISIBLE);
+                            views.setViewVisibility(R.id.attribution_content, View.VISIBLE);
+
+                            appWidgetManager.updateAppWidget(appWidgetId, views);
                         }
+                    }
 
-                        views.setTextViewText(R.id.attribution_content, result);
-
-                        // Set url pending intent
-                        String extractedUrl = Utils.getUrlFromHtml(attribution.getText());
-                        if (!TextUtils.isEmpty(extractedUrl)) {
-                            Intent attrIntent = new Intent(Intent.ACTION_VIEW, Uri.parse
-                                    (extractedUrl));
-                            attrIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            PendingIntent configPendingIntent = PendingIntent.getActivity(context,
-                                    appWidgetId, attrIntent, 0);
-                            views.setOnClickPendingIntent(R.id.attribution_content,
-                                    configPendingIntent);
-                        }
-
-                        views.setViewVisibility(R.id.attribution_prefix, View.VISIBLE);
-                        views.setViewVisibility(R.id.attribution_content, View.VISIBLE);
-
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Timber.d("onCancelled", databaseError.getMessage());
                         appWidgetManager.updateAppWidget(appWidgetId, views);
                     }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Timber.d("onCancelled", databaseError.getMessage());
-                    appWidgetManager.updateAppWidget(appWidgetId, views);
-                }
-            });
-        } else {
-            views.setViewVisibility(R.id.attribution_prefix, View.GONE);
-            views.setViewVisibility(R.id.attribution_content, View.GONE);
-            appWidgetManager.updateAppWidget(appWidgetId, views);
+                });
+            } else {
+                views.setViewVisibility(R.id.attribution_prefix, View.GONE);
+                views.setViewVisibility(R.id.attribution_content, View.GONE);
+                appWidgetManager.updateAppWidget(appWidgetId, views);
+            }
         }
-
     }
 
     private void removeTripFromSharedPrefs(Context context, int[] appWidgetIds) {

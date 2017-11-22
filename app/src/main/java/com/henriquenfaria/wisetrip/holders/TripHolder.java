@@ -67,7 +67,6 @@ public class TripHolder extends RecyclerView.ViewHolder {
     protected ImageView mEditButton;
 
     private OnTripItemClickListener mOnTripItemClickListener;
-    private OnEditTripClickListener mOnEditTripClickListener;
 
     public TripHolder(View itemView) {
         super(itemView);
@@ -78,15 +77,6 @@ public class TripHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 if (mOnTripItemClickListener != null) {
                     mOnTripItemClickListener.onTripItemClick(v);
-                }
-            }
-        });
-
-        mEditButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnEditTripClickListener != null) {
-                    mOnEditTripClickListener.onEditTripClick(v);
                 }
             }
         });
@@ -152,66 +142,63 @@ public class TripHolder extends RecyclerView.ViewHolder {
         mOnTripItemClickListener = clickListener;
     }
 
-    public void setOnEditTripClickListener(TripHolder.OnEditTripClickListener clickListener) {
-        mOnEditTripClickListener = clickListener;
-    }
 
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
         if (mAttributionContainer != null) {
             if (shouldDisplay) {
                 FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference attributionsReference = firebaseDatabase
-                        .getReference()
-                        .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
-                        .child(currentUser.getUid())
-                        .child(tripId);
+                if (currentUser != null) {
+                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                    DatabaseReference attributionsReference = firebaseDatabase
+                            .getReference()
+                            .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
+                            .child(currentUser.getUid())
+                            .child(tripId);
 
-                attributionsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Timber.d("onDataChange");
-                        if (mAttributionContainer != null) {
-                            AttributionModel attribution = dataSnapshot.getValue(AttributionModel
-                                    .class);
-                            if (attribution != null && !TextUtils.isEmpty(attribution.getText())) {
-                                Spanned result;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    result = Html.fromHtml(attribution.getText(),
-                                            Html.FROM_HTML_MODE_LEGACY);
-                                } else {
-                                    result = Html.fromHtml(attribution.getText());
+                    attributionsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Timber.d("onDataChange");
+                            if (mAttributionContainer != null) {
+                                AttributionModel attribution = dataSnapshot.getValue
+                                        (AttributionModel
+                                        .class);
+                                if (attribution != null && !TextUtils.isEmpty(attribution.getText
+                                        ())) {
+                                    Spanned result;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        result = Html.fromHtml(attribution.getText(),
+                                                Html.FROM_HTML_MODE_LEGACY);
+                                    } else {
+                                        result = Html.fromHtml(attribution.getText());
+                                    }
+
+                                    mAttributionContent.setText(result);
+                                    mAttributionContent.setMovementMethod(
+                                            LinkMovementMethod.getInstance());
+                                    // mAttributionContainer.setVisibility(View.VISIBLE);
+
+                                    mAttributionPrefix.setVisibility(View.VISIBLE);
+                                    mAttributionContent.setVisibility(View.VISIBLE);
                                 }
-
-                                mAttributionContent.setText(result);
-                                mAttributionContent.setMovementMethod(
-                                        LinkMovementMethod.getInstance());
-                                // mAttributionContainer.setVisibility(View.VISIBLE);
-
-                                mAttributionPrefix.setVisibility(View.VISIBLE);
-                                mAttributionContent.setVisibility(View.VISIBLE);
                             }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Timber.d("onCancelled", databaseError.getMessage());
-                    }
-                });
-            } else {
-                mAttributionPrefix.setVisibility(View.GONE);
-                mAttributionContent.setVisibility(View.GONE);
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Timber.d("onCancelled", databaseError.getMessage());
+                        }
+                    });
+                } else {
+                    mAttributionPrefix.setVisibility(View.GONE);
+                    mAttributionContent.setVisibility(View.GONE);
+                }
             }
         }
     }
 
     public interface OnTripItemClickListener {
         void onTripItemClick(View view);
-    }
-
-    public interface OnEditTripClickListener {
-        void onEditTripClick(View view);
     }
 }

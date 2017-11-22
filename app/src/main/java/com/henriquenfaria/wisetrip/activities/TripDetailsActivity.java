@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -32,12 +31,9 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.ObjectKey;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.GlideApp;
 import com.henriquenfaria.wisetrip.R;
@@ -67,7 +63,7 @@ import timber.log.Timber;
 /**
  * Activity which holds the fragment that displays Trips' details
  */
-public class TripDetailsActivity extends AppCompatActivity implements
+public class TripDetailsActivity extends FirebaseBaseActivity implements
         OnExpenseInteractionListener,
         OnBudgetInteractionListener,
         OnPlaceInteractionListener {
@@ -353,13 +349,9 @@ public class TripDetailsActivity extends AppCompatActivity implements
     private void displayPhotoAttribution(String tripId, boolean shouldDisplay) {
         if (mAttributionContainer != null) {
             if (shouldDisplay) {
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference attributionsReference = firebaseDatabase
-                        .getReference()
+                DatabaseReference attributionsReference = mRootReference
                         .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
-                        .child(currentUser.getUid())
+                        .child(mCurrentUser.getUid())
                         .child(tripId);
 
                 attributionsReference.addListenerForSingleValueEvent(new ValueEventListener() {

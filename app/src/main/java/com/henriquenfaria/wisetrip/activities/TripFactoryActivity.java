@@ -3,13 +3,11 @@ package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
@@ -21,15 +19,12 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 /**
  * Activity that holds the trip form fragment
  */
-public class TripFactoryActivity extends AppCompatActivity
+public class TripFactoryActivity extends FirebaseBaseActivity
         implements TripFactoryFragment.OnTripFactoryListener {
 
     private static final String TAG_TRIP_FACTORY_FRAGMENT = "tag_trip_factory_fragment";
 
     private TripFactoryFragment mTripFactoryFragment;
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mCurrentUser;
-    private FirebaseDatabase mFirebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

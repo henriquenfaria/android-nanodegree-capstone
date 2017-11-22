@@ -14,13 +14,10 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
@@ -48,7 +45,7 @@ import timber.log.Timber;
 /**
  * Fragment that displays a place list
  */
-public class PlaceListFragment extends BaseFragment implements
+public class PlaceListFragment extends FirebaseBaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
 
@@ -65,11 +62,8 @@ public class PlaceListFragment extends BaseFragment implements
 
     @BindView(R.id.empty_text)
     protected TextView mEmptyText;
-
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
+    
     private DatabaseReference mPlacesReference;
-    private FirebaseUser mCurrentUser;
     private FlexibleAdapter<IFlexible> mPlacesAdapter;
     private ValueEventListener mValueEventListener;
     private ChildEventListener mChildEventListener;
@@ -93,11 +87,7 @@ public class PlaceListFragment extends BaseFragment implements
             mTrip = getArguments().getParcelable(ARG_TRIP);
         }
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-
-        mPlacesReference = mFirebaseDatabase.getReference()
+        mPlacesReference = mRootReference
                 .child(FirebaseDbContract.Places.PATH_PLACES)
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());

@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity;
 /**
  * Base Fragment for all Fragments in the app
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     protected FragmentActivity mFragmentActivity;
 

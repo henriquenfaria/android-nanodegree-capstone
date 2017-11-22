@@ -2,6 +2,7 @@ package com.henriquenfaria.wisetrip.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,13 +15,10 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
@@ -43,7 +41,7 @@ import timber.log.Timber;
 /**
  * Fragment that displays a budget list
  */
-public class BudgetListFragment extends BaseFragment implements
+public class BudgetListFragment extends FirebaseBaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
@@ -60,10 +58,7 @@ public class BudgetListFragment extends BaseFragment implements
     @BindView(R.id.empty_text)
     protected TextView mEmptyText;
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mBudgetReference;
-    private FirebaseUser mCurrentUser;
     private FlexibleAdapter<IFlexible> mBudgetAdapter;
     private ValueEventListener mValueEventListener;
     private ChildEventListener mChildEventListener;
@@ -86,18 +81,14 @@ public class BudgetListFragment extends BaseFragment implements
         if (getArguments() != null) {
             mTrip = getArguments().getParcelable(ARG_TRIP);
         }
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-        mBudgetReference = mFirebaseDatabase.getReference()
+        mBudgetReference = mRootReference
                 .child(FirebaseDbContract.Budgets.PATH_BUDGETS)
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_budget_list, container, false);

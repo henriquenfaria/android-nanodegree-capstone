@@ -17,13 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.flexibles.TripHeader;
@@ -51,7 +48,7 @@ import timber.log.Timber;
 /**
  * Fragment that displays a budget list
  */
-public class TripListFragment extends BaseFragment implements
+public class TripListFragment extends FirebaseBaseFragment implements
         FlexibleAdapter.OnUpdateListener {
 
 
@@ -61,24 +58,17 @@ public class TripListFragment extends BaseFragment implements
     @BindView(R.id.empty_trip_list_text)
     protected TextView mEmptyTripListText;
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mTripsReference;
-    private FirebaseUser mCurrentUser;
     private ChildEventListener mTripsEventListener;
     private PlacePhotoReceiver mPlacePhotoReceiver;
     private FlexibleAdapter<IFlexible> mTripAdapter;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
         //TODO: Need to order by child?
-        mTripsReference = mFirebaseDatabase.getReference()
+        mTripsReference = mRootReference
                 .child(FirebaseDbContract.Trips.PATH_TRIPS)
                 .child(mCurrentUser.getUid());
     }

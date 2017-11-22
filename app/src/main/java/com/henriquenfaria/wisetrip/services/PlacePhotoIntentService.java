@@ -138,16 +138,19 @@ public class PlacePhotoIntentService extends IntentService implements GoogleApiC
     private void addDestinationPhotoAttribution(TripModel trip, CharSequence attributionText) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference attributionsReference = firebaseDatabase.getReference()
-                .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
-                .child(currentUser.getUid())
-                .child(trip.getId());
 
-        AttributionModel attribution = new AttributionModel();
-        attribution.setId(attributionsReference.getKey());
-        attribution.setText(attributionText != null ? attributionText.toString() : "");
-        attributionsReference.setValue(attribution);
+        if (currentUser != null) {
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference attributionsReference = firebaseDatabase.getReference()
+                    .child(FirebaseDbContract.Attributions.PATH_ATTRIBUTIONS)
+                    .child(currentUser.getUid())
+                    .child(trip.getId());
+
+            AttributionModel attribution = new AttributionModel();
+            attribution.setId(attributionsReference.getKey());
+            attribution.setText(attributionText != null ? attributionText.toString() : "");
+            attributionsReference.setValue(attribution);
+        }
     }
 
     private void sendUpdateTripListBroadcast(TripModel trip) {

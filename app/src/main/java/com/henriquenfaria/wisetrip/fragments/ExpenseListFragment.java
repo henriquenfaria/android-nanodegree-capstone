@@ -15,13 +15,10 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
@@ -49,7 +46,7 @@ import timber.log.Timber;
 /**
  * Fragment that displays an expense list
  */
-public class ExpenseListFragment extends BaseFragment implements
+public class ExpenseListFragment extends FirebaseBaseFragment implements
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnUpdateListener {
     private static final String ARG_TRIP = "arg_trip";
@@ -66,10 +63,7 @@ public class ExpenseListFragment extends BaseFragment implements
     @BindView(R.id.empty_text)
     protected TextView mEmptyText;
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mExpensesReference;
-    private FirebaseUser mCurrentUser;
     private FlexibleAdapter<IFlexible> mExpenseAdapter;
     private ValueEventListener mValueEventListener;
     private ChildEventListener mChildEventListener;
@@ -93,11 +87,7 @@ public class ExpenseListFragment extends BaseFragment implements
             mTrip = getArguments().getParcelable(ARG_TRIP);
         }
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-
-        mExpensesReference = mFirebaseDatabase.getReference()
+        mExpensesReference = mRootReference
                 .child(FirebaseDbContract.Expenses.PATH_EXPENSES)
                 .child(mCurrentUser.getUid())
                 .child(mTrip.getId());

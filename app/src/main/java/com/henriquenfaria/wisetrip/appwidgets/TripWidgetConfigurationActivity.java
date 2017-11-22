@@ -4,7 +4,6 @@ package com.henriquenfaria.wisetrip.appwidgets;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,11 +13,9 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.henriquenfaria.wisetrip.R;
+import com.henriquenfaria.wisetrip.activities.FirebaseBaseActivity;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.holders.TripHolder;
 import com.henriquenfaria.wisetrip.models.TripModel;
@@ -33,16 +30,13 @@ import butterknife.ButterKnife;
  * Configuration Activity for Trip appwidget.
  * User can select a trip to be displayed in the homescreen widget.
  */
-public class TripWidgetConfigurationActivity extends AppCompatActivity {
+public class TripWidgetConfigurationActivity extends FirebaseBaseActivity {
 
     @BindView(R.id.trip_list)
     protected SizeAwareRecyclerView mTripListRecyclerView;
 
     private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
     private Query mTripsQuery;
-    private FirebaseUser mCurrentUser;
     private FirebaseRecyclerAdapter<TripModel, TripHolder> mAdapter;
     private FirebaseRecyclerOptions<TripModel> mOptions;
 
@@ -57,10 +51,6 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if they press the back button.
         setResult(RESULT_CANCELED);
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
 
         // Not signed in, finish Configuration
         if (mCurrentUser == null) {
@@ -101,7 +91,6 @@ public class TripWidgetConfigurationActivity extends AppCompatActivity {
         mTripListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mTripListRecyclerView.setAdapter(mAdapter);
     }
-
 
     private FirebaseRecyclerAdapter<TripModel, TripHolder> getAdapter() {
         return new FirebaseRecyclerAdapter<TripModel, TripHolder>(mOptions) {

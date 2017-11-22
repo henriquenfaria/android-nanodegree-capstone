@@ -3,15 +3,11 @@ package com.henriquenfaria.wisetrip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.henriquenfaria.wisetrip.R;
 import com.henriquenfaria.wisetrip.data.FirebaseDbContract;
 import com.henriquenfaria.wisetrip.fragments.PlaceFactoryFragment;
@@ -22,7 +18,7 @@ import com.henriquenfaria.wisetrip.utils.Constants;
 /**
  * Activity that holds the place form fragment
  */
-public class PlaceFactoryActivity extends AppCompatActivity
+public class PlaceFactoryActivity extends FirebaseBaseActivity
         implements PlaceFactoryFragment.OnPlaceFactoryListener {
 
     public static final int RESULT_PLACE_UPDATED = 1;
@@ -31,21 +27,10 @@ public class PlaceFactoryActivity extends AppCompatActivity
     private static final String TAG_PLACE_FACTORY_FRAGMENT = "tag_place_factory_fragment";
     private PlaceFactoryFragment mPlaceFactoryFragment;
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mRootReference;
-    private FirebaseUser mCurrentUser;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_factory);
-
-        // Initialize Firebase instances
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mFirebaseAuth.getCurrentUser();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRootReference = mFirebaseDatabase.getReference();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
