@@ -165,47 +165,41 @@ public class TripWidgetProvider extends AppWidgetProvider {
 
                         TripModel trip = dataSnapshot.getValue(TripModel.class);
                         if (trip != null && !TextUtils.isEmpty(trip.getId())) {
-                            views.setViewVisibility(R.id.select_trip, View.GONE);
-                            views.setViewVisibility(R.id.trip_title, View.VISIBLE);
-                            views.setViewVisibility(R.id.trip_date, View.VISIBLE);
-                            views.setViewVisibility(R.id.trip_photo, View.VISIBLE);
-
+                            views.setViewVisibility(R.id.error_message, View.GONE);
+                            views.setViewVisibility(R.id.trip_container, View.VISIBLE);
                             views.setTextViewText(R.id.trip_title, trip.getTitle());
                             views.setTextViewText(R.id.trip_date,
-                                    Utils.getFormattedStartEndShortTripDateText(trip.getStartDate(),
-                                            trip.getEndDate()));
+                                    Utils.getFormattedStartEndShortTripDateText(trip
+                                            .getStartDate(), trip.getEndDate()));
                             views.setOnClickPendingIntent(R.id.widget_container,
                                     getAddExpensePendingIntent(context, trip, appWidgetId));
                             loadTripPhotoData(context, appWidgetManager, views, tripId,
                                     appWidgetId);
 
                         } else {
-                            views.setViewVisibility(R.id.select_trip, View.VISIBLE);
-                            views.setTextViewText(R.id.select_trip,
-                                    context.getString(R.string.select_trip_inside_widget_settings));
-                            views.setViewVisibility(R.id.trip_title, View.GONE);
-                            views.setViewVisibility(R.id.trip_date, View.GONE);
-                            views.setViewVisibility(R.id.trip_photo, View.GONE);
+                            views.setViewVisibility(R.id.error_message, View.VISIBLE);
+                            views.setTextViewText(R.id.error_message,
+                                    context.getString(R.string
+                                            .select_trip_inside_widget_settings));
+                            views.setViewVisibility(R.id.trip_container, View.GONE);
 
                             views.setOnClickPendingIntent(R.id.widget_container,
                                     configPendingIntent);
-                            loadTripPhotoData(context, appWidgetManager, views, tripId,
-                                    appWidgetId);
+                            appWidgetManager.updateAppWidget(appWidgetId, views);
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Timber.d("onCancelled", databaseError.getMessage());
-                        views.setViewVisibility(R.id.select_trip, View.VISIBLE);
-                        views.setTextViewText(R.id.select_trip,
+                        views.setViewVisibility(R.id.error_message, View.VISIBLE);
+                        views.setTextViewText(R.id.error_message,
                                 context.getString(R.string.select_trip_inside_widget_settings));
-                        views.setViewVisibility(R.id.trip_title, View.GONE);
-                        views.setViewVisibility(R.id.trip_date, View.GONE);
-                        views.setViewVisibility(R.id.trip_photo, View.GONE);
+                        views.setViewVisibility(R.id.trip_container, View.GONE);
 
-                        views.setOnClickPendingIntent(R.id.widget_container, configPendingIntent);
-                        loadTripPhotoData(context, appWidgetManager, views, tripId, appWidgetId);
+                        views.setOnClickPendingIntent(R.id.widget_container,
+                                configPendingIntent);
+                        appWidgetManager.updateAppWidget(appWidgetId, views);
                     }
                 });
             }
@@ -221,13 +215,9 @@ public class TripWidgetProvider extends AppWidgetProvider {
             final RemoteViews views = new RemoteViews(context.getPackageName(),
                     R.layout.widget_layout);
 
-            views.setViewVisibility(R.id.select_trip, View.VISIBLE);
-            views.setTextViewText(R.id.select_trip, context.getString(R.string.not_signed_in));
-            views.setViewVisibility(R.id.trip_title, View.GONE);
-            views.setViewVisibility(R.id.trip_date, View.GONE);
-            views.setViewVisibility(R.id.trip_photo, View.GONE);
-            views.setViewVisibility(R.id.attribution_prefix, View.GONE);
-            views.setViewVisibility(R.id.attribution_content, View.GONE);
+            views.setViewVisibility(R.id.error_message, View.VISIBLE);
+            views.setTextViewText(R.id.error_message, context.getString(R.string.not_signed_in));
+            views.setViewVisibility(R.id.trip_container, View.GONE);
 
             final PendingIntent configPendingIntent = getConfigPendingIntent(context, appWidgetId);
             views.setOnClickPendingIntent(R.id.settings_button, configPendingIntent);
@@ -245,6 +235,8 @@ public class TripWidgetProvider extends AppWidgetProvider {
         Intent tripDetailsActivityIntent = new Intent(context, TripDetailsActivity.class);
         tripDetailsActivityIntent.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
         Intent addExpense = new Intent(context, ExpenseFactoryActivity.class);
+        //TODO: Not working
+        addExpense.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         addExpense.putExtra(Constants.Extra.EXTRA_TRIP, (Parcelable) trip);
 
         PendingIntent pendingIntent =
@@ -258,16 +250,21 @@ public class TripWidgetProvider extends AppWidgetProvider {
     private PendingIntent getConfigPendingIntent(Context context, int appWidgetId) {
         final Intent configIntent = new Intent(context, TripWidgetConfigurationActivity.class);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        //TODO: Not working
+        configIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent
+                .FLAG_ACTIVITY_REORDER_TO_FRONT);
         final PendingIntent configPendingIntent = PendingIntent.getActivity(context,
                 appWidgetId, configIntent, 0);
         return configPendingIntent;
     }
 
     private PendingIntent getAppPendingIntent(Context context, int appWidgetId) {
-        final Intent configIntent = new Intent(context, MainActivity.class);
-        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        final Intent appIntent = new Intent(context, MainActivity.class);
+        appIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        //TODO: Not working
+        appIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         final PendingIntent configPendingIntent = PendingIntent.getActivity(context,
-                appWidgetId, configIntent, 0);
+                appWidgetId, appIntent, 0);
         return configPendingIntent;
     }
 
@@ -358,7 +355,7 @@ public class TripWidgetProvider extends AppWidgetProvider {
                                 attrIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 PendingIntent configPendingIntent = PendingIntent.getActivity
                                         (context,
-                                        appWidgetId, attrIntent, 0);
+                                                appWidgetId, attrIntent, 0);
                                 views.setOnClickPendingIntent(R.id.attribution_content,
                                         configPendingIntent);
                             }

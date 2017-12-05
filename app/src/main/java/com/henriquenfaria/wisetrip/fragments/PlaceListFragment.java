@@ -224,7 +224,6 @@ public class PlaceListFragment extends FirebaseBaseFragment implements
                 @Override
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                     Timber.d("onChildMoved");
-                    //TODO: Implementation needed?
                 }
 
                 @Override

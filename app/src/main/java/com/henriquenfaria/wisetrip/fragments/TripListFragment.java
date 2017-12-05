@@ -67,7 +67,6 @@ public class TripListFragment extends FirebaseBaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO: Need to order by child?
         mTripsReference = mRootReference
                 .child(FirebaseDbContract.Trips.PATH_TRIPS)
                 .child(mCurrentUser.getUid());
@@ -255,7 +254,6 @@ public class TripListFragment extends FirebaseBaseFragment implements
 
         Utils.updateAppWidgets(mFragmentActivity, trip.getId(), true);
     }
-
 
     // TODO: Optimize with binary search?
     private TripHeader getHeaderForTrip(TripModel trip) {
