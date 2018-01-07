@@ -7,7 +7,7 @@ ext.minSdkVersion = 16
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.henriquenfaria.wisetrip"
         minSdkVersion project.ext.minSdkVersion
